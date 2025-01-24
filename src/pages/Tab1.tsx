@@ -1,8 +1,21 @@
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from '@ionic/react';
+import React from 'react';
+import {
+  IonContent,
+  IonHeader,
+  IonPage,
+  IonTitle,
+  IonToolbar,
+  IonButton,
+} from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab1.css';
 
-const Tab1: React.FC = () => {
+function Tab1() {
+  const handleButtonClick = () => {
+    console.log('Data Sent!');
+    alert('Data Sent!');
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -17,9 +30,14 @@ const Tab1: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <ExploreContainer name="Tab 1 page" />
+
+        {/* Button with a click handler */}
+        <IonButton size="large" color="danger" onClick={handleButtonClick}>
+          Send Data
+        </IonButton>
       </IonContent>
     </IonPage>
   );
-};
+}
 
 export default Tab1;
