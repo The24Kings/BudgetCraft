@@ -9,11 +9,33 @@ import {
 } from '@ionic/react';
 import ExploreContainer from '../components/ExploreContainer';
 import './Tab1.css';
+import { collection, addDoc } from 'firebase/firestore';
+import { firestore } from '../firebaseConfig'; 
 
-function Tab1() {
+
+const Tab1: React.FC = () => {
+  /**
+   *  Function to test Firebase connection
+   */
+  const testFirebaseConnection = async () => {
+    try {
+      const docRef = await addDoc(collection(firestore, 'testCollection'), {
+        testField: 'Hello Firebase!',
+        timestamp: new Date().toISOString(),
+      });
+      console.log('Document written with ID:', docRef.id);
+      alert(`Document written with ID: ${docRef.id}`);
+    } catch (error: any) { 
+      const errorMessage = error?.message || 'An unknown error occurred';
+      console.error('Error adding document:', error);
+      alert(`Error: ${errorMessage}`);
+    }
+  };
+
+  // Button click handler
   const handleButtonClick = () => {
-    console.log('Data Sent!');
-    alert('Data Sent!');
+    console.log('Sending Data to Firebase...');
+    testFirebaseConnection(); 
   };
 
   return (
