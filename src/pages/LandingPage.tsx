@@ -4,8 +4,7 @@ import {
   IonHeader,
   IonPage,
   IonTitle,
-  IonToolbar,
-  IonButton,
+  IonToolbar
 } from '@ionic/react';
 
 import Container from '../components/Container';

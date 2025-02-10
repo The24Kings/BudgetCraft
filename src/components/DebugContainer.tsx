@@ -4,6 +4,9 @@ import { IonButton } from '@ionic/react';
 import { collection, addDoc } from 'firebase/firestore';
 import { firestore } from '../firebaseConfig';
 
+import { EntryCategories, DataValidation, parseJSON } from '../utilities/Categories';
+import jsonData from '../categories.json';
+
 import './Container.css';
 
 interface ContainerProps {
@@ -35,12 +38,21 @@ const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
         testFirebaseConnection();
     };
 
+    // Parse the categories from the JSON file
+    var data = parseJSON(jsonData); // Mutable JSON data
+
     return (
         <div className="container">
             {/* Button with a click handler */}
             <IonButton size="large" color="danger" onClick={handleButtonClick}>
                 Send Data
             </IonButton>
+
+            {/* Display the data validation */}
+            <DataValidation categories={data}/>
+
+            {/* Display the categories */}
+            <EntryCategories categories={data} />
         </div>
     );
 };

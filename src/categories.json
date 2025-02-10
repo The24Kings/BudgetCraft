@@ -1,0 +1,88 @@
+{
+    "Income": {
+        "Salary & Wages": {
+            "Paycheck": true,
+            "Bonus": true,
+            "Overtime": true,
+            "Commissions": true
+        },
+        "Business Revenue": {
+            "Sales": true,
+            "Services": true,
+            "Other": true  
+        },
+        "Gifts": {
+            "Cash": true,
+            "Gift Cards": true,
+            "Other": true
+        }
+    },
+    "Expenses": {
+        "Housing": {
+            "Rent/ Mortgage": true,
+            "Utilities": true,
+            "Home Maintenance": true
+        },
+        "Transportation": {
+            "Car Payment": true,
+            "Gas": true,
+            "Insurance": true,
+            "Public Transportation": true,
+            "Parking Tolls": true,
+            "Maintenance": true
+        },
+        "Food": {
+            "Groceries": true,
+            "Dining Out": true,
+            "Coffee/ Snacks": true,
+            "Fast Food": true
+        },
+        "Health": {
+            "Insurance": true,
+            "Medical Bills": true,
+            "Dental/ Vision": true,
+            "Medication": true
+        },
+        "Debt & Loans": {
+            "Credit Card": true,
+            "Student Loan": true,
+            "Personal Loan": true,
+            "Other": true
+        },
+        "Savings": {
+            "Emergency Fund": true,
+            "Retirement": true,
+            "Stocks & Investments": true,
+            "Investment Accounts Tracking": true
+        },
+        "Entertainment & Leisure": {
+            "Subscriptions": true,
+            "Movies/ Concerts": true,
+            "Hobbies": true,
+            "Books and Magazines": true
+        },
+        "Shopping & Personal Care": {
+            "Clothing & Accesories": true,
+            "Beauty and Grooming": true,
+            "Electronics": true,
+            "Home Decor": true
+        },
+        "Children & Education": {
+            "Childcare": true,
+            "Tuition & School Supplies": true,
+            "College Fund": true
+        },
+        "Business Expenses": {
+            "Office Supplies": true,
+            "Marketing & Advertising": true,
+            "Business Travel": true,
+            "Software & Subscriptions": true
+        },
+        "Miscellaneous": {
+            "Pet Expenses": true,
+            "Legal Fees": true,
+            "Other Expenses": true,
+            "Uncategorized": true
+        }
+    }
+}

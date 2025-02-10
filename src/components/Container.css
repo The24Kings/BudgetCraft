@@ -22,3 +22,9 @@
 .container a {
   text-decoration: none;
 }
+
+.categories {
+  width: 50%;
+  margin: 0 auto;
+  margin-top: 1%;
+}

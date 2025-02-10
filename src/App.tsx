@@ -50,6 +50,8 @@ setupIonicReact();
 
 const DEBUG = process.env.NODE_ENV === 'development';
 
+console.log('DEBUG:', DEBUG);
+
 const App: React.FC = () => {
   return (
     <IonApp>
