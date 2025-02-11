@@ -2,8 +2,9 @@ import React from "react";
 import { addDoc, collection } from "firebase/firestore";
 import { IonButton } from "@ionic/react";
 import jsonData from "../categories.json";
-import { firestore } from "../firebaseConfig";
+import { firestore } from "../utilities/FirebaseConfig";
 import { DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
+
 import "./Container.css";
 
 interface ContainerProps {
