@@ -1,0 +1,22 @@
+{
+	"printWidth": 100,
+	"tabWidth": 4,
+	"useTabs": true,
+	"semi": true,
+	"singleQuote": false,
+	"trailingComma": "none",
+	"bracketSpacing": true,
+	"arrowParens": "always",
+	"endOfLine": "lf",
+	"jsxSingleQuote": false,
+	"bracketSameLine": false,
+	"plugins": ["@ianvs/prettier-plugin-sort-imports"],
+	"importOrder": [
+		"^react",
+		"<THIRD_PARTY_MODULES>",
+		"^@ionic/react$",
+		"^@/",
+		"^[./]"
+	],
+	"importOrderParserPlugins": ["typescript", "jsx"]
+}

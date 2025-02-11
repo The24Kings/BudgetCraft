@@ -1,20 +1,16 @@
 /// <reference types="vitest" />
 
-import legacy from '@vitejs/plugin-legacy'
-import react from '@vitejs/plugin-react'
-import EnvironmentPlugin from 'vite-plugin-environment'
-import { defineConfig } from 'vite'
+import legacy from "@vitejs/plugin-legacy";
+import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
+import EnvironmentPlugin from "vite-plugin-environment";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    react(),
-    legacy(),
-    EnvironmentPlugin('all', { loadEnvFiles: true })
-  ],
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './src/setupTests.ts',
-  }
-})
+	plugins: [react(), legacy(), EnvironmentPlugin("all", { loadEnvFiles: true })],
+	test: {
+		globals: true,
+		environment: "jsdom",
+		setupFiles: "./src/setupTests.ts"
+	}
+});

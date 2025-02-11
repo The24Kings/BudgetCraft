@@ -1,7 +1,7 @@
 {
-  "name": "Capstone",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "react-vite"
+	"name": "Capstone",
+	"integrations": {
+		"capacitor": {}
+	},
+	"type": "react-vite"
 }

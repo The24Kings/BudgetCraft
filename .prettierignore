@@ -1,0 +1,22 @@
+# Ignore node_modules and build artifacts
+node_modules/
+dist/
+build/
+coverage/
+
+# Ignore environment and dependency files
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Ignore config and generated files
+*.min.js
+*.log
+*.d.ts
+*.cache
+*.tgz
+
+# Ignore ESLint and Prettier configs
+.eslintcache
+.prettierignore
+.prettierrc
