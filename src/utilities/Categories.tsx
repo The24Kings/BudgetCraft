@@ -86,7 +86,7 @@ function getInfo(categories: Category[], subCategory: string): Category[] {
 	categories.forEach((category) => {
 		const sub = category
 			.getSubcategories()
-			.find((sub) => sub.Name.toLowerCase() === subCategory.toLowerCase());
+			.find((sub) => sub.Name.toLowerCase().includes(subCategory.toLowerCase()));
 
 		if (sub) {
 			validCategories.push(new Category(category.getType(), category.getCategory(), [sub]));
@@ -114,7 +114,12 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 			<IonItem>
 				<IonInput
 					placeholder="Enter a subcategory"
-					onIonChange={(e) => setInput(e.detail.value!)}
+					onIonInput={(e) => setInput(e.detail.value!)}
+					onKeyDown={(e) => {
+						if (e.key === "Enter") {
+							setValidCategories(getInfo(categories, input));
+						}
+					}}
 				/>
 			</IonItem>
 			<IonButton
@@ -162,6 +167,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 	return (
 		<div className="categories">
 			<IonAccordionGroup>
+			
 				{/* Create a Set with the Types to remove mulitples and display */}
 				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
 					<IonAccordion value={type} key={type}>
@@ -170,6 +176,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 						</IonItem>
 						<div slot="content" key={type}>
 							<IonAccordionGroup>
+
 								{/* Display the categories under the corrisponding Type */}
 								{categories
 									.filter((cat) => cat.getType() === type)
