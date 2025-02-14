@@ -42,7 +42,7 @@ const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
 	return (
 		<div className="container">
 			{/* Button with a click handler */}
-			<IonButton size="large" color="danger" onClick={handleButtonClick}>
+			<IonButton className="database-test" size="large" color="danger" onClick={handleButtonClick}>
 				Send Data
 			</IonButton>
 
