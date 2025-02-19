@@ -56,22 +56,19 @@ const App: React.FC = () => {
 
 						{/* Different tabs for the app */}
 						<Route path="/home" render={() => <LandingPage />} exact={true} />
-						{DEBUG && <Route path="/debug" render={() => <DebugPage />} exact={true} />}
+						<Route path="/debug" render={() => <DebugPage />} exact={true} />
 					</IonRouterOutlet>
 
-					{/* Only show the tab bar if we are in development mode */}
-					{DEBUG && (
-						<IonTabBar slot="bottom">
-							<IonTabButton tab="home" href="/home">
-								<IonIcon aria-hidden="true" icon={triangle} />
-								<IonLabel>Home</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="debug" href="/debug">
-								<IonIcon aria-hidden="true" icon={ellipse} />
-								<IonLabel>Debug</IonLabel>
-							</IonTabButton>
-						</IonTabBar>
-					)}
+					<IonTabBar slot="bottom">
+						<IonTabButton tab="home" href="/home">
+							<IonIcon aria-hidden="true" icon={triangle} />
+							<IonLabel>Home</IonLabel>
+						</IonTabButton>
+						<IonTabButton tab="debug" href="/debug">
+							<IonIcon aria-hidden="true" icon={ellipse} />
+							<IonLabel>Debug</IonLabel>
+						</IonTabButton>
+					</IonTabBar>
 				</IonTabs>
 			</IonReactRouter>
 		</IonApp>

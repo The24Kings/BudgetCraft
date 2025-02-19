@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { star } from "ionicons/icons";
 import {
 	IonAccordion,
@@ -106,8 +106,8 @@ interface DataValidationProps {
 }
 
 const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
-	const [validCategories, setValidCategories] = React.useState<Category[]>([]);
-	const [input, setInput] = React.useState<string>("");
+	const [validCategories, setValidCategories] = useState<Category[]>([]);
+	const [input, setInput] = useState<string>("");
 
 	return (
 		<div className="category-validation">
