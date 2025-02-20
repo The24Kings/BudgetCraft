@@ -1,13 +1,22 @@
-import React, { useState } from "react";
-import { star } from "ionicons/icons";
+import React, { useRef, useState } from "react";
+import { create, duplicate, star } from "ionicons/icons";
 import {
 	IonAccordion,
 	IonAccordionGroup,
+	IonAlert,
 	IonButton,
+	IonButtons,
+	IonContent,
+	IonHeader,
 	IonIcon,
 	IonInput,
 	IonItem,
-	IonLabel
+	IonLabel,
+	IonModal,
+	IonSelect,
+	IonSelectOption,
+	IonTitle,
+	IonToolbar
 } from "@ionic/react";
 
 class Category {
@@ -167,7 +176,6 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 	return (
 		<div className="categories">
 			<IonAccordionGroup>
-			
 				{/* Create a Set with the Types to remove mulitples and display */}
 				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
 					<IonAccordion className="type" value={type} key={type}>
@@ -176,7 +184,6 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 						</IonItem>
 						<div slot="content" key={type}>
 							<IonAccordionGroup>
-
 								{/* Display the categories under the corrisponding Type */}
 								{categories
 									.filter((cat) => cat.getType() === type)
@@ -196,7 +203,10 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 													slot="content"
 													key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
 												>
-													<IonItem className="subCategory" key={subCategory.Name}>
+													<IonItem
+														className="subCategory"
+														key={subCategory.Name}
+													>
 														<IonButton
 															fill="clear"
 															shape="round"
@@ -226,4 +236,109 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 	);
 };
 
-export { EntryCategories, DataValidation, parseJSON, getInfo, Category, SubCategory };
+/**
+ * Check if a category and subcategory already exists
+ */
+function exists(category: string, subcategory: string, categories: Category[]): boolean {
+	return categories.some(
+		(cat) =>
+			cat.getCategory() === category &&
+			cat.getSubcategories().some((sub) => sub.Name === subcategory)
+	);
+}
+
+/**
+ * Check if a category is static
+ */
+function isStatic(category: string, subcategory: string, categories: Category[]): boolean {
+	return categories
+		.find((cat) => cat.getCategory() === category)
+		?.getSubcategories()
+		.find((sub) => sub.Name === subcategory)
+		?.isStaticCategory();
+}
+
+/**
+ * A custom component to add custom categories to the list
+ */
+const CustomCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
+	const modal = useRef<HTMLIonModalElement>(null);
+
+	const [category, setCategory] = useState<string>("");
+	const [subcategory, setSubcategory] = useState<string>("");
+
+	function dismiss() {
+		modal.current?.dismiss();
+	}
+
+	function submitCustom() {
+		if (category && subcategory && !exists(category, subcategory, categories)) {
+			categories.push(
+				new Category(category, subcategory, [
+					new SubCategory(subcategory, false) //FIXME: Doesn't actually add the subcategory
+				])
+			);
+
+			console.log("Added:", category, subcategory);
+		}
+
+		// Reset the values
+		setCategory("");
+		setSubcategory("");
+		dismiss(); // Close the modal
+	}
+
+	return (
+		<div className="custom-categories">
+			<IonButton id="create-category" shape="round">
+				<IonIcon slot="icon-only" icon={duplicate} />
+			</IonButton>
+
+			<IonModal id="custom-category-modal" ref={modal} trigger="create-category">
+				<IonHeader>
+					<IonToolbar>
+						<IonButtons slot="start">
+							<IonButton onClick={() => dismiss()}>
+								Cancel
+							</IonButton>
+						</IonButtons>
+						<IonTitle className="ion-text-center">Create</IonTitle>
+						<IonButtons slot="end">
+							<IonButton onClick={() => submitCustom()}>Add</IonButton>
+						</IonButtons>
+					</IonToolbar>
+				</IonHeader>
+
+				<IonContent className="ion-padding">
+					<IonItem>
+						<IonSelect value={category} placeholder="Category" onIonChange={(e) => setCategory(e.detail.value)}>
+							{categories.map((category) => (
+								<IonSelectOption key={category.getCategory()} value={category.getCategory()}>
+									{category.getCategory()}
+								</IonSelectOption>
+							))}
+						</IonSelect>
+					</IonItem>
+					
+					<IonItem>
+						<IonInput
+							value={subcategory}
+							placeholder="Enter a subcategory"
+							onIonChange={(e) => setSubcategory(e.detail.value!)}
+						/>
+					</IonItem>
+				</IonContent>
+			</IonModal>
+		</div>
+	);
+};
+
+export {
+	EntryCategories,
+	DataValidation,
+	CustomCategories,
+	parseJSON,
+	getInfo,
+	Category,
+	SubCategory
+};

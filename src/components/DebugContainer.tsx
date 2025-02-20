@@ -1,7 +1,7 @@
 import React from "react";
 import { IonButton } from "@ionic/react";
 
-import { DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
+import { Category, CustomCategories, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
 import { testFirebaseConnection } from "../utilities/Firebase";
 
 import "./Container.css";
@@ -19,7 +19,7 @@ const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
 	};
 
 	// Parse the categories from the JSON file
-	var data = parseJSON(jsonData); // Mutable JSON data
+	var data: Category[] = parseJSON(jsonData); // Mutable JSON data
 
 	return (
 		<div className="container">
@@ -27,6 +27,8 @@ const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
 			<IonButton className="database-test" size="large" color="danger" onClick={handleButtonClick}>
 				Send Data
 			</IonButton>
+
+			<CustomCategories categories={data} />
 
 			{/* Display the data validation */}
 			<DataValidation categories={data} />
