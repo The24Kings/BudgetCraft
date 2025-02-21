@@ -262,37 +262,69 @@ interface AddCategoryProps {
  * A custom component to add custom categories to the list
  */
 const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
-	const modal = useRef<HTMLIonModalElement>(null);
-
 	const [category, setCategory] = useState<string>("");
 	const [subcategory, setSubcategory] = useState<string>("");
+	const [isValid, setIsValid] = useState<boolean>(true);
+	const [isTouched, setIsTouched] = useState<boolean>(false);
 
-	function dismiss() {
+	const modal = useRef<HTMLIonModalElement>(null);
+
+	/*
+	 * Check if the input is valid
+	 */
+	const validEntry = (name: string) => {
+		return name.match(/^[a-zA-Z\s]*$/);
+	};
+
+	/*
+	 * Validate the input field
+	 */
+	const validate = (event: Event) => {
+		// Get the value from the input
+		const value = (event.target as HTMLInputElement).value;
+
+		// Update the state
+		setSubcategory(value);
+
+		// Reset the validation
+		setIsValid(undefined);
+
+		if (value === "") return; // Don't validate empty strings
+
+		// Check if the value is valid
+		validEntry(value) ? setIsValid(true) : setIsValid(false);
+	};
+
+	const dismiss = () => {
+		// Reset the input values
+		setCategory("");
+		setSubcategory("");
+
+		// Close
 		modal.current?.dismiss();
-	}
+	};
 
-	function submitCustom() {
-		if (category && subcategory && !exists(category, subcategory, categories)) {
-			//Get the category type
-			const type = categories.find((cat) => cat.getCategory() === category)?.getType();
+	const submitCustom = () => {
+		if (exists(category, subcategory, categories)) {
+			alert("Category already exists.");
 
-			// Add the subcategory to the JSON file
-			json[type][category][subcategory] = false;
-
-			// Update the categories list
-			categories = parseJSON(json);
-
-			console.log("Added:", category, subcategory);
+			dismiss(); // Close the modal
+			return;
 		}
 
+		// Get the category type
+		const type = categories.find((cat) => cat.getCategory() === category)?.getType();
+
+		// Add the subcategory to the JSON file
+		json[type][category][subcategory] = false;
+
+		console.log("Added:", category, subcategory);
+		
 		// Update the Firebase database
 		pushCategoriesToFirebase(json);
 
-		// Reset the values
-		setCategory("");
-		setSubcategory("");
 		dismiss(); // Close the modal
-	}
+	};
 
 	return (
 		<div className="custom-categories">
@@ -308,7 +340,12 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 						</IonButtons>
 						<IonTitle className="ion-text-center">Create</IonTitle>
 						<IonButtons slot="end">
-							<IonButton onClick={() => submitCustom()}>Add</IonButton>
+							<IonButton
+								onClick={() => submitCustom()}
+								disabled={!category || !subcategory || !isValid}
+							>
+								Add
+							</IonButton>
 						</IonButtons>
 					</IonToolbar>
 				</IonHeader>
@@ -333,9 +370,12 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 
 					<IonItem>
 						<IonInput
+							className={`${isValid && "ion-valid"} ${!isValid && "ion-invalid"} ${isTouched && "ion-touched"}`}
 							value={subcategory}
 							placeholder="Enter a subcategory"
-							onIonInput={(e) => setSubcategory(e.detail.value!)}
+							onIonInput={(e) => validate(e)}
+							onIonBlur={() => setIsTouched(true)}
+							errorText="Invalid Name"
 						/>
 					</IonItem>
 				</IonContent>
@@ -344,12 +384,4 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 	);
 };
 
-export {
-	EntryCategories,
-	DataValidation,
-	AddCategory,
-	parseJSON,
-	getInfo,
-	Category,
-	SubCategory
-};
+export { EntryCategories, DataValidation, AddCategory, parseJSON, getInfo, Category, SubCategory };
