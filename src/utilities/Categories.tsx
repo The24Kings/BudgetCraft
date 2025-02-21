@@ -270,7 +270,6 @@ const CustomCategories: React.FC<CustomCategoriesProps> = ({ categories, json })
 		modal.current?.dismiss();
 	}
 
-	//TODO: Change to push to the JSON file
 	function submitCustom() {
 		if (category && subcategory && !exists(category, subcategory, categories)) {
 			//Get the category type

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { IonButton } from "@ionic/react";
 
 import { Category, CustomCategories, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
@@ -12,14 +12,22 @@ interface ContainerProps {
 }
 
 const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
+	var [data, setData] = useState<Category[]>([]);
+
 	// Button click handler
 	const handleButtonClick = () => {
 		console.log("Sending Data to Firebase...");
 		testFirebaseConnection();
 	};
 
-	// Parse the categories from the JSON file
-	var data: Category[] = parseJSON(jsonData); // Mutable JSON data
+	// Load the JSON data
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setData(parseJSON(jsonData));
+		}, 100);
+
+		return () => clearInterval(interval);
+	}, []);
 
 	return (
 		<div className="container">
@@ -28,7 +36,7 @@ const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
 				Send Data
 			</IonButton>
 
-			<CustomCategories categories={data} />
+			<CustomCategories categories={data} json={jsonData} />
 
 			{/* Display the data validation */}
 			<DataValidation categories={data} />
