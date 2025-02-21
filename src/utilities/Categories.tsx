@@ -264,35 +264,31 @@ interface AddCategoryProps {
 const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 	const [category, setCategory] = useState<string>("");
 	const [subcategory, setSubcategory] = useState<string>("");
-	const [isValid, setIsValid] = useState<boolean>(true);
-	const [isTouched, setIsTouched] = useState<boolean>(false);
 
 	const modal = useRef<HTMLIonModalElement>(null);
+	const input = useRef<HTMLIonInputElement>(null);
 
 	/*
-	 * Check if the input is valid
-	 */
-	const validEntry = (name: string) => {
-		return name.match(/^[a-zA-Z\s]*$/);
-	};
-
-	/*
-	 * Validate the input field
+	 * Validate the input field - replaces non alphanumeric characters
 	 */
 	const validate = (event: Event) => {
 		// Get the value from the input
-		const value = (event.target as HTMLInputElement).value;
+		const value: string = (event.target as HTMLInputElement).value;
 
-		// Update the state
-		setSubcategory(value);
+		// Removes non alphanumeric characters
+		const filteredValue = value.replace(/[^a-zA-Z0-9]+/g, '');
 
-		// Reset the validation
-		setIsValid(undefined);
+		/**
+		 * Update both the state and
+		 * component to keep them in sync.
+		 */
+		setSubcategory(filteredValue);
 
-		if (value === "") return; // Don't validate empty strings
+		const inputCmp = input.current;
 
-		// Check if the value is valid
-		validEntry(value) ? setIsValid(true) : setIsValid(false);
+		if (inputCmp !== null) {
+			inputCmp.value = filteredValue;
+		}
 	};
 
 	const dismiss = () => {
@@ -342,7 +338,7 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 						<IonButtons slot="end">
 							<IonButton
 								onClick={() => submitCustom()}
-								disabled={!category || !subcategory || !isValid}
+								disabled={!category || !subcategory}
 							>
 								Add
 							</IonButton>
@@ -368,16 +364,17 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 						</IonSelect>
 					</IonItem>
 
-					<IonItem>
-						<IonInput
-							className={`${isValid && "ion-valid"} ${!isValid && "ion-invalid"} ${isTouched && "ion-touched"}`}
-							value={subcategory}
-							placeholder="Enter a subcategory"
-							onIonInput={(e) => validate(e)}
-							onIonBlur={() => setIsTouched(true)}
-							errorText="Invalid Name"
-						/>
-					</IonItem>
+					<div style={{ padding: "10px 0" }}></div>
+
+					<IonInput
+						ref={input}
+						value={subcategory}
+						fill="outline"
+						placeholder="Enter a subcategory"
+						onIonInput={(e) => validate(e)}
+						maxlength={25}
+						counter={true}
+					/>
 				</IonContent>
 			</IonModal>
 		</div>
