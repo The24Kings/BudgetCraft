@@ -3,7 +3,6 @@ import { duplicate, star } from "ionicons/icons";
 import {
 	IonAccordion,
 	IonAccordionGroup,
-	IonAlert,
 	IonButton,
 	IonButtons,
 	IonContent,
@@ -139,6 +138,7 @@ interface DataValidationProps {
 	categories: Category[];
 }
 
+//TODO: This can be changed to use IonSearchbar instead of IonInput
 const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 	const [validCategories, setValidCategories] = useState<Category[]>([]);
 	const [input, setInput] = useState<string>("");
@@ -202,6 +202,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 	return (
 		<div className="categories">
 			<IonAccordionGroup>
+
 				{/* Create a Set with the Types to remove mulitples and display */}
 				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
 					<IonAccordion className="type" value={type} key={type}>
@@ -210,6 +211,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 						</IonItem>
 						<div slot="content" key={type}>
 							<IonAccordionGroup>
+
 								{/* Display the categories under the corrisponding Type */}
 								{categories
 									.filter((cat) => cat.getType() === type)
@@ -293,6 +295,9 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 		}
 	};
 
+	/**
+	 * Dismiss the modal
+	 */
 	const dismiss = () => {
 		// Reset the input values
 		setCategory("");
@@ -302,6 +307,9 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 		modal.current?.dismiss();
 	};
 
+	/**
+	 * Submit the custom category
+	 */
 	const submitCustom = () => {
 		if (exists(category, subcategory, categories)) {
 			alert("Category already exists.");
