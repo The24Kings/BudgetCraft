@@ -63,6 +63,30 @@ class SubCategory {
 }
 
 /**
+ * Check if a category and subcategory already exists
+ */
+const exists = (category: string, subcategory: string, categories: Category[]): boolean => {
+	return categories.some(
+		(cat) =>
+			cat.getCategory() === category &&
+			cat.getSubcategories().some((sub) => sub.Name === subcategory)
+	);
+};
+
+/**
+ * Check if a category is static
+ */
+const isStatic = (category: string, subcategory: string, categories: Category[]): boolean => {
+	return (
+		categories
+			.find((cat) => cat.getCategory() === category)
+			?.getSubcategories()
+			.find((sub) => sub.Name === subcategory)
+			?.isStaticCategory() ?? false
+	);
+};
+
+/**
  * Parse the JSON data into a list of categories with a list of subcategories
  */
 function parseJSON(jsonData: any): Category[] {
@@ -231,28 +255,6 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 	);
 };
 
-/**
- * Check if a category and subcategory already exists
- */
-function exists(category: string, subcategory: string, categories: Category[]): boolean {
-	return categories.some(
-		(cat) =>
-			cat.getCategory() === category &&
-			cat.getSubcategories().some((sub) => sub.Name === subcategory)
-	);
-}
-
-/**
- * Check if a category is static
- */
-function isStatic(category: string, subcategory: string, categories: Category[]): boolean {
-	return categories
-		.find((cat) => cat.getCategory() === category)
-		?.getSubcategories()
-		.find((sub) => sub.Name === subcategory)
-		?.isStaticCategory();
-}
-
 interface AddCategoryProps {
 	categories: Category[];
 	json: Object;
@@ -276,7 +278,7 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 		const value: string = (event.target as HTMLInputElement).value;
 
 		// Removes non alphanumeric characters
-		const filteredValue = value.replace(/[^a-zA-Z0-9]+/g, '');
+		const filteredValue = value.replace(/[^a-zA-Z0-9]+/g, "");
 
 		/**
 		 * Update both the state and
@@ -315,7 +317,7 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 		json[type][category][subcategory] = false;
 
 		console.log("Added:", category, subcategory);
-		
+
 		// Update the Firebase database
 		pushCategoriesToFirebase(json);
 
