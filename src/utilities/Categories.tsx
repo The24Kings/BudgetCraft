@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { create, duplicate, star } from "ionicons/icons";
+import { duplicate, star } from "ionicons/icons";
 import {
 	IonAccordion,
 	IonAccordionGroup,
@@ -18,6 +18,7 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
+import { pushCategoriesToFirebase } from "./Firebase";
 
 class Category {
 	Type: string;
@@ -284,6 +285,9 @@ const CustomCategories: React.FC<CustomCategoriesProps> = ({ categories, json })
 			console.log("Added:", category, subcategory);
 		}
 
+		// Update the Firebase database
+		pushCategoriesToFirebase(json);
+
 		// Reset the values
 		setCategory("");
 		setSubcategory("");
@@ -300,9 +304,7 @@ const CustomCategories: React.FC<CustomCategoriesProps> = ({ categories, json })
 				<IonHeader>
 					<IonToolbar>
 						<IonButtons slot="start">
-							<IonButton onClick={() => dismiss()}>
-								Cancel
-							</IonButton>
+							<IonButton onClick={() => dismiss()}>Cancel</IonButton>
 						</IonButtons>
 						<IonTitle className="ion-text-center">Create</IonTitle>
 						<IonButtons slot="end">
@@ -313,15 +315,22 @@ const CustomCategories: React.FC<CustomCategoriesProps> = ({ categories, json })
 
 				<IonContent className="ion-padding">
 					<IonItem>
-						<IonSelect value={category} placeholder="Category" onIonChange={(e) => setCategory(e.detail.value)}>
+						<IonSelect
+							value={category}
+							placeholder="Category"
+							onIonChange={(e) => setCategory(e.detail.value)}
+						>
 							{categories.map((category) => (
-								<IonSelectOption key={category.getCategory()} value={category.getCategory()}>
+								<IonSelectOption
+									key={category.getCategory()}
+									value={category.getCategory()}
+								>
 									{category.getCategory()}
 								</IonSelectOption>
 							))}
 						</IonSelect>
 					</IonItem>
-					
+
 					<IonItem>
 						<IonInput
 							value={subcategory}

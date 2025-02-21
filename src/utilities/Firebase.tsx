@@ -22,4 +22,26 @@ const testFirebaseConnection = async () => {
     }
 };
 
-export { testFirebaseConnection };
+//TODO: Change this to push JSON to database if the user hasnt already done so, if they have, update the existing document
+/**
+ * Push the categories to Firebase
+ */
+const pushCategoriesToFirebase = async (json: Object) => {
+    try {
+        const docRef = await addDoc(collection(firestore, "user-categories"), json);
+
+        console.log("Document written with ID:", docRef.id);
+        alert(`Document written with ID: ${docRef.id}`);
+
+        return docRef.id;
+    } catch (error: any) {
+        const errorMessage = error?.message || "An unknown error occurred";
+        
+        console.error("Error adding document:", error);
+        alert(`Error: ${errorMessage}`);
+
+        return null;
+    }
+};
+
+export { testFirebaseConnection, pushCategoriesToFirebase };
