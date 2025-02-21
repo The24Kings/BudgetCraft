@@ -123,6 +123,7 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 			<IonItem>
 				<IonInput
 					placeholder="Enter a subcategory"
+					value={input}
 					onIonInput={(e) => setInput(e.detail.value!)}
 					onKeyDown={(e) => {
 						if (e.key === "Enter") {
@@ -251,10 +252,15 @@ function isStatic(category: string, subcategory: string, categories: Category[])
 		?.isStaticCategory();
 }
 
+interface CustomCategoriesProps {
+	categories: Category[];
+	json: Object;
+}
+
 /**
  * A custom component to add custom categories to the list
  */
-const CustomCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
+const CustomCategories: React.FC<CustomCategoriesProps> = ({ categories, json }) => {
 	const modal = useRef<HTMLIonModalElement>(null);
 
 	const [category, setCategory] = useState<string>("");
@@ -267,11 +273,14 @@ const CustomCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 	//TODO: Change to push to the JSON file
 	function submitCustom() {
 		if (category && subcategory && !exists(category, subcategory, categories)) {
-			categories.push(
-				new Category(category, subcategory, [
-					new SubCategory(subcategory, false) //FIXME: Doesn't actually add the subcategory
-				])
-			);
+			//Get the category type
+			const type = categories.find((cat) => cat.getCategory() === category)?.getType();
+
+			// Add the subcategory to the JSON file
+			json[type][category][subcategory] = false;
+
+			// Update the categories list
+			categories = parseJSON(json);
 
 			console.log("Added:", category, subcategory);
 		}
@@ -318,7 +327,7 @@ const CustomCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 						<IonInput
 							value={subcategory}
 							placeholder="Enter a subcategory"
-							onIonChange={(e) => setSubcategory(e.detail.value!)}
+							onIonInput={(e) => setSubcategory(e.detail.value!)}
 						/>
 					</IonItem>
 				</IonContent>
