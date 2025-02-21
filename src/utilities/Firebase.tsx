@@ -28,7 +28,13 @@ const testFirebaseConnection = async () => {
  */
 const pushCategoriesToFirebase = async (json: Object) => {
     try {
-        const docRef = await addDoc(collection(firestore, "user-categories"), json);
+        const docData = {
+            user_id: "testUser", //TODO: Change this to the actual user ID using Firebase Auth
+            categories: json,
+            timestamp: new Date().toISOString()
+        };
+        
+        const docRef = await addDoc(collection(firestore, "user-categories"), docData);
 
         console.log("Document written with ID:", docRef.id);
         alert(`Document written with ID: ${docRef.id}`);
