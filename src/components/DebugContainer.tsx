@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IonButton } from "@ionic/react";
 
-import { Category, CustomCategories, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
+import { Category, AddCategory, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
 import { testFirebaseConnection } from "../utilities/Firebase";
 
 import "./Container.css";
@@ -36,7 +36,7 @@ const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
 				Send Data
 			</IonButton>
 
-			<CustomCategories categories={data} json={jsonData} />
+			<AddCategory categories={data} json={jsonData} />
 
 			{/* Display the data validation */}
 			<DataValidation categories={data} />

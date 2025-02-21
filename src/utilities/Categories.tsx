@@ -253,7 +253,7 @@ function isStatic(category: string, subcategory: string, categories: Category[])
 		?.isStaticCategory();
 }
 
-interface CustomCategoriesProps {
+interface AddCategoryProps {
 	categories: Category[];
 	json: Object;
 }
@@ -261,7 +261,7 @@ interface CustomCategoriesProps {
 /**
  * A custom component to add custom categories to the list
  */
-const CustomCategories: React.FC<CustomCategoriesProps> = ({ categories, json }) => {
+const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 	const modal = useRef<HTMLIonModalElement>(null);
 
 	const [category, setCategory] = useState<string>("");
@@ -347,7 +347,7 @@ const CustomCategories: React.FC<CustomCategoriesProps> = ({ categories, json })
 export {
 	EntryCategories,
 	DataValidation,
-	CustomCategories,
+	AddCategory,
 	parseJSON,
 	getInfo,
 	Category,
