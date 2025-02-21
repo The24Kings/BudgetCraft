@@ -117,6 +117,10 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 					onIonInput={(e) => setInput(e.detail.value!)}
 					onKeyDown={(e) => {
 						if (e.key === "Enter") {
+							if (input.trim() === "") {
+								setValidCategories([]); // Make sure no categories are shown when empty
+								return;
+							}
 							setValidCategories(getInfo(categories, input));
 						}
 					}}
@@ -124,7 +128,13 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 			</IonItem>
 			<IonButton
 				className="validate ion-padding"
-				onClick={() => setValidCategories(getInfo(categories, input))}
+				onClick={() => {
+					if (input.trim() === "") {
+						setValidCategories([]); // Make sure no categories are shown when empty
+						return;
+					}
+					setValidCategories(getInfo(categories, input));
+				}}
 			>
 				Get Info
 			</IonButton>
@@ -167,7 +177,6 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 	return (
 		<div className="categories">
 			<IonAccordionGroup>
-			
 				{/* Create a Set with the Types to remove mulitples and display */}
 				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
 					<IonAccordion className="type" value={type} key={type}>
@@ -176,7 +185,6 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 						</IonItem>
 						<div slot="content" key={type}>
 							<IonAccordionGroup>
-
 								{/* Display the categories under the corrisponding Type */}
 								{categories
 									.filter((cat) => cat.getType() === type)
@@ -196,7 +204,10 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 													slot="content"
 													key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
 												>
-													<IonItem className="subCategory" key={subCategory.Name}>
+													<IonItem
+														className="subCategory"
+														key={subCategory.Name}
+													>
 														<IonButton
 															fill="clear"
 															shape="round"
