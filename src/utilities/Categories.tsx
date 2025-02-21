@@ -288,7 +288,7 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 		const value: string = (event.target as HTMLInputElement).value;
 
 		// Removes non alphanumeric characters
-		const filteredValue = value.replace(/[^a-zA-Z0-9]+/g, "");
+		const filteredValue = value.replace(/[^a-zA-Z0-9\s]+/g, "");
 
 		/**
 		 * Update both the state and
