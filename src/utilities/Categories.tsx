@@ -78,9 +78,9 @@ const exists = (category: string, subcategory: string, categories: Category[]): 
 const isStatic = (category: string, subcategory: string, categories: Category[]): boolean => {
 	return (
 		categories
-			.find((cat) => cat.getCategory() === category)
+			.find((cat) => cat.getCategory().toLowerCase() === category.toLowerCase())
 			?.getSubcategories()
-			.find((sub) => sub.Name === subcategory)
+			.find((sub) => sub.Name.toLowerCase() === subcategory.toLowerCase())
 			?.isStaticCategory() ?? false
 	);
 };
