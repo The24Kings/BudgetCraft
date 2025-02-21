@@ -210,14 +210,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 														<IonButton
 															fill="clear"
 															shape="round"
-															onClick={() =>
-																console.log(
-																	category.getType() + ":\n\t",
-																	category.getCategory() +
-																		":\n\t\t",
-																	subCategory.Name
-																)
-															}
+															onClick={() => alert(subCategory.Name)}
 														>
 															<IonIcon slot="start" icon={star} />
 															{subCategory.Name}
@@ -271,6 +264,7 @@ const CustomCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 		modal.current?.dismiss();
 	}
 
+	//TODO: Change to push to the JSON file
 	function submitCustom() {
 		if (category && subcategory && !exists(category, subcategory, categories)) {
 			categories.push(
