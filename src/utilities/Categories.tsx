@@ -342,11 +342,12 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 				<IonHeader>
 					<IonToolbar>
 						<IonButtons slot="start">
-							<IonButton onClick={() => dismiss()}>Cancel</IonButton>
+							<IonButton id="cancel-modal" onClick={() => dismiss()}>Cancel</IonButton>
 						</IonButtons>
 						<IonTitle className="ion-text-center">Create</IonTitle>
 						<IonButtons slot="end">
 							<IonButton
+								id="submit-modal"
 								onClick={() => submitCustom()}
 								disabled={!category || !subcategory}
 							>
@@ -359,6 +360,7 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 				<IonContent className="ion-padding">
 					<IonItem>
 						<IonSelect
+							id="category-select"
 							value={category}
 							placeholder="Category"
 							onIonChange={(e) => setCategory(e.detail.value)}
@@ -377,6 +379,7 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 					<div style={{ padding: "10px 0" }}></div>
 
 					<IonInput
+						id="subcategory-input"
 						ref={input}
 						value={subcategory}
 						fill="outline"
@@ -391,4 +394,4 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 	);
 };
 
-export { EntryCategories, DataValidation, AddCategory, parseJSON, getInfo, Category, SubCategory };
+export { EntryCategories, DataValidation, AddCategory, parseJSON, getInfo, exists, isStatic, Category, SubCategory };

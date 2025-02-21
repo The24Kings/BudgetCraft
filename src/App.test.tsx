@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import App from "./App";
-import { getInfo, parseJSON } from "./utilities/Categories";
+import { AddCategory, exists, getInfo, isStatic, parseJSON } from "./utilities/Categories";
 import { testFirebaseConnection } from "./utilities/Firebase";
 
 const object = {
@@ -68,4 +68,33 @@ test("connects to Firebase", async () => {
 	// Assert the result
 	expect(result).toBeDefined();
 	window.alert = jsdomAlert; // Restore the alert
+});
+
+test("Add Category redenders without crashing", () => {
+	const { baseElement } = render(<AddCategory categories={[]} json={undefined} />);
+	expect(baseElement).toBeDefined();
+});
+
+test("check is 'exists' function works", () => {
+	const categories = parseJSON(object);
+
+	expect(exists("Category1", "Subcategory1", categories)).toBe(true);
+});
+
+test("check is 'exists' function works with invalid data", () => {
+	const categories = parseJSON(object);
+
+	expect(exists("Category1", "Subcategory3", categories)).toBe(false);
+});
+
+test("check if 'isStatic' function works", () => {
+	const categories = parseJSON(object);
+
+	expect(isStatic("Category1", "Subcategory1", categories)).toBe(true);
+});
+
+test("check if 'isStatic' function works with invalid data", () => {
+	const categories = parseJSON(object);
+
+	expect(isStatic("Category1", "Subcategory3", categories)).toBe(false);
 });
