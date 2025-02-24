@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { duplicate, star } from "ionicons/icons";
+import React, { useEffect, useRef, useState } from "react";
+import { add, closeOutline, duplicate, star } from "ionicons/icons";
 import {
 	IonAccordion,
 	IonAccordionGroup,
@@ -211,58 +211,120 @@ interface EntryCategoriesProps {
  * This component displays the categories and subcategories from the JSON file.
  */
 const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
+	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
+	const [subcategory, setSubcategory] = useState<string>("");
+
+	const input = useRef<HTMLIonInputElement>(null);
+
+	/*
+	 * Validate the input field - replaces non alphanumeric characters
+	 */
+	const validate = (event: Event) => {
+		// Get the value from the input
+		const value: string = (event.target as HTMLInputElement).value;
+
+		// Removes non alphanumeric characters
+		const filteredValue = value.replace(/[^a-zA-Z0-9\s]+/g, "");
+
+		/**
+		 * Update both the state and
+		 * component to keep them in sync.
+		 */
+		setSubcategory(filteredValue);
+
+		const inputCmp = input.current;
+
+		if (inputCmp !== null) {
+			inputCmp.value = filteredValue;
+		}
+	};
+
+	const accordionChange = (e: CustomEvent) => {
+		setShowCustomEntry(false);
+	};
+
 	return (
-		<div className="categories">
+		<IonAccordionGroup className="categories" onIonChange={accordionChange}>
 			<IonItemGroup>
 				{/* Display the Types of categories - as a set so they are unique (no duplicates) */}
 				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
 					<div key={type}>
-						<IonItemDivider>
+						<IonItemDivider color="light">
 							<IonLabel>{type}</IonLabel>
 						</IonItemDivider>
 
-						<IonAccordionGroup>
-							{/* Display the categories under the corrisponding Type */}
-							{categories
-								.filter((cat) => cat.getType() === type)
-								.map((category) => (
-									<IonAccordion
-										className="category"
-										value={category.getCategory()}
-										key={category.getCategory()}
-									>
-										<IonItem slot="header" color="dark">
-											<IonLabel>{category.getCategory()}</IonLabel>
-										</IonItem>
+						{/* Display the categories under the corrisponding Type */}
+						{categories
+							.filter((cat) => cat.getType() === type)
+							.map((category) => (
+								<IonAccordion
+									className="category"
+									value={category.getCategory()}
+									key={category.getCategory()}
+								>
+									<IonItem slot="header" color="dark">
+										<IonLabel>{category.getCategory()}</IonLabel>
+									</IonItem>
 
-										{/* Display the subcategories */}
-										{category.getSubcategories().map((subCategory) => (
-											<div
-												slot="content"
-												key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
-											>
-												<IonItem
-													className="subCategory"
-													key={subCategory.Name}
+									{/* Display the subcategories */}
+									{category.getSubcategories().map((subCategory) => (
+										<div
+											slot="content"
+											key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
+										>
+											<IonItem className="subCategory" key={subCategory.Name}>
+												<IonButton
+													fill="clear"
+													onClick={() => alert(subCategory.Name)}
 												>
-													<IonButton
-														fill="clear"
-														shape="round"
-														onClick={() => alert(subCategory.Name)}
-													>
-														<IonIcon slot="start" icon={star} />
-														{subCategory.Name}
+													{subCategory.Name}
+												</IonButton>
+											</IonItem>
+										</div>
+									))}
+									<div
+										slot="content"
+										key={`${category.getType()}-${category.getCategory()}-add`}
+									>
+										<IonItem
+											className="subCategory"
+											key={`${category.getCategory()}-add`}
+										>
+											{!showCustomEntry && (
+												<IonButton
+													fill="clear"
+													onClick={() => setShowCustomEntry(true)}
+												>
+													<IonIcon slot="start" icon={add} />
+													Add Sub-Category
+												</IonButton>
+											)}
+											{showCustomEntry && (
+												<IonInput
+													ref={input}
+													value={subcategory}
+													onIonInput={(e) => validate(e)}
+													maxlength={25}
+												>
+													<IonButton fill="clear" slot="end">
+														<IonIcon
+															slot="icon-only"
+															icon={closeOutline}
+														/>
 													</IonButton>
-												</IonItem>
-											</div>
-										))}
-									</IonAccordion>
-								))}
-						</IonAccordionGroup>
+													<IonButton fill="clear" slot="end">
+														<IonIcon slot="icon-only" icon={add} />
+													</IonButton>
+												</IonInput>
+											)}
+										</IonItem>
+									</div>
+								</IonAccordion>
+							))}
 					</div>
 				))}
 			</IonItemGroup>
-		</div>
+		</IonAccordionGroup>
 	);
 };
 
