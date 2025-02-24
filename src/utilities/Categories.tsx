@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { add, closeOutline, duplicate, star } from "ionicons/icons";
+import { add, closeOutline, duplicate, enter, star } from "ionicons/icons";
 import {
 	IonAccordion,
 	IonAccordionGroup,
@@ -147,6 +147,19 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 	const [validCategories, setValidCategories] = useState<Category[]>([]);
 	const [input, setInput] = useState<string>("");
 
+	/**
+	 * Handle the enter key for search
+	 */
+	function search(e: any) {
+		if (e.key === "Enter") {
+			if (input.trim() === "") {
+				setValidCategories([]); // Make sure no categories are shown when empty
+				return;
+			}
+			setValidCategories(getInfo(categories, input));
+		}
+	}
+
 	return (
 		<div className="category-validation">
 			<IonItem>
@@ -154,15 +167,7 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 					placeholder="Enter a subcategory"
 					value={input}
 					onIonInput={(e) => setInput(e.detail.value!)}
-					onKeyDown={(e) => {
-						if (e.key === "Enter") {
-							if (input.trim() === "") {
-								setValidCategories([]); // Make sure no categories are shown when empty
-								return;
-							}
-							setValidCategories(getInfo(categories, input));
-						}
-					}}
+					onKeyDown={(e) => {search(e)}}
 				/>
 			</IonItem>
 			<IonButton
@@ -220,6 +225,15 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 	const input = useRef<HTMLIonInputElement>(null);
 
 	/*
+	 * Handle key press events
+	 */
+	const keyPress = (e: React.KeyboardEvent<HTMLIonInputElement>, _category: string) => {
+		if (e.key === "Enter") {
+			submitCustom(_category);
+		}
+	}
+
+	/*
 	 * Validate the input field - replaces non alphanumeric characters
 	 */
 	const validate = (event: Event) => {
@@ -268,6 +282,9 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 		pushCategoriesToFirebase(json);
 	};
 
+	/*
+	 * Handle the accordion change event
+	 */
 	const accordionChange = (e: CustomEvent) => {
 		// Check if the accordion value is set
 		if (e.detail.value) {
@@ -347,6 +364,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 												<IonInput
 													ref={input}
 													value={subcategory}
+													onKeyDown={(e) => keyPress(e, category.getCategory())}
 													onIonInput={(e) => validate(e)}
 													maxlength={25}
 												>
@@ -366,7 +384,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 														<IonButton
 															fill="clear"
 															onClick={() =>
-																submitCustom(category.Name)
+																submitCustom(category.getCategory())
 															}
 															disabled={!subcategory}
 														>
