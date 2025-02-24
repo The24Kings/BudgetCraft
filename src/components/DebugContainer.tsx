@@ -13,7 +13,7 @@ interface ContainerProps {
 
 const DebugContainer: React.FC<ContainerProps> = () => {
 	const { addDocument } = useFirestoreStore();
-	var [data, setData] = useState<Category[]>([]);
+	let [data, setData] = useState<Category[]>([]);
 	
 	// Button click handler
 	const handleButtonClick = async () => {
