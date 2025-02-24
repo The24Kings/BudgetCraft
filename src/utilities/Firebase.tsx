@@ -1,54 +1,69 @@
+import { create } from "zustand";
 import { firestore } from "../utilities/FirebaseConfig";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, getDocs, collection, setDoc, doc } from "firebase/firestore";
 
-const testFirebaseConnection = async () => {
-    try {
-        const docRef = await addDoc(collection(firestore, "testCollection"), {
-            testField: "Hello Firebase!",
-            timestamp: new Date().toISOString()
-        });
+// Courtesy of https://github.com/Shailendra1703/fb/
+interface FirestoreState {
+    documents: any[];
+    isLoading: boolean;
+    error: string | null;
+    addDocument: (collectionName: string, data: any) => Promise<void>;
+    getDocuments: (collectionName: string) => Promise<void>;
+    setDocument: (collectionName: string, data: any) => Promise<void>;
+}
 
-        console.log("Document written with ID:", docRef.id);
-        alert(`Document written with ID: ${docRef.id}`);
+const useFirestoreStore = create<FirestoreState>((set) => ({
+    documents: [],
+    isLoading: false,
+    error: null,
 
-        return docRef.id;
-    } catch (error: any) {
-        const errorMessage = error?.message || "An unknown error occurred";
+    addDocument: async (collectionName: string, data: any) => {
+        set({ isLoading: true, error: null });
+
+        try {
+            const docRef = await addDoc(collection(firestore, collectionName), data);
+
+            set((state) => ({
+                documents: [...state.documents, { id: docRef.id, ...data }],
+                isLoading: false,
+            }));
+        } catch (error) {
+            set({ error: error.message, isLoading: false });
+        }
+    },
+
+    getDocuments: async (collectionName: string) => {
+        set({ isLoading: true, error: null });
         
-        console.error("Error adding document:", error);
-        alert(`Error: ${errorMessage}`);
+        try {
+            const querySnapshot = await getDocs(collection(firestore, collectionName));
+            const docs = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
 
-        return null;
-    }
-};
+            set({ documents: docs, isLoading: false });
+        } catch (error) {
+            set({ error: error.message, isLoading: false });
+        }
+    },
 
-//TODO: Change this to push JSON to database if the user hasnt already done so, if they have, update the existing document
-//FIXME: Causes a 400 error when trying to push the JSON to Firebase
-/**
- * Push the categories to Firebase
- */
-const pushCategoriesToFirebase = async (json: Object) => {
-    try {
-        const docData = {
-            user_id: "testUser", //TODO: Change this to the actual user ID using Firebase Auth
-            categories: json,
-            timestamp: new Date().toISOString()
-        };
-        
-        const docRef = await addDoc(collection(firestore, "user-categories"), docData);
+    setDocument: async (collectionName: string, data: any) => {
+        set({ isLoading: true, error: null });
 
-        console.log("Document written with ID:", docRef.id);
-        alert(`Document written with ID: ${docRef.id}`);
+        try {
+            await setDoc(doc(firestore, collectionName, data.id), data);
 
-        return docRef.id;
-    } catch (error: any) {
-        const errorMessage = error?.message || "An unknown error occurred";
-        
-        console.error("Error adding document:", error);
-        alert(`Error: ${errorMessage}`);
+            set((state) => ({
+                documents: state.documents.map((doc) =>
+                    doc.id === data.id ? { ...doc, ...data } : doc
+                ),
+                isLoading: false,
+            }));
+        } catch (error) {
+            set({ error: error.message, isLoading: false });
+        }
+    },
+}));
 
-        return null;
-    }
-};
-
-export { testFirebaseConnection, pushCategoriesToFirebase };
+export default useFirestoreStore;

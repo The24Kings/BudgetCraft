@@ -1,25 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import { add, closeOutline, duplicate, enter, star } from "ionicons/icons";
+import React, { useRef, useState } from "react";
+import { add, closeOutline } from "ionicons/icons";
 import {
 	IonAccordion,
 	IonAccordionGroup,
 	IonButton,
-	IonButtons,
-	IonContent,
-	IonHeader,
 	IonIcon,
 	IonInput,
 	IonItem,
 	IonItemDivider,
 	IonItemGroup,
 	IonLabel,
-	IonModal,
-	IonSelect,
-	IonSelectOption,
-	IonTitle,
-	IonToolbar
 } from "@ionic/react";
-import { pushCategoriesToFirebase } from "./Firebase";
+import useFirestoreStore from "./Firebase";
 
 class Category {
 	Type: string;
@@ -221,10 +213,11 @@ interface EntryCategoriesProps {
 const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) => {
 	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
 	const [subcategory, setSubcategory] = useState<string>("");
+	const { isLoading, error, addDocument } = useFirestoreStore();
 
 	const input = useRef<HTMLIonInputElement>(null);
 
-	/*
+	/**
 	 * Handle key press events
 	 */
 	const keyPress = (e: React.KeyboardEvent<HTMLIonInputElement>, _category: string) => {
@@ -233,7 +226,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 		}
 	}
 
-	/*
+	/**
 	 * Validate the input field - replaces non alphanumeric characters
 	 */
 	const validate = (event: Event) => {
@@ -259,7 +252,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 	/**
 	 * Submit the custom category
 	 */
-	const submitCustom = (_category: string) => {
+	const submitCustom = async (_category: string) => {
 		if (exists(_category, subcategory, categories)) {
 			alert("Category already exists.");
 
@@ -279,10 +272,17 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 		setShowCustomEntry(false);
 
 		// Update the Firebase database
-		pushCategoriesToFirebase(json);
+		await addDocument("user-categories", {
+			id: "testUser", //TODO: Change this to the actual user ID using Firebase Auth
+			categories: json,
+			timestamp: new Date().toISOString()
+		}); //FIXME: Firebase is sending back 400 error: Bad Request
+
+		console.log("Error:", error);
+		console.log("Loading:", isLoading);
 	};
 
-	/*
+	/**
 	 * Handle the accordion change event
 	 */
 	const accordionChange = (e: CustomEvent) => {

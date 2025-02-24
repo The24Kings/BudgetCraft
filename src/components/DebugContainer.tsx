@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IonButton } from "@ionic/react";
 
 import { Category, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
-import { testFirebaseConnection } from "../utilities/Firebase";
+import useFirestoreStore from "../utilities/Firebase";
 
 import "./Container.css";
 import jsonData from "../categories.json";
@@ -11,13 +11,18 @@ interface ContainerProps {
 	name: string;
 }
 
-const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
+const DebugContainer: React.FC<ContainerProps> = () => {
+	const { addDocument } = useFirestoreStore();
 	var [data, setData] = useState<Category[]>([]);
-
+	
 	// Button click handler
-	const handleButtonClick = () => {
+	const handleButtonClick = async () => {
 		console.log("Sending Data to Firebase...");
-		testFirebaseConnection();
+
+		await addDocument("testCollection", {
+			testField: "Hello Firebase!",
+			timestamp: new Date().toISOString()
+		});
 	};
 
 	// Load the JSON data

@@ -15,8 +15,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 console.log("Initializing Firebase...");
-const app = (getApps().length === 0) ? initializeApp(firebaseConfig) : getApp();
-console.log(app.options.apiKey === firebaseConfig.apiKey ? "Firebase Initialized!" : "Firebase Initialization Failed!");
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp()[0];
 
 // Export Firebase services
 export const firestore = getFirestore(app); // Firestore database
