@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IonButton } from "@ionic/react";
 
-import { Category, AddCategory, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
+import { Category, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
 import { testFirebaseConnection } from "../utilities/Firebase";
 
 import "./Container.css";
