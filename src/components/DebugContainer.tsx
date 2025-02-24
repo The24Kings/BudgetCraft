@@ -36,13 +36,11 @@ const DebugContainer: React.FC<ContainerProps> = ({ name }) => {
 				Send Data
 			</IonButton>
 
-			<AddCategory categories={data} json={jsonData} />
-
 			{/* Display the data validation */}
 			<DataValidation categories={data} />
 
 			{/* Display the categories */}
-			<EntryCategories categories={data} />
+			<EntryCategories categories={data} json={jsonData} />
 		</div>
 	);
 };
