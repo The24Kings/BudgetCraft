@@ -10,6 +10,8 @@ import {
 	IonIcon,
 	IonInput,
 	IonItem,
+	IonItemDivider,
+	IonItemGroup,
 	IonLabel,
 	IonModal,
 	IonSelect,
@@ -211,56 +213,55 @@ interface EntryCategoriesProps {
 const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
 	return (
 		<div className="categories">
-			<IonAccordionGroup>
-				{/* Create a Set with the Types to remove mulitples and display */}
+			<IonItemGroup>
+				{/* Display the Types of categories - as a set so they are unique (no duplicates) */}
 				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
-					<IonAccordion className="type" value={type} key={type}>
-						<IonItem slot="header" color="primary">
+					<div key={type}>
+						<IonItemDivider>
 							<IonLabel>{type}</IonLabel>
-						</IonItem>
-						<div slot="content" key={type}>
-							<IonAccordionGroup>
-								{/* Display the categories under the corrisponding Type */}
-								{categories
-									.filter((cat) => cat.getType() === type)
-									.map((category) => (
-										<IonAccordion
-											className="category"
-											value={category.getCategory()}
-											key={category.getCategory()}
-										>
-											<IonItem slot="header" color="dark">
-												<IonLabel>{category.getCategory()}</IonLabel>
-											</IonItem>
+						</IonItemDivider>
 
-											{/* Display the subcategories */}
-											{category.getSubcategories().map((subCategory) => (
-												<div
-													slot="content"
-													key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
+						<IonAccordionGroup>
+							{/* Display the categories under the corrisponding Type */}
+							{categories
+								.filter((cat) => cat.getType() === type)
+								.map((category) => (
+									<IonAccordion
+										className="category"
+										value={category.getCategory()}
+										key={category.getCategory()}
+									>
+										<IonItem slot="header" color="dark">
+											<IonLabel>{category.getCategory()}</IonLabel>
+										</IonItem>
+
+										{/* Display the subcategories */}
+										{category.getSubcategories().map((subCategory) => (
+											<div
+												slot="content"
+												key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
+											>
+												<IonItem
+													className="subCategory"
+													key={subCategory.Name}
 												>
-													<IonItem
-														className="subCategory"
-														key={subCategory.Name}
+													<IonButton
+														fill="clear"
+														shape="round"
+														onClick={() => alert(subCategory.Name)}
 													>
-														<IonButton
-															fill="clear"
-															shape="round"
-															onClick={() => alert(subCategory.Name)}
-														>
-															<IonIcon slot="start" icon={star} />
-															{subCategory.Name}
-														</IonButton>
-													</IonItem>
-												</div>
-											))}
-										</IonAccordion>
-									))}
-							</IonAccordionGroup>
-						</div>
-					</IonAccordion>
+														<IonIcon slot="start" icon={star} />
+														{subCategory.Name}
+													</IonButton>
+												</IonItem>
+											</div>
+										))}
+									</IonAccordion>
+								))}
+						</IonAccordionGroup>
+					</div>
 				))}
-			</IonAccordionGroup>
+			</IonItemGroup>
 		</div>
 	);
 };
@@ -350,7 +351,9 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 				<IonHeader>
 					<IonToolbar>
 						<IonButtons slot="start">
-							<IonButton id="cancel-modal" onClick={() => dismiss()}>Cancel</IonButton>
+							<IonButton id="cancel-modal" onClick={() => dismiss()}>
+								Cancel
+							</IonButton>
 						</IonButtons>
 						<IonTitle className="ion-text-center">Create</IonTitle>
 						<IonButtons slot="end">
@@ -402,4 +405,14 @@ const AddCategory: React.FC<AddCategoryProps> = ({ categories, json }) => {
 	);
 };
 
-export { EntryCategories, DataValidation, AddCategory, parseJSON, getInfo, exists, isStatic, Category, SubCategory };
+export {
+	EntryCategories,
+	DataValidation,
+	AddCategory,
+	parseJSON,
+	getInfo,
+	exists,
+	isStatic,
+	Category,
+	SubCategory
+};
