@@ -23,6 +23,7 @@ const testFirebaseConnection = async () => {
 };
 
 //TODO: Change this to push JSON to database if the user hasnt already done so, if they have, update the existing document
+//FIXME: Causes a 400 error when trying to push the JSON to Firebase
 /**
  * Push the categories to Firebase
  */
