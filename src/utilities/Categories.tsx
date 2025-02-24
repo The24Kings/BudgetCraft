@@ -9,7 +9,7 @@ import {
 	IonItem,
 	IonItemDivider,
 	IonItemGroup,
-	IonLabel,
+	IonLabel
 } from "@ionic/react";
 import useFirestoreStore from "./Firebase";
 
@@ -159,7 +159,9 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 					placeholder="Enter a subcategory"
 					value={input}
 					onIonInput={(e) => setInput(e.detail.value!)}
-					onKeyDown={(e) => {search(e)}}
+					onKeyDown={(e) => {
+						search(e);
+					}}
 				/>
 			</IonItem>
 			<IonButton
@@ -224,7 +226,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 		if (e.key === "Enter") {
 			submitCustom(_category);
 		}
-	}
+	};
 
 	/**
 	 * Validate the input field - replaces non alphanumeric characters
@@ -276,7 +278,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 			id: "testUser", //TODO: Change this to the actual user ID using Firebase Auth
 			categories: json,
 			timestamp: new Date().toISOString()
-		})
+		});
 
 		console.log("Error:", error);
 		console.log("Loading:", isLoading);
@@ -364,7 +366,9 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 												<IonInput
 													ref={input}
 													value={subcategory}
-													onKeyDown={(e) => keyPress(e, category.getCategory())}
+													onKeyDown={(e) =>
+														keyPress(e, category.getCategory())
+													}
 													onIonInput={(e) => validate(e)}
 													maxlength={25}
 												>
@@ -395,10 +399,13 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 											)}
 										</IonItem>
 									</div>
+									{/* End of Add Custom Sub-Category */}
 								</IonAccordion>
 							))}
+						{/* End of Display the categories */}
 					</div>
 				))}
+				{/* End of Display the Types of categories */}
 			</IonItemGroup>
 		</IonAccordionGroup>
 	);
