@@ -215,7 +215,6 @@ interface EntryCategoriesProps {
  */
 const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) => {
 	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
-	const [category, setCategory] = useState<string>("");
 	const [subcategory, setSubcategory] = useState<string>("");
 
 	const input = useRef<HTMLIonInputElement>(null);
@@ -246,31 +245,44 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 	/**
 	 * Submit the custom category
 	 */
-	const submitCustom = () => {
-		if (exists(category, subcategory, categories)) {
+	const submitCustom = (_category: string) => {
+		if (exists(_category, subcategory, categories)) {
 			alert("Category already exists.");
-		
+
 			return;
 		}
 
 		// Get the category type
-		const type = categories.find((cat) => cat.getCategory() === category)?.getType();
+		const type = categories.find((cat) => cat.getCategory() === _category)?.getType();
 
 		// Add the subcategory to the JSON file
-		json[type][category][subcategory] = false;
+		json[type][_category][subcategory] = false;
 
-		console.log("Added:", category, subcategory);
+		console.log("Added:", _category, subcategory);
+
+		// Clear the input field
+		setSubcategory("");
+		setShowCustomEntry(false);
 
 		// Update the Firebase database
 		pushCategoriesToFirebase(json);
 	};
 
 	const accordionChange = (e: CustomEvent) => {
-		setShowCustomEntry(false);
-		setCategory(e.detail.value);
-		setSubcategory("");
+		// Check if the accordion value is set
+		if (e.detail.value) {
+			const triggeredAccordion = e.detail.value as string;
+			const categoryExists = categories.some(
+				(category) => category.getCategory() === triggeredAccordion
+			);
 
-		console.log("Selected:", e.detail.value);
+			// Make sure the trigger was caused by a category accordion
+			if (categoryExists) {
+				setShowCustomEntry(false);
+
+				console.log("Accordion changed to:", triggeredAccordion);
+			}
+		}
 	};
 
 	return (
@@ -312,6 +324,8 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 											</IonItem>
 										</div>
 									))}
+
+									{/* Add Custom Sub-Category */}
 									<div
 										slot="content"
 										key={`${category.getType()}-${category.getCategory()}-add`}
@@ -351,7 +365,9 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 														</IonButton>
 														<IonButton
 															fill="clear"
-															onClick={() => submitCustom()}
+															onClick={() =>
+																submitCustom(category.Name)
+															}
 															disabled={!subcategory}
 														>
 															<IonIcon slot="icon-only" icon={add} />
