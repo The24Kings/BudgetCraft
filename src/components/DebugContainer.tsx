@@ -22,7 +22,7 @@ const DebugContainer: React.FC<ContainerProps> = () => {
 		await addDocument("testCollection", {
 			testField: "Hello Firebase!",
 			timestamp: new Date().toISOString()
-		}); //FIXME: Sending data to Firebase throws a 400 error: Bad Request
+		});
 	};
 
 	// Load the JSON data

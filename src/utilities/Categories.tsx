@@ -276,7 +276,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 			id: "testUser", //TODO: Change this to the actual user ID using Firebase Auth
 			categories: json,
 			timestamp: new Date().toISOString()
-		}); //FIXME: Firebase is sending back 400 error: Bad Request
+		})
 
 		console.log("Error:", error);
 		console.log("Loading:", isLoading);
