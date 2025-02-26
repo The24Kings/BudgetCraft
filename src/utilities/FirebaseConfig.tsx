@@ -1,6 +1,7 @@
-import { getApp, getApps, initializeApp } from "firebase/app";
+import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getDatabase } from "firebase/database";
+import { initializeFirestore } from "firebase/firestore";
 
 // Load environment variables
 const firebaseConfig = {
@@ -15,10 +16,11 @@ const firebaseConfig = {
 
 // Initialize Firebase
 console.log("Initializing Firebase...");
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-console.log(app.options.apiKey === firebaseConfig.apiKey ? "Firebase Initialized!" : "Firebase Initialization Failed!");
+const app = initializeApp(firebaseConfig);
 
 // Export Firebase services
-export const firestore = getFirestore(app); // Firestore database
+export const firebase = app; // Firebase
+export const firestore = initializeFirestore(app, {}); // Firestore
+export const db = getDatabase(app); // Firestore
 export const auth = getAuth(app); // Authentication
 export const provider = new GoogleAuthProvider(); // Google Auth Provider

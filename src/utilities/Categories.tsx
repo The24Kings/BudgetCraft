@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { star } from "ionicons/icons";
+import React, { useRef, useState } from "react";
+import { add, closeOutline } from "ionicons/icons";
 import {
 	IonAccordion,
 	IonAccordionGroup,
@@ -7,8 +7,11 @@ import {
 	IonIcon,
 	IonInput,
 	IonItem,
+	IonItemDivider,
+	IonItemGroup,
 	IonLabel
 } from "@ionic/react";
+import useFirestoreStore from "./Firebase";
 
 class Category {
 	Type: string;
@@ -51,6 +54,32 @@ class SubCategory {
 		this.isStatic = isStatic;
 	}
 }
+
+/**
+ * Check if a category and subcategory already exists
+ */
+const exists = (category: string, subcategory: string, categories: Category[]): boolean => {
+	console.log("Checking if", category, subcategory, "exists...");
+
+	return categories.some(
+		(cat) =>
+			cat.getCategory() === category &&
+			cat.getSubcategories().some((sub) => sub.Name === subcategory)
+	);
+};
+
+/**
+ * Check if a category is static
+ */
+const isStatic = (category: string, subcategory: string, categories: Category[]): boolean => {
+	return (
+		categories
+			.find((cat) => cat.getCategory().toLowerCase() === category.toLowerCase())
+			?.getSubcategories()
+			.find((sub) => sub.Name.toLowerCase() === subcategory.toLowerCase())
+			?.isStaticCategory() ?? false
+	);
+};
 
 /**
  * Parse the JSON data into a list of categories with a list of subcategories
@@ -105,24 +134,33 @@ interface DataValidationProps {
 	categories: Category[];
 }
 
+//TODO: This can be changed to use IonSearchbar instead of IonInput
 const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 	const [validCategories, setValidCategories] = useState<Category[]>([]);
 	const [input, setInput] = useState<string>("");
+
+	/**
+	 * Handle the enter key for search
+	 */
+	function search(e: any) {
+		if (e.key === "Enter") {
+			if (input.trim() === "") {
+				setValidCategories([]); // Make sure no categories are shown when empty
+				return;
+			}
+			setValidCategories(getInfo(categories, input));
+		}
+	}
 
 	return (
 		<div className="category-validation">
 			<IonItem>
 				<IonInput
 					placeholder="Enter a subcategory"
+					value={input}
 					onIonInput={(e) => setInput(e.detail.value!)}
 					onKeyDown={(e) => {
-						if (e.key === "Enter") {
-							if (input.trim() === "") {
-								setValidCategories([]); // Make sure no categories are shown when empty
-								return;
-							}
-							setValidCategories(getInfo(categories, input));
-						}
+						search(e);
 					}}
 				/>
 			</IonItem>
@@ -168,73 +206,218 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 
 interface EntryCategoriesProps {
 	categories: Category[];
+	json: Object;
 }
 
 /**
  * This component displays the categories and subcategories from the JSON file.
  */
-const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories }) => {
-	return (
-		<div className="categories">
-			<IonAccordionGroup>
-				{/* Create a Set with the Types to remove mulitples and display */}
-				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
-					<IonAccordion className="type" value={type} key={type}>
-						<IonItem slot="header" color="primary">
-							<IonLabel>{type}</IonLabel>
-						</IonItem>
-						<div slot="content" key={type}>
-							<IonAccordionGroup>
-								{/* Display the categories under the corrisponding Type */}
-								{categories
-									.filter((cat) => cat.getType() === type)
-									.map((category) => (
-										<IonAccordion
-											className="category"
-											value={category.getCategory()}
-											key={category.getCategory()}
-										>
-											<IonItem slot="header" color="dark">
-												<IonLabel>{category.getCategory()}</IonLabel>
-											</IonItem>
+const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) => {
+	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
+	const [subcategory, setSubcategory] = useState<string>("");
+	const { isLoading, error, addDocument } = useFirestoreStore();
 
-											{/* Display the subcategories */}
-											{category.getSubcategories().map((subCategory) => (
-												<div
-													slot="content"
-													key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
+	const input = useRef<HTMLIonInputElement>(null);
+
+	/**
+	 * Handle key press events
+	 */
+	const keyPress = (e: React.KeyboardEvent<HTMLIonInputElement>, _category: string) => {
+		if (e.key === "Enter") {
+			submitCustom(_category);
+		}
+	};
+
+	/**
+	 * Validate the input field - replaces non alphanumeric characters
+	 */
+	const validate = (event: Event) => {
+		// Get the value from the input
+		const value: string = (event.target as HTMLInputElement).value;
+
+		// Removes non alphanumeric characters
+		const filteredValue = value.replace(/[^a-zA-Z0-9\s]+/g, "");
+
+		/**
+		 * Update both the state and
+		 * component to keep them in sync.
+		 */
+		setSubcategory(filteredValue);
+
+		const inputCmp = input.current;
+
+		if (inputCmp !== null) {
+			inputCmp.value = filteredValue;
+		}
+	};
+
+	/**
+	 * Submit the custom category
+	 */
+	const submitCustom = async (_category: string) => {
+		if (exists(_category, subcategory, categories)) {
+			alert("Category already exists.");
+
+			return;
+		}
+
+		// Get the category type
+		const type = categories.find((cat) => cat.getCategory() === _category)?.getType();
+
+		// Add the subcategory to the JSON file
+		json[type][_category][subcategory] = false;
+
+		console.log("Added:", _category, subcategory);
+
+		// Clear the input field
+		setSubcategory("");
+		setShowCustomEntry(false);
+
+		// Update the Firebase database
+		await addDocument("user-categories", {
+			id: "testUser", //TODO: Change this to the actual user ID using Firebase Auth
+			categories: json,
+			timestamp: new Date().toISOString()
+		});
+
+		console.log("Error:", error);
+		console.log("Loading:", isLoading);
+	};
+
+	/**
+	 * Handle the accordion change event
+	 */
+	const accordionChange = (e: CustomEvent) => {
+		// Check if the accordion value is set
+		if (e.detail.value) {
+			const triggeredAccordion = e.detail.value as string;
+			const categoryExists = categories.some(
+				(category) => category.getCategory() === triggeredAccordion
+			);
+
+			// Make sure the trigger was caused by a category accordion
+			if (categoryExists) {
+				setShowCustomEntry(false);
+
+				console.log("Accordion changed to:", triggeredAccordion);
+			}
+		}
+	};
+
+	return (
+		<IonAccordionGroup className="categories" onIonChange={accordionChange}>
+			<IonItemGroup>
+				{/* Display the Types of categories - as a set so they are unique (no duplicates) */}
+				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
+					<div key={type}>
+						<IonItemDivider color="light">
+							<IonLabel>{type}</IonLabel>
+						</IonItemDivider>
+
+						{/* Display the categories under the corrisponding Type */}
+						{categories
+							.filter((cat) => cat.getType() === type)
+							.map((category) => (
+								<IonAccordion
+									className="category"
+									value={category.getCategory()}
+									key={category.getCategory()}
+								>
+									<IonItem slot="header" color="dark">
+										<IonLabel>{category.getCategory()}</IonLabel>
+									</IonItem>
+
+									{/* Display the subcategories */}
+									{category.getSubcategories().map((subCategory) => (
+										<div
+											slot="content"
+											key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
+										>
+											<IonItem className="subCategory" key={subCategory.Name}>
+												<IonButton
+													fill="clear"
+													onClick={() => alert(subCategory.Name)} //TODO: Will be used to select the subcategory for the entry
 												>
-													<IonItem
-														className="subCategory"
-														key={subCategory.Name}
-													>
+													{subCategory.Name}
+												</IonButton>
+											</IonItem>
+										</div>
+									))}
+
+									{/* Add Custom Sub-Category */}
+									<div
+										slot="content"
+										key={`${category.getType()}-${category.getCategory()}-add`}
+									>
+										<IonItem
+											className="subCategory"
+											key={`${category.getCategory()}-add`}
+										>
+											{!showCustomEntry && (
+												<IonButton
+													fill="clear"
+													onClick={() => setShowCustomEntry(true)}
+												>
+													<IonIcon slot="start" icon={add} />
+													Add Sub-Category
+												</IonButton>
+											)}
+											{showCustomEntry && (
+												<IonInput
+													ref={input}
+													value={subcategory}
+													onKeyDown={(e) =>
+														keyPress(e, category.getCategory())
+													}
+													onIonInput={(e) => validate(e)}
+													maxlength={25}
+												>
+													<div slot="end">
 														<IonButton
 															fill="clear"
-															shape="round"
-															onClick={() =>
-																console.log(
-																	category.getType() + ":\n\t",
-																	category.getCategory() +
-																		":\n\t\t",
-																	subCategory.Name
-																)
-															}
+															onClick={() => {
+																setShowCustomEntry(false);
+																setSubcategory("");
+															}}
 														>
-															<IonIcon slot="start" icon={star} />
-															{subCategory.Name}
+															<IonIcon
+																slot="icon-only"
+																icon={closeOutline}
+															/>
 														</IonButton>
-													</IonItem>
-												</div>
-											))}
-										</IonAccordion>
-									))}
-							</IonAccordionGroup>
-						</div>
-					</IonAccordion>
+														<IonButton
+															fill="clear"
+															onClick={() =>
+																submitCustom(category.getCategory())
+															}
+															disabled={!subcategory}
+														>
+															<IonIcon slot="icon-only" icon={add} />
+														</IonButton>
+													</div>
+												</IonInput>
+											)}
+										</IonItem>
+									</div>
+									{/* End of Add Custom Sub-Category */}
+								</IonAccordion>
+							))}
+						{/* End of Display the categories */}
+					</div>
 				))}
-			</IonAccordionGroup>
-		</div>
+				{/* End of Display the Types of categories */}
+			</IonItemGroup>
+		</IonAccordionGroup>
 	);
 };
 
-export { EntryCategories, DataValidation, parseJSON, getInfo, Category, SubCategory };
+export {
+	EntryCategories,
+	DataValidation,
+	parseJSON,
+	getInfo,
+	exists,
+	isStatic,
+	Category,
+	SubCategory
+};
