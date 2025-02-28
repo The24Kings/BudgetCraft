@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { IonButton } from "@ionic/react";
-
+import Transactions from "../utilities/Transactions";
 import { Category, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
 import useFirestoreStore from "../utilities/Firebase";
-
-import "./Container.css";
+import "./DebugContainer.css";
 import jsonData from "../categories.json";
 
 interface ContainerProps {
@@ -36,16 +35,18 @@ const DebugContainer: React.FC<ContainerProps> = () => {
 
 	return (
 		<div className="container">
-			{/* Button with a click handler */}
-			<IonButton className="database-test" size="large" color="danger" onClick={handleButtonClick}>
-				Send Data
-			</IonButton>
+            <IonButton className="database-test" size="large" color="danger" onClick={handleButtonClick}>
+                Send Data
+            </IonButton>
 
-			{/* Display the data validation */}
-			<DataValidation categories={data} />
+            {/* Add new transactions */}
+            <Transactions categories={data} json={jsonData}/>
 
-			{/* Display the categories */}
-			<EntryCategories categories={data} json={jsonData} />
+            {/* Display the data validation */}
+            <DataValidation categories={data} />
+
+            {/* Display the categories */}
+            <EntryCategories categories={data} json={jsonData} />
 		</div>
 	);
 };
