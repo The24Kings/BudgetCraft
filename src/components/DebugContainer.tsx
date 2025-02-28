@@ -40,7 +40,7 @@ const DebugContainer: React.FC<ContainerProps> = () => {
             </IonButton>
 
             {/* Add new transactions */}
-            <Transactions categories={data} json={jsonData}/>
+            <Transactions categories={data}/>
 
             {/* Display the data validation */}
             <DataValidation categories={data} />
