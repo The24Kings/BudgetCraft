@@ -21,14 +21,16 @@ import { auth, provider } from "../utilities/FirebaseConfig";
 const LandingPage: React.FC = () => {
     const [user, setUser] = useState<any>(null);
 
+    // Handle user sign in
     const handleSignIn = async () => {
-        await signInWithPopup(auth, provider)
+        await signInWithPopup(auth, provider) //TODO: Change to use signInWithEmailAndPassword for email/password login
             .catch((error) => {
                 console.error("Sign in Error:", error);
             });
 
     };
 
+    // Handle user logout
     const handleLogout = async () => {
         await signOut(auth)
             .finally(() => {
@@ -41,6 +43,7 @@ const LandingPage: React.FC = () => {
             });
     };
 
+    // Check if user is signed in
     useEffect(() => {
         onAuthStateChanged(auth, async (user) => {
             if (user) {
