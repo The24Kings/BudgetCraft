@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { getApp } from "firebase/app";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
 import { add } from "ionicons/icons";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -22,7 +20,9 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
-import { Category, EntryCategories, parseJSON } from "./Categories";
+
+import useFirestoreStore from "./Firebase";
+import { Category, EntryCategories } from "./Categories";
 
 class Transaction {
 	constructor(
@@ -49,6 +49,8 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
     const [date, setDate] = useState(new Date().toISOString());
     const [amount, setAmount] = useState(0.0);
 	const [description, setDescription] = useState("");
+
+    const { addDocument, error } = useFirestoreStore();
 
 	const modalStartRef = useRef<HTMLIonModalElement>(null);
 	const modalSubmitRef = useRef<HTMLIonModalElement>(null);
@@ -88,20 +90,25 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 		}
 	}
 
-	const handleAddTransaction = () => {
-		const newTransaction = new Transaction(
-			uuidv4(),
-			type,
-			category,
-			subCategory,
-			title,
-			date,
-			description,
-			amount
-		);
+	const handleAddTransaction = async () => {
+        const transactionID = uuidv4();
 
-		console.log("Transaction added:", newTransaction);
-		saveTransactionToDatabase(newTransaction);
+        await addDocument("test-transaction", {
+            id: transactionID,
+            type: type,
+            category: category,
+            subCategory: subCategory,
+            title: title,
+            date: date,
+            description: description,
+            amount: amount
+        }).finally(() => {
+            if(error) {
+                console.error("Error adding transaction:", error);
+            } else {
+                console.log("Transaction added to with ID:", transactionID);
+            }
+        });
 
 		resetForm();
 
@@ -109,33 +116,13 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 	};
 
 	const resetForm = () => {
-        setDate(new Date().toISOString());
         setTitle("");
-		setType("");
+        setType("");
+        setAmount(null);
 		setCategory("");
 		setSubCategory("");
-		setDescription("");
-		setAmount(null);
-	};
-
-	const saveTransactionToDatabase = async (transaction: Transaction) => {
-		try {
-			const db = getFirestore(getApp()); // Get Firestore instance
-			const docRef = await addDoc(collection(db, "test-transaction"), {
-				id: transaction.id,
-				type: transaction.type,
-				category: transaction.category,
-				subCategory: transaction.subCategory,
-				title: transaction.title,
-				date: transaction.date,
-				description: transaction.description,
-				amount: transaction.amount
-			});
-
-			console.log("Transaction successfully saved to Firestore with ID:", docRef.id);
-		} catch (error) {
-			console.error("Error saving transaction to Firestore:", error);
-		}
+        setDescription("");
+        setDate(new Date().toISOString());
 	};
 
 	return (
