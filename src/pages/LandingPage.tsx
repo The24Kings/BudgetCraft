@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {    
     IonButton,
     IonButtons,
@@ -14,30 +14,52 @@ import {
     IonToolbar
 } from "@ionic/react";
 import Container from "../components/Container";
-import { logout, signInWithGoogle } from "../utilities/AuthService";
 import "./LandingPage.css";
+import { browserLocalPersistence, onAuthStateChanged, setPersistence, signInWithPopup, signOut } from "firebase/auth";
+import { auth, provider } from "../utilities/FirebaseConfig";
 
 const LandingPage: React.FC = () => {
     const [user, setUser] = useState<any>(null);
 
-    //TODO: Look into cookies to make login persistant between sessions
     const handleSignIn = async () => {
-        try {
-            const userData = await signInWithGoogle();
-            setUser(userData);
-        } catch (error) {
-            console.error("Login failed", error);
-        }
+        await signInWithPopup(auth, provider)
+            .catch((error) => {
+                console.error("Sign in Error:", error);
+            });
+
     };
 
     const handleLogout = async () => {
-        try {
-            await logout();
-            setUser(null);
-        } catch (error) {
-            console.error("Logout failed", error);
-        }
+        await signOut(auth)
+            .finally(() => {
+                console.log("User signed out");
+
+                setUser(null);
+            })
+            .catch((error) => {
+                console.error("Logout Error:", error);
+            });
     };
+
+    useEffect(() => {
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                console.log("User Signed in using Auth Change Listener");
+
+                setPersistence(auth, browserLocalPersistence);
+
+                console.log("User Info:", user);
+
+                setUser(user);
+
+                //TODO: Create Firebase document for user if it doesn't exist
+            } else {
+                console.log("No user signed in");
+
+                setUser(null);
+            }
+        });
+    }, []);
 
     return (
         <React.Fragment>
