@@ -329,7 +329,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 		try {
 			const db = getFirestore(getApp());
 
-			// Step 1: Update Firestore transactions where subCategory matches the deleted one
+			// Update Firestore transactions where subCategory matches the deleted one
 			const transactionsRef = collection(db, "test-transaction");
 			const q = query(transactionsRef, where("subCategory", "==", subCategoryName));
 
@@ -343,7 +343,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 				`All transactions with subcategory "${subCategoryName}" are now "Uncategorized"`
 			);
 
-			// Step 2: Remove subcategory from Firestore JSON
+			// Remove subcategory from Firestore JSON
 			const type = category.getType();
 			delete json[type][category.getCategory()][subCategoryName];
 
@@ -355,7 +355,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 
 			console.log(`Subcategory "${subCategoryName}" removed from Firestore`);
 
-			// Step 3: Update the local UI state by triggering a re-render
+			// Update the local UI state by triggering a re-render
 			const updatedCategories = category.Subcategories.filter(
 				(sub) => sub.Name !== subCategoryName
 			);
