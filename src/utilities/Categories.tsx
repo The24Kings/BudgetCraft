@@ -1,4 +1,14 @@
 import React, { useRef, useState } from "react";
+import { getApp } from "firebase/app";
+import {
+	collection,
+	doc,
+	getDocs,
+	getFirestore,
+	query,
+	updateDoc,
+	where
+} from "firebase/firestore";
 import { add, closeOutline } from "ionicons/icons";
 import {
 	IonAccordion,
@@ -309,13 +319,54 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 	/**
 	 * Confirm delete custom subcategory
 	 */
-	const confirmDeleteSubcategory = async (category: Category, subcategoryName: string) => {
+	const confirmDeleteSubcategory = async (category: Category, subCategoryName: string) => {
 		const isConfirmed = window.confirm(
-			`Are you sure you want to delete the custom subcategory "${subcategoryName}"?`
+			`Are you sure you want to delete the custom subcategory "${subCategoryName}"?`
 		);
 
-		if (isConfirmed) {
-			deleteCustomSubcategory(category, subcategoryName);
+		if (!isConfirmed) return;
+
+		try {
+			const db = getFirestore(getApp());
+
+			// Step 1: Update Firestore transactions where subCategory matches the deleted one
+			const transactionsRef = collection(db, "test-transaction");
+			const q = query(transactionsRef, where("subCategory", "==", subCategoryName));
+
+			const querySnapshot = await getDocs(q);
+			querySnapshot.forEach(async (docSnap) => {
+				const transactionRef = doc(db, "test-transaction", docSnap.id);
+				await updateDoc(transactionRef, { subCategory: "Uncategorized" });
+			});
+
+			console.log(
+				`All transactions with subcategory "${subCategoryName}" are now "Uncategorized"`
+			);
+
+			// Step 2: Remove subcategory from Firestore JSON
+			const type = category.getType();
+			delete json[type][category.getCategory()][subCategoryName];
+
+			await addDocument("user-categories", {
+				id: "testUser", // TODO: Replace with actual user ID
+				categories: json,
+				timestamp: new Date().toISOString()
+			});
+
+			console.log(`Subcategory "${subCategoryName}" removed from Firestore`);
+
+			// Step 3: Update the local UI state by triggering a re-render
+			const updatedCategories = category.Subcategories.filter(
+				(sub) => sub.Name !== subCategoryName
+			);
+			category.Subcategories = updatedCategories;
+
+			// Use setSubcategory to trigger a UI update
+			setSubcategory(""); // Force re-render
+
+			console.log(`Updated UI: Subcategory "${subCategoryName}" removed from local state`);
+		} catch (error) {
+			console.error("Error deleting subcategory:", error);
 		}
 	};
 
