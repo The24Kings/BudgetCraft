@@ -1,303 +1,262 @@
 import { useEffect, useRef, useState } from "react";
-import { Category, parseJSON } from "./Categories";
-import { addDoc, collection, getFirestore } from "firebase/firestore";
-import { getApp } from "firebase/app";
-import { v4 as uuidv4 } from "uuid";
-
-import {
-    IonButton,
-    IonContent,
-    IonFab,
-    IonFabButton,
-    IonHeader,
-    IonIcon,
-    IonInput,
-    IonItem,
-    IonLabel,
-    IonModal,
-    IonSelect,
-    IonSelectOption,
-    IonTitle,
-    IonToolbar
-} from "@ionic/react";
 import { add } from "ionicons/icons";
+import { v4 as uuidv4 } from "uuid";
+import {
+	IonButton,
+	IonContent,
+	IonDatetime,
+	IonDatetimeButton,
+	IonFab,
+	IonFabButton,
+	IonHeader,
+	IonIcon,
+	IonInput,
+	IonItem,
+	IonLabel,
+	IonModal,
+	IonSelect,
+	IonSelectOption,
+	IonTextarea,
+	IonTitle,
+	IonToolbar
+} from "@ionic/react";
+
+import useFirestoreStore from "./Firebase";
+import { Category, EntryCategories } from "./Categories";
 
 class Transaction {
-    constructor(
-        public id: string,
-        public type: string,
-        public category: string,
-        public subCategory: string,
-        public date: string,
-        public description: string,
-        public amount: string
-    ) {}
+	constructor(
+		public id: string,
+		public type: string,
+		public category: string,
+		public subCategory: string,
+		public title: string,
+		public date: string,
+		public description: string,
+		public amount: number
+	) {}
 }
 
 interface TransactionProps {
-    categories: Category[];
-    json: Object;
+	categories: Category[];
 }
 
-const Transactions: React.FC<TransactionProps> = ({ categories, json }) => {
-    const [showModal, setShowModal] = useState(false);
-    const [step, setStep] = useState(1);
-    const [type, setType] = useState("");
-    const [category, setCategory] = useState("");
-    const [subCategory, setSubCategory] = useState("");
-    const [description, setDescription] = useState("");
-    const [amount, setAmount] = useState("");
+const Transactions: React.FC<TransactionProps> = ({ categories }) => {
+	const [type, setType] = useState("");
+	const [category, setCategory] = useState("");
+	const [subCategory, setSubCategory] = useState("");
+    const [title, setTitle] = useState("");
+    const [date, setDate] = useState(new Date().toISOString());
+    const [amount, setAmount] = useState(0.0);
+	const [description, setDescription] = useState("");
 
-    const date = new Date().toISOString().split("T")[0];
-    const modal = useRef<HTMLIonModalElement>(null);
+    const { addDocument, error } = useFirestoreStore();
 
-    const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
+	const modalStartRef = useRef<HTMLIonModalElement>(null);
+	const modalSubmitRef = useRef<HTMLIonModalElement>(null);
 
-    useEffect(() => {
-        if (type) {
-            const parsedCategories = parseJSON(json); // Store parsed data
-            console.log(
-                "All Parsed Categories:",
-                parsedCategories.map((cat) => ({ name: cat.Name, type: cat.Type }))
-            );
+	const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
 
-            const filtered = parsedCategories.filter((cat) => {
-                console.log(`Checking category: ${cat.Name}, Type: ${cat.Type}`);
-                return (
-                    (type.toLowerCase() === "expense" && cat.Type.toLowerCase() === "expenses") ||
-                    (type.toLowerCase() === "income" && cat.Type.toLowerCase() === "income")
-                );
-            });
+	useEffect(() => {
+		if (!type) {
+			console.log("No Type selected. Resetting Categories.");
+			setFilteredCategories([]);
 
-            console.log(`Filtered Categories for ${type}:`, filtered);
-            setFilteredCategories(filtered);
-        } else {
-            setFilteredCategories([]);
-        }
-    }, [type]);
+			return;
+		}
 
-    
-    const selectedCategory = categories.find((cat) => cat.getCategory() === category);
+		console.log("Filtering Categories for:", type);
 
-    const isFormValid = type && category && subCategory && amount.match(/^\d+(\.\d{1,2})?$/);
+		// Filter categories based on selected type
+		const filtered = categories.filter((cat) => {
+			return cat.getType() === type;
+		});
 
-    const handleCategorySelect = (categoryName: string) => {
-        setCategory(categoryName);
-        setStep(2);
-    };
+		console.log(`Filtered Categories for ${type}:`, filtered);
 
-    const handleAddTransaction = () => {
-        if (!isFormValid) return;
+		setFilteredCategories(filtered);
+	}, [type]);
 
-        const newTransaction = new Transaction(
-            uuidv4(),
-            type,
-            category,
-            subCategory,
-            date,
-            description,
-            amount
-        );
+	/*
+	 * Validates the amount input to ensure it is a valid number. Only allows up to 2 decimal places.
+	 */
+	function validateAmount(value: string) {
+		const decimalIndex = value.indexOf(".");
 
-        console.log("Transaction added:", newTransaction);
-        saveTransactionToDatabase(newTransaction);
+		if (decimalIndex !== -1 && value.length - decimalIndex - 1 > 2) {
+			setAmount(parseFloat(value.substring(0, decimalIndex + 3)));
+		} else {
+			setAmount(parseFloat(value));
+		}
+	}
 
-        resetForm();
-        setTimeout(() => {
-            setShowModal(false);
-            setStep(1);
-        }, 100); // Small delay to prevent UI glitches
-    };
+	const handleAddTransaction = async () => {
+        const transactionID = uuidv4();
 
-    const resetForm = () => {
+        await addDocument("test-transaction", {
+            id: transactionID,
+            type: type,
+            category: category,
+            subCategory: subCategory,
+            title: title,
+            date: date,
+            description: description,
+            amount: amount
+        }).finally(() => {
+            if(error) {
+                console.error("Error adding transaction:", error);
+            } else {
+                console.log("Transaction added to with ID:", transactionID);
+            }
+        });
+
+		resetForm();
+
+		modalSubmitRef.current?.dismiss();
+	};
+
+	const resetForm = () => {
+        setTitle("");
         setType("");
-        setCategory("");
-        setSubCategory("");
+        setAmount(null);
+		setCategory("");
+		setSubCategory("");
         setDescription("");
-        setAmount("");
-    };
+        setDate(new Date().toISOString());
+	};
 
-    const saveTransactionToDatabase = async (transaction: Transaction) => {
-        try {
-            const db = getFirestore(getApp()); // Get Firestore instance
-            const docRef = await addDoc(collection(db, "test-transaction"), {
-                id: transaction.id,
-                type: transaction.type,
-                category: transaction.category,
-                subCategory: transaction.subCategory,
-                date: transaction.date,
-                description: transaction.description,
-                amount: transaction.amount
-            });
+	return (
+		<div className="container">
+			<IonFab className="add-tansaction" vertical="bottom" horizontal="end" slot="fixed">
+				<IonFabButton id="add-transaction" onClick={() => resetForm()}>
+					<IonIcon icon={add} />
+				</IonFabButton>
+			</IonFab>
 
-            console.log("Transaction successfully saved to Firestore with ID:", docRef.id);
-        } catch (error) {
-            console.error("Error saving transaction to Firestore:", error);
-        }
-    };
+			{/* Add Transaction Popup */}
+			<IonModal id="custom-category-modal" ref={modalStartRef} trigger="add-transaction">
+				<IonHeader>
+					<IonToolbar>
+						<IonTitle className="ion-text-center">New Transaction</IonTitle>
+					</IonToolbar>
+				</IonHeader>
 
-    return (
-        <div className="container">
-            <IonFab className="add-tansaction" vertical="bottom" horizontal="end" slot="fixed">
-                <IonFabButton
-                    onClick={() => {
-                        resetForm();
-                        setStep(1);
-                        setShowModal(true);
-                    }}
-                >
-                    <IonIcon icon={add} />
-                </IonFabButton>
-            </IonFab>
+				<IonContent className="ion-padding">
+                    <IonItem className="ion-margin-bottom ion-padding-start ion-padding-end">
+                        <IonSelect
+                            placeholder="Select Type"
+                            value={type}
+                            onIonChange={(e) => {
+                                setType(e.detail.value);
+                                setCategory(""); // Reset category when type changes
+                            }}
+                        >
+                            {/* Get Each Type (Unique) as options */}
+                            {[...new Set(categories.map((category) => category.getType()))].map(
+                                (type) => (
+                                    <IonSelectOption key={type} value={type}>
+                                        {type}
+                                    </IonSelectOption>
+                                )
+                            )}
+                        </IonSelect>
+                    </IonItem>
+					
+					<EntryCategories
+						disableHeader={true}
+						categories={filteredCategories}
+						onSelect={(category, subCategory) => {
+							setCategory(category);
+							setSubCategory(subCategory);
 
-            {/* Add Transaction Popup */ }
-            < IonModal
-                id = "custom-category-modal"
-                isOpen = { showModal }
-                onDidDismiss = {() => {
-                    resetForm();
-                    setStep(1);
-                    setShowModal(false);
-                }}
-            >
-                <IonHeader>
-                    <IonToolbar>
-                        <IonTitle className="ion-text-center">
-                            {step === 1 ? "Select Type & Category" : "Enter Details"}
-                        </IonTitle>
-                    </IonToolbar>
-                </IonHeader>
+							// Close and open the next modal
+							modalStartRef.current?.dismiss();
+							setTimeout(() => {
+								modalSubmitRef.current?.present();
+							}, 200); // Small delay to prevent UI glitches
+						}}
+					/>
+				</IonContent>
+			</IonModal>
 
-                <IonContent className="ion-padding">
-                    {step === 1 ? (
-                        <>
-                            <IonItem>
-                                <IonLabel>Type</IonLabel>
-                                <IonSelect
-                                    value={type}
-                                    onIonChange={(e) => {
-                                        setType(e.detail.value);
-                                        setCategory(""); // Reset category when type changes
-                                        console.log("Selected Type:", e.detail.value);
-                                    }}
-                                >
-                                    <IonSelectOption value="Income">Income</IonSelectOption>
-                                    <IonSelectOption value="Expense">Expense</IonSelectOption>
-                                </IonSelect>
-                            </IonItem>
+			<IonModal id="custom-category-modal" ref={modalSubmitRef}>
+				<IonHeader>
+					<IonToolbar>
+						<IonButton
+							fill="default"
+							slot="start"
+							onClick={() => {
+								modalSubmitRef.current?.dismiss();
 
-                            <IonItem>
-                                <IonLabel>Category</IonLabel>
-                                <IonSelect
-                                    value={category}
-                                    onIonChange={(e) => handleCategorySelect(e.detail.value)}
-                                    disabled={!type || filteredCategories.length === 0}
-                                >
-                                    {filteredCategories.length > 0 ? (
-                                        filteredCategories.map((cat) => (
-                                            <IonSelectOption
-                                                key={cat.getCategory()}
-                                                value={cat.getCategory()}
-                                            >
-                                                {cat.getCategory()}
-                                            </IonSelectOption>
-                                        ))
-                                    ) : (
-                                        <IonSelectOption disabled>
-                                            No Categories Available
-                                        </IonSelectOption>
-                                    )}
-                                </IonSelect>
-                            </IonItem>
-                            <IonButton
-                                expand="full"
-                                color="danger"
-                                onClick={() => setShowModal(false)}
-                            >
-                                Cancel
-                            </IonButton>
-                        </>
-                    ) : (
-                        <>
-                            <IonItem>
-                                <IonLabel>Subcategory</IonLabel>
-                                <IonSelect
-                                    value={subCategory}
-                                    onIonChange={(e) => setSubCategory(e.detail.value)}
-                                >
-                                    {selectedCategory?.getSubcategories().map((sub) => (
-                                        <IonSelectOption key={sub.Name} value={sub.Name}>
-                                            {sub.Name}
-                                        </IonSelectOption>
-                                    ))}
-                                </IonSelect>
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel>Amount: </IonLabel>
-                                <IonInput
-                                    type="number"
-                                    value={amount}
-                                    onIonInput={(e) => {
-                                        let value = e.detail.value!;
-
-                                        // Valid number format
-                                        if (value) {
-                                            // Remove any non-numeric characters except for decimal point
-                                            value = value.replace(/[^0-9.]/g, "");
-
-                                            // Restrict to two decimal places
-                                            if (value.includes(".")) {
-                                                const parts = value.split(".");
-                                                if (parts[1]?.length > 2) {
-                                                    value = `${parts[0]}.${parts[1].substring(0, 2)}`;
-                                                }
-                                            }
-
-                                            // Make sure value is at least 0.01
-                                            if (parseFloat(value) < 0.01) {
-                                                value = "0.01";
-                                            }
-                                        }
-
-                                        setAmount(value);
-                                    }}
-                                />
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel>Date: </IonLabel>
-                                <IonInput value={date} disabled />
-                            </IonItem>
-                            <IonItem>
-                                <IonLabel>Description: </IonLabel>
-                                <IonInput
-                                    value={description}
-                                    onIonInput={(e) => {
-                                        let inputValue = e.detail.value!;
-                                        if (inputValue.length > 100) {
-                                            inputValue = inputValue.substring(0, 100); // Trim input if over limit
-                                        }
-                                        setDescription(inputValue);
-                                    }}
-                                    maxlength={100} // Prevents additional characters in UI
-                                />
-                            </IonItem>
-                            <IonButton
-                                expand="full"
-                                color="success"
-                                onClick={handleAddTransaction}
-                                disabled={!isFormValid}
-                            >
-                                Confirm
-                            </IonButton>
-                            <IonButton expand="full" onClick={() => setStep(1)}>
-                                Back
-                            </IonButton>
-                        </>
-                    )}
-                </IonContent>
-            </IonModal >
-        </div>
-    );
+								setTimeout(() => {
+									modalStartRef.current?.present();
+								}, 200); // Small delay to prevent UI glitches
+							}}
+						>
+							Back
+						</IonButton>
+						<IonTitle className="ion-text-center">New Transaction</IonTitle>
+						<IonButton
+							fill="default"
+							slot="end"
+							disabled={!title || !amount || !category || !subCategory}
+							onClick={handleAddTransaction}
+						>
+							Confirm
+						</IonButton>
+					</IonToolbar>
+				</IonHeader>
+				<IonContent>
+                    <div className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
+                        <IonItem>
+                            <IonLabel>Title: </IonLabel>
+                            <IonInput
+                                value={title}
+                                onIonInput={(e) => {
+                                    setTitle(e.detail.value!);
+                                }}
+                                maxlength={20} // Prevents additional characters in UI
+                            />
+                        </IonItem>
+                        <IonDatetimeButton className="ion-margin ion-justify-content-start" datetime="datetime"></IonDatetimeButton>
+                        <IonModal keepContentsMounted={true}>
+                            <IonDatetime
+                                id="datetime"
+                                value={date}
+                                onIonChange={(e) => {
+                                    setDate(Array.isArray(e.detail.value) ? e.detail.value[0] : e.detail.value!);
+                                }}
+                                presentation="date-time"
+                            />
+                        </IonModal>
+						<IonItem id="transaction-amount">
+							<IonLabel>Amount: </IonLabel>
+							<IonInput
+								type="number"
+								value={amount}
+								onIonInput={(e) => validateAmount(e.detail.value!)}
+								maxlength={10} // Prevents additional characters in UI
+							/>
+						</IonItem>
+					</div>
+					<IonItem className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
+						<IonTextarea
+							placeholder="Description (Optional)"
+							value={description}
+							rows={6}
+							onIonInput={(e) => setDescription(e.detail.value!)}
+							maxlength={100} // Prevents additional characters in UI
+						/>
+					</IonItem>
+				</IonContent>
+			</IonModal>
+		</div>
+	);
 };
+
+/*
+
+
+*/
 
 export default Transactions;

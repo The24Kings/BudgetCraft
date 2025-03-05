@@ -216,13 +216,20 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 
 interface EntryCategoriesProps {
 	categories: Category[];
-	json: Object;
+	disableHeader?: boolean;
+	onSelect?: (category: string, subcategory: string) => void;
+	json?: Object;
 }
 
 /**
  * This component displays the categories and subcategories from the JSON file.
  */
-const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) => {
+const EntryCategories: React.FC<EntryCategoriesProps> = ({
+	disableHeader = false,
+	categories = [],
+	json,
+	onSelect
+}) => {
 	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
 	const [subcategory, setSubcategory] = useState<string>("");
 	const { isLoading, error, addDocument } = useFirestoreStore();
@@ -396,9 +403,11 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 				{/* Display the Types of categories - as a set so they are unique (no duplicates) */}
 				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
 					<div key={type}>
-						<IonItemDivider color="light">
-							<IonLabel>{type}</IonLabel>
-						</IonItemDivider>
+						{!disableHeader && (
+							<IonItemDivider color="light">
+								<IonLabel>{type}</IonLabel>
+							</IonItemDivider>
+						)}
 
 						{/* Display the categories under the corrisponding Type */}
 						{categories
@@ -422,7 +431,19 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 											<IonItem className="subCategory" key={subCategory.Name}>
 												<IonButton
 													fill="clear"
-													onClick={() => alert(subCategory.Name)} // TODO: Will be used to select the subcategory for the entry
+													onClick={() => {
+														// Call the onClick function if it exists and pass the category and subcategory
+														if (onSelect) {
+															onSelect(
+																category.getCategory(),
+																subCategory.Name
+															); //  Call the onClick function if it exists and pass the category and subcategory
+														} else {
+															alert(
+																`Selected: ${category.getCategory()} - ${subCategory.Name}`
+															);
+														}
+													}}
 												>
 													{subCategory.Name}
 												</IonButton>
@@ -449,6 +470,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 
 									{/* Add Custom Sub-Category */}
 									<div
+										hidden={!json}
 										slot="content"
 										key={`${category.getType()}-${category.getCategory()}-add`}
 									>
