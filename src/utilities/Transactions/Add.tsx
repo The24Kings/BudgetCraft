@@ -21,27 +21,14 @@ import {
 	IonToolbar
 } from "@ionic/react";
 
-import useFirestoreStore from "./Firebase";
-import { Category, EntryCategories } from "./Categories";
+import useFirestoreStore from "../Firebase";
+import { Category, EntryCategories } from "../Categories";
 
-class Transaction {
-	constructor(
-		public id: string,
-		public type: string,
-		public category: string,
-		public subCategory: string,
-		public title: string,
-		public date: string,
-		public description: string,
-		public amount: number
-	) {}
-}
-
-interface TransactionProps {
+interface AddTransactionProps {
 	categories: Category[];
 }
 
-const Transactions: React.FC<TransactionProps> = ({ categories }) => {
+const AddTransactions: React.FC<AddTransactionProps> = ({ categories }) => {
 	const [type, setType] = useState("");
 	const [category, setCategory] = useState("");
 	const [subCategory, setSubCategory] = useState("");
@@ -254,9 +241,4 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 	);
 };
 
-/*
-
-
-*/
-
-export default Transactions;
+export default AddTransactions;
