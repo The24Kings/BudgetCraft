@@ -276,6 +276,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ disableHeader = false
 		setShowCustomEntry(false);
 
 		// Update the Firebase database
+        //TODO: Change to setDocument, use the actual user ID, and update the timestamp (Firebase Auth/ Query to get the user's categories)
 		await addDocument("user-categories", {
 			id: "testUser", //TODO: Change this to the actual user ID using Firebase Auth
 			categories: json,

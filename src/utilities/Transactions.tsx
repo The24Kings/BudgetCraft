@@ -121,7 +121,7 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 	const saveTransactionToDatabase = async (transaction: Transaction) => {
 		try {
 			const db = getFirestore(getApp()); // Get Firestore instance
-			const docRef = await addDoc(collection(db, "test-transaction"), {
+			const docRef = await addDoc(collection(db, "test-transaction"), { //TODO: Change to the User's collection of transactions (e.g. collection(db, user.uid, "transactions"))
 				id: transaction.id,
 				type: transaction.type,
 				category: transaction.category,
