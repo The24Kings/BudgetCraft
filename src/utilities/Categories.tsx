@@ -285,6 +285,41 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 	};
 
 	/**
+	 * Delete the custome subcategory
+	 */
+	const deleteCustomSubcategory = async (category: Category, subcategoryName: string) => {
+		// Find the category type
+		const type = category.getType();
+
+		// Remove subcategory from JSON object
+		delete json[type][category.getCategory()][subcategoryName];
+
+		console.log(`Deleted subcategory: ${subcategoryName}`);
+
+		// Update Firebase with the new JSON structure
+		await addDocument("user-categories", {
+			id: "testUser", // TODO: Replace with actual user ID
+			categories: json,
+			timestamp: new Date().toISOString()
+		});
+
+		console.log("Updated Firebase after deletion");
+	};
+
+	/**
+	 * Confirm delete custom subcategory
+	 */
+	const confirmDeleteSubcategory = async (category: Category, subcategoryName: string) => {
+		const isConfirmed = window.confirm(
+			`Are you sure you want to delete the custom subcategory "${subcategoryName}"?`
+		);
+
+		if (isConfirmed) {
+			deleteCustomSubcategory(category, subcategoryName);
+		}
+	};
+
+	/**
 	 * Handle the accordion change event
 	 */
 	const accordionChange = (e: CustomEvent) => {
@@ -336,10 +371,27 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ categories, json }) =
 											<IonItem className="subCategory" key={subCategory.Name}>
 												<IonButton
 													fill="clear"
-													onClick={() => alert(subCategory.Name)} //TODO: Will be used to select the subcategory for the entry
+													onClick={() => alert(subCategory.Name)} // TODO: Will be used to select the subcategory for the entry
 												>
 													{subCategory.Name}
 												</IonButton>
+
+												{/* Only show delete button for non-static (custom) subcategories */}
+												{!subCategory.isStatic && (
+													<IonButton
+														fill="clear"
+														color="danger"
+														className="subCat-delete-button"
+														onClick={() =>
+															confirmDeleteSubcategory(
+																category,
+																subCategory.Name
+															)
+														}
+													>
+														<IonIcon icon={closeOutline} />
+													</IonButton>
+												)}
 											</IonItem>
 										</div>
 									))}
