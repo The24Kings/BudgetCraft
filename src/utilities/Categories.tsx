@@ -1,4 +1,14 @@
 import React, { useRef, useState } from "react";
+import { getApp } from "firebase/app";
+import {
+	collection,
+	doc,
+	getDocs,
+	getFirestore,
+	query,
+	updateDoc,
+	where
+} from "firebase/firestore";
 import { add, closeOutline } from "ionicons/icons";
 import {
 	IonAccordion,
@@ -206,15 +216,22 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 
 interface EntryCategoriesProps {
 	categories: Category[];
-    disableHeader?: boolean;
-    onSelect?: (category: string, subcategory: string) => void;
+	disableHeader?: boolean;
+	onSelect?: (category: string, subcategory: string) => void;
 	json?: Object;
+	hideDelete?: boolean;
 }
 
 /**
  * This component displays the categories and subcategories from the JSON file.
  */
-const EntryCategories: React.FC<EntryCategoriesProps> = ({ disableHeader = false, categories = [], json, onSelect }) => {
+const EntryCategories: React.FC<EntryCategoriesProps> = ({
+	disableHeader = false,
+	categories = [],
+	json,
+	onSelect,
+	hideDelete = false
+}) => {
 	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
 	const [subcategory, setSubcategory] = useState<string>("");
 	const { isLoading, error, addDocument } = useFirestoreStore();
@@ -287,6 +304,82 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ disableHeader = false
 	};
 
 	/**
+	 * Delete the custome subcategory
+	 */
+	const deleteCustomSubcategory = async (category: Category, subcategoryName: string) => {
+		// Find the category type
+		const type = category.getType();
+
+		// Remove subcategory from JSON object
+		delete json[type][category.getCategory()][subcategoryName];
+
+		console.log(`Deleted subcategory: ${subcategoryName}`);
+
+		// Update Firebase with the new JSON structure
+		await addDocument("user-categories", {
+			id: "testUser", // TODO: Replace with actual user ID
+			categories: json,
+			timestamp: new Date().toISOString()
+		});
+
+		console.log("Updated Firebase after deletion");
+	};
+
+	/**
+	 * Confirm delete custom subcategory
+	 */
+	const confirmDeleteSubcategory = async (category: Category, subCategoryName: string) => {
+		const isConfirmed = window.confirm(
+			`Are you sure you want to delete the custom subcategory "${subCategoryName}"?`
+		);
+
+		if (!isConfirmed) return;
+
+		try {
+			const db = getFirestore(getApp());
+
+			// Update Firestore transactions where subCategory matches the deleted one
+			const transactionsRef = collection(db, "test-transaction");
+			const q = query(transactionsRef, where("subCategory", "==", subCategoryName));
+
+			const querySnapshot = await getDocs(q);
+			querySnapshot.forEach(async (docSnap) => {
+				const transactionRef = doc(db, "test-transaction", docSnap.id);
+				await updateDoc(transactionRef, { subCategory: "Uncategorized" });
+			});
+
+			console.log(
+				`All transactions with subcategory "${subCategoryName}" are now "Uncategorized"`
+			);
+
+			// Remove subcategory from Firestore JSON
+			const type = category.getType();
+			delete json[type][category.getCategory()][subCategoryName];
+
+			await addDocument("user-categories", {
+				id: "testUser", // TODO: Replace with actual user ID
+				categories: json,
+				timestamp: new Date().toISOString()
+			});
+
+			console.log(`Subcategory "${subCategoryName}" removed from Firestore`);
+
+			// Update the local UI state by triggering a re-render
+			const updatedCategories = category.Subcategories.filter(
+				(sub) => sub.Name !== subCategoryName
+			);
+			category.Subcategories = updatedCategories;
+
+			// Use setSubcategory to trigger a UI update
+			setSubcategory(""); // Force re-render
+
+			console.log(`Updated UI: Subcategory "${subCategoryName}" removed from local state`);
+		} catch (error) {
+			console.error("Error deleting subcategory:", error);
+		}
+	};
+
+	/**
 	 * Handle the accordion change event
 	 */
 	const accordionChange = (e: CustomEvent) => {
@@ -338,78 +431,100 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({ disableHeader = false
 											key={`${category.getType()}-${category.getCategory()}-${subCategory.Name}`}
 										>
 											<IonItem className="subCategory" key={subCategory.Name}>
-                                                <IonButton
-                                                    fill="clear"
-                                                    onClick={() => {
-                                                        // Call the onClick function if it exists and pass the category and subcategory
-                                                        if (onSelect) {
-                                                            onSelect(category.getCategory(), subCategory.Name); // Call the onClick function if it exists and pass the category and subcategory
-                                                        } else {
-                                                            alert(`Selected: ${category.getCategory()} - ${subCategory.Name}`);
-                                                        }
-                                                    }}
-                                                >
-                                                    {subCategory.Name}
-                                                </IonButton>
+												<IonButton
+													fill="clear"
+													onClick={() => {
+														// Call the onClick function if it exists and pass the category and subcategory
+														if (onSelect) {
+															onSelect(
+																category.getCategory(),
+																subCategory.Name
+															); //  Call the onClick function if it exists and pass the category and subcategory
+														} else {
+															alert(
+																`Selected: ${category.getCategory()} - ${subCategory.Name}`
+															);
+														}
+													}}
+												>
+													{subCategory.Name}
+												</IonButton>
+
+												{/* Only show delete button for non-static (custom) subcategories */}
+												{!subCategory.isStatic && !hideDelete && (
+													<IonButton
+														fill="clear"
+														color="danger"
+														className="subCat-delete-button"
+														onClick={() =>
+															confirmDeleteSubcategory(
+																category,
+																subCategory.Name
+															)
+														}
+													>
+														<IonIcon icon={closeOutline} />
+													</IonButton>
+												)}
 											</IonItem>
 										</div>
 									))}
 
 									{/* Add Custom Sub-Category */}
 									<div
-                                        hidden={!json}
+										hidden={!json}
 										slot="content"
 										key={`${category.getType()}-${category.getCategory()}-add`}
 									>
-                                        <IonItem
-                                            className="subCategory"
-                                            key={`${category.getCategory()}-add`}
-                                        >
-                                            {!showCustomEntry && (
-                                                <IonButton
-                                                    fill="clear"
-                                                    onClick={() => setShowCustomEntry(true)}
-                                                >
-                                                    <IonIcon slot="start" icon={add} />
-                                                    Add Sub-Category
-                                                </IonButton>
-                                            )}
-                                            {showCustomEntry && (
-                                                <IonInput
-                                                    ref={input}
-                                                    value={subcategory}
-                                                    onKeyDown={(e) =>
-                                                        keyPress(e, category.getCategory())
-                                                    }
-                                                    onIonInput={(e) => validate(e)}
-                                                    maxlength={25}
-                                                >
-                                                    <div slot="end">
-                                                        <IonButton
-                                                            fill="clear"
-                                                            onClick={() => {
-                                                                setShowCustomEntry(false);
-                                                                setSubcategory("");
-                                                            }}
-                                                        >
-                                                            <IonIcon
-                                                                slot="icon-only"
-                                                                icon={closeOutline}
-                                                            />
-                                                        </IonButton>
-                                                        <IonButton
-                                                            fill="clear"
-                                                            onClick={() =>
-                                                                submitCustom(category.getCategory())
-                                                            }
-                                                            disabled={!subcategory}
-                                                        >
-                                                            <IonIcon slot="icon-only" icon={add} />
-                                                        </IonButton>
-                                                    </div>
-                                                </IonInput>
-                                            )}
-                                        </IonItem>
+										<IonItem
+											className="subCategory"
+											key={`${category.getCategory()}-add`}
+										>
+											{!showCustomEntry && (
+												<IonButton
+													fill="clear"
+													onClick={() => setShowCustomEntry(true)}
+												>
+													<IonIcon slot="start" icon={add} />
+													Add Sub-Category
+												</IonButton>
+											)}
+											{showCustomEntry && (
+												<IonInput
+													ref={input}
+													value={subcategory}
+													onKeyDown={(e) =>
+														keyPress(e, category.getCategory())
+													}
+													onIonInput={(e) => validate(e)}
+													maxlength={25}
+												>
+													<div slot="end">
+														<IonButton
+															fill="clear"
+															onClick={() => {
+																setShowCustomEntry(false);
+																setSubcategory("");
+															}}
+														>
+															<IonIcon
+																slot="icon-only"
+																icon={closeOutline}
+															/>
+														</IonButton>
+														<IonButton
+															fill="clear"
+															onClick={() =>
+																submitCustom(category.getCategory())
+															}
+															disabled={!subcategory}
+														>
+															<IonIcon slot="icon-only" icon={add} />
+														</IonButton>
+													</div>
+												</IonInput>
+											)}
+										</IonItem>
 									</div>
 									{/* End of Add Custom Sub-Category */}
 								</IonAccordion>
