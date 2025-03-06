@@ -242,7 +242,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 							value={description}
 							rows={6}
 							onIonInput={(e) => setDescription(e.detail.value!)}
-							maxlength={100} // Prevents additional characters in UI
+							maxlength={256} // Prevents additional characters in UI
 						/>
 					</IonItem>
 				</IonContent>
