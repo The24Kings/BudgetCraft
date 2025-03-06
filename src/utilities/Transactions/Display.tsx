@@ -1,27 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import {
     IonItem,
-    IonList,
     IonLabel,
-    IonTitle,
     IonNote,
-    IonContent,
     IonItemGroup,
     IonGrid,
     IonCol,
     IonItemDivider,
     IonRow,
-    IonIcon,
 } from "@ionic/react";
 
 import Transaction from "./Transaction";
-import { addCircle, removeCircle } from "ionicons/icons";
 
 interface DisplayTransactionsProps {
     transactions: Transaction[];
 }
 
 const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions }) => {
+    const [expandedTransactionId, setExpandedTransactionId] = useState<string | null>(null);
+
     // Group the transactions by month
     const groups = transactions.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .reduce((groups, transaction) => {
@@ -35,21 +32,31 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
 
             return groups;
         }, {} as { [key: string]: Transaction[] })
+
+    const toggleAccordion = (transactionId: string) => {
+        if (expandedTransactionId === transactionId) {
+            setExpandedTransactionId(null);
+        } else {
+            setExpandedTransactionId(transactionId);
+        }
+    }
     
     return (
         <React.Fragment>
             <div className="transactions">
                 <div hidden={!(transactions.length === 0)}><h1>Loading...</h1></div>
 
-                {/* TODO: Group by month */}
+                {/* Group the transactions by month */}
                 {Object.keys(groups).map((month) => (
                     <IonItemGroup key={month}>
                         <IonItemDivider>
                             <IonLabel>{month}</IonLabel>
                         </IonItemDivider>
+
+                        {/* Display the transactions */}
                         {groups[month].map((transaction) => (
                             <div key={transaction.id}>
-                                <IonItem button detail={true}>
+                                <IonItem button detail={true} onClick={() => toggleAccordion(transaction.id)}>
                                     <IonLabel>
                                         <IonNote>
                                             {transaction.category} - {transaction.subCategory}
@@ -66,6 +73,11 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
                                         </IonGrid>
                                     </IonLabel>
                                 </IonItem>
+                                {expandedTransactionId === transaction.id && (
+                                    <div className="accordion-content">
+                                        <p>Additional details about the transaction...</p>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </IonItemGroup>
