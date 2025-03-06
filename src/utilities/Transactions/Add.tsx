@@ -34,12 +34,12 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	const [type, setType] = useState("");
 	const [category, setCategory] = useState("");
 	const [subCategory, setSubCategory] = useState("");
-    const [title, setTitle] = useState("");
-    const [date, setDate] = useState(new Date().toISOString());
-    const [amount, setAmount] = useState(0.0);
+	const [title, setTitle] = useState("");
+	const [date, setDate] = useState(new Date().toISOString());
+	const [amount, setAmount] = useState(0.0);
 	const [description, setDescription] = useState("");
 
-    const { addDocument, error } = useFirestoreStore();
+	const { addDocument, error } = useFirestoreStore();
 
 	const modalStartRef = useRef<HTMLIonModalElement>(null);
 	const modalSubmitRef = useRef<HTMLIonModalElement>(null);
@@ -80,24 +80,24 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	}
 
 	const handleAddTransaction = async () => {
-        const transactionID = uuidv4();
+		const transactionID = uuidv4();
 
-        await addDocument(`users/${userID}/transactions`, {
-            id: transactionID,
-            type: type,
-            category: category,
-            subCategory: subCategory,
-            title: title,
-            date: date,
-            description: description,
-            amount: amount
-        }).finally(() => {
-            if(error) {
-                console.error("Error adding transaction:", error);
-            } else {
-                console.log("Transaction added to with ID:", transactionID);
-            }
-        });
+		await addDocument(`users/${userID}/transactions`, {
+			id: transactionID,
+			type: type,
+			category: category,
+			subCategory: subCategory,
+			title: title,
+			date: date,
+			description: description,
+			amount: amount
+		}).finally(() => {
+			if (error) {
+				console.error("Error adding transaction:", error);
+			} else {
+				console.log("Transaction added to with ID:", transactionID);
+			}
+		});
 
 		resetForm();
 
@@ -105,13 +105,13 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	};
 
 	const resetForm = () => {
-        setTitle("");
-        setType("");
-        setAmount(null);
+		setTitle("");
+		setType("");
+		setAmount(null);
 		setCategory("");
 		setSubCategory("");
-        setDescription("");
-        setDate(new Date().toISOString());
+		setDescription("");
+		setDate(new Date().toISOString());
 	};
 
 	return (
@@ -131,29 +131,30 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 				</IonHeader>
 
 				<IonContent className="ion-padding">
-                    <IonItem className="ion-margin-bottom ion-padding-start ion-padding-end">
-                        <IonSelect
-                            placeholder="Select Type"
-                            value={type}
-                            onIonChange={(e) => {
-                                setType(e.detail.value);
-                                setCategory(""); // Reset category when type changes
-                            }}
-                        >
-                            {/* Get Each Type (Unique) as options */}
-                            {[...new Set(categories.map((category) => category.getType()))].map(
-                                (type) => (
-                                    <IonSelectOption key={type} value={type}>
-                                        {type}
-                                    </IonSelectOption>
-                                )
-                            )}
-                        </IonSelect>
-                    </IonItem>
-					
+					<IonItem className="ion-margin-bottom ion-padding-start ion-padding-end">
+						<IonSelect
+							placeholder="Select Type"
+							value={type}
+							onIonChange={(e) => {
+								setType(e.detail.value);
+								setCategory(""); // Reset category when type changes
+							}}
+						>
+							{/* Get Each Type (Unique) as options */}
+							{[...new Set(categories.map((category) => category.getType()))].map(
+								(type) => (
+									<IonSelectOption key={type} value={type}>
+										{type}
+									</IonSelectOption>
+								)
+							)}
+						</IonSelect>
+					</IonItem>
+
 					<EntryCategories
 						disableHeader={true}
 						categories={filteredCategories}
+						hideDelete={true} // Hide the delete button on custom subcategories when selecting subcategories for transactions
 						onSelect={(category, subCategory) => {
 							setCategory(category);
 							setSubCategory(subCategory);
@@ -196,28 +197,35 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 					</IonToolbar>
 				</IonHeader>
 				<IonContent>
-                    <div className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
-                        <IonItem>
-                            <IonLabel>Title: </IonLabel>
-                            <IonInput
-                                value={title}
-                                onIonInput={(e) => {
-                                    setTitle(e.detail.value!);
-                                }}
-                                maxlength={20} // Prevents additional characters in UI
-                            />
-                        </IonItem>
-                        <IonDatetimeButton className="ion-margin ion-justify-content-start" datetime="datetime"></IonDatetimeButton>
-                        <IonModal keepContentsMounted={true}>
-                            <IonDatetime
-                                id="datetime"
-                                value={date}
-                                onIonChange={(e) => {
-                                    setDate(Array.isArray(e.detail.value) ? e.detail.value[0] : e.detail.value!);
-                                }}
-                                presentation="date-time"
-                            />
-                        </IonModal>
+					<div className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
+						<IonItem>
+							<IonLabel>Title: </IonLabel>
+							<IonInput
+								value={title}
+								onIonInput={(e) => {
+									setTitle(e.detail.value!);
+								}}
+								maxlength={20} // Prevents additional characters in UI
+							/>
+						</IonItem>
+						<IonDatetimeButton
+							className="ion-margin ion-justify-content-start"
+							datetime="datetime"
+						></IonDatetimeButton>
+						<IonModal keepContentsMounted={true}>
+							<IonDatetime
+								id="datetime"
+								value={date}
+								onIonChange={(e) => {
+									setDate(
+										Array.isArray(e.detail.value)
+											? e.detail.value[0]
+											: e.detail.value!
+									);
+								}}
+								presentation="date-time"
+							/>
+						</IonModal>
 						<IonItem id="transaction-amount">
 							<IonLabel>Amount: </IonLabel>
 							<IonInput

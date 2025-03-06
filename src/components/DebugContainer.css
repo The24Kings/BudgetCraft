@@ -82,3 +82,18 @@ ion-item ion-label {
 ion-item ion-input {
 	padding-left: 10px;
 }
+
+.subCategory {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.subCategory-label {
+	flex-grow: 1; /* Allows the label to take up available space */
+}
+
+.subCat-delete-button {
+	margin-left: auto; /* Moves the delete button to the far right */
+}
