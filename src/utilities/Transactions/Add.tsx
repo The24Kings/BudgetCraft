@@ -24,11 +24,13 @@ import {
 import useFirestoreStore from "../Firebase";
 import { Category, EntryCategories } from "../Categories";
 
+//TODO: In the future this should probably be abstracted out into an object or a function that is called in the component
 interface AddTransactionProps {
 	categories: Category[];
+    userID: string;
 }
 
-const AddTransactions: React.FC<AddTransactionProps> = ({ categories }) => {
+const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) => {
 	const [type, setType] = useState("");
 	const [category, setCategory] = useState("");
 	const [subCategory, setSubCategory] = useState("");
@@ -80,7 +82,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories }) => {
 	const handleAddTransaction = async () => {
         const transactionID = uuidv4();
 
-        await addDocument("test-transaction", {
+        await addDocument(`users/${userID}/transactions`, {
             id: transactionID,
             type: type,
             category: category,

@@ -96,7 +96,7 @@ const LandingPage: React.FC = () => {
                             </IonButton>
                         </div>
                     ) : (
-                        <Container name="Landing Page" />
+                        <Container userID="test-user"/>
                     )}
                 </IonContent>
             </IonPage>

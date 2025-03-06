@@ -200,7 +200,9 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 	);
 };
 
+//TODO: In the future this should probably be abstracted out into an object or a function that is called in the component
 interface EntryCategoriesProps {
+    userID?: string;
 	categories: Category[];
 	disableHeader?: boolean;
 	onSelect?: (category: string, subcategory: string) => void;
@@ -211,6 +213,7 @@ interface EntryCategoriesProps {
  * This component displays the categories and subcategories from the JSON file.
  */
 const EntryCategories: React.FC<EntryCategoriesProps> = ({
+    userID = "",
 	disableHeader = false,
 	categories = [],
 	json,
