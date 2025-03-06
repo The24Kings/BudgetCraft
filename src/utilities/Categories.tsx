@@ -219,6 +219,7 @@ interface EntryCategoriesProps {
 	disableHeader?: boolean;
 	onSelect?: (category: string, subcategory: string) => void;
 	json?: Object;
+	hideDelete?: boolean;
 }
 
 /**
@@ -228,7 +229,8 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 	disableHeader = false,
 	categories = [],
 	json,
-	onSelect
+	onSelect,
+	hideDelete = false
 }) => {
 	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
 	const [subcategory, setSubcategory] = useState<string>("");
@@ -449,7 +451,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 												</IonButton>
 
 												{/* Only show delete button for non-static (custom) subcategories */}
-												{!subCategory.isStatic && (
+												{!subCategory.isStatic && !hideDelete && (
 													<IonButton
 														fill="clear"
 														color="danger"
