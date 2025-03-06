@@ -95,33 +95,33 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
                                     )}
                                 </IonItem>
 								{expandedTransactionId === transaction.id && (
-									<div className="accordion-content">
-										<IonItem color="light">
-											<IonGrid fixed={true} className="ion-no-padding">
-												<IonRow>
-													<IonCol className="ion-padding-vertical">
-														{new Date(
-															transaction.date
-														).toLocaleDateString()}
-													</IonCol>
-												</IonRow>
+                                    <div className="accordion-content">
+                                        <IonItem color="light">
+                                            <IonGrid fixed={true} className="ion-no-padding">
+                                                <IonRow>
+                                                    <IonCol className="ion-padding-vertical">
+                                                        {new Date(
+                                                            transaction.date
+                                                        ).toLocaleDateString()}
+                                                    </IonCol>
+                                                </IonRow>
                                                 <IonRow>
                                                     <IonTextarea
                                                         className="custom ion-no-padding"
                                                         shape="round"
-                                                        autoGrow={true}
                                                         readonly={true}
-                                                        value={transaction.description || "No description available."}
+                                                        value={transaction.description}
+                                                        placeholder="No description available."
                                                     />
                                                 </IonRow>
-												<IonRow>
-													<IonCol className="ion-text-right ion-padding-vertical">
-														<IonNote>{transaction.id}</IonNote>
-													</IonCol>
-												</IonRow>
-											</IonGrid>
-										</IonItem>
-									</div>
+                                                <IonRow>
+                                                    <IonCol className="ion-text-right ion-padding-vertical">
+                                                        <IonNote>{transaction.id}</IonNote>
+                                                    </IonCol>
+                                                </IonRow>
+                                            </IonGrid>
+                                        </IonItem>
+                                    </div>
 								)}
 							</div>
 						))}
