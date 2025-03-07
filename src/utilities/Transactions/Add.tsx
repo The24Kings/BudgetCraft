@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { add } from "ionicons/icons";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -20,16 +21,14 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
-
-import useFirestoreStore from "../Firebase";
 import { Category, EntryCategories } from "../Categories";
-import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import useFirestoreStore from "../Firebase";
 import { firestore } from "../FirebaseConfig";
 
 //TODO: In the future this should probably be abstracted out into an object or a function that is called in the component
 interface AddTransactionProps {
 	categories: Category[];
-    userID: string;
+	userID: string;
 }
 
 const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) => {
@@ -84,25 +83,25 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	const handleAddTransaction = async () => {
 		const transactionID = uuidv4();
 
-        try {
-            const docRef = collection(firestore, `users/${userID}/transactions/`);
-            const transactionRef = doc(docRef, transactionID);
-            
-            await setDoc(transactionRef, {
-                type: type,
-                category: category,
-                subCategory: subCategory,
-                title: title,
-                date: date,
-                description: description,
-                amount: amount
-            });
-        } catch (error) {
-            console.error("Failed to add transaction...", error);
-        } finally {
-            console.log("Transaction added successfully with ID:", transactionID);
-        }
-        
+		try {
+			const docRef = collection(firestore, `users/${userID}/transactions/`);
+			const transactionRef = doc(docRef, transactionID);
+
+			await setDoc(transactionRef, {
+				type: type,
+				category: category,
+				subCategory: subCategory,
+				title: title,
+				date: date,
+				description: description,
+				amount: amount
+			});
+		} catch (error) {
+			console.error("Failed to add transaction...", error);
+		} finally {
+			console.log("Transaction added successfully with ID:", transactionID);
+		}
+
 		resetForm();
 
 		modalSubmitRef.current?.dismiss();

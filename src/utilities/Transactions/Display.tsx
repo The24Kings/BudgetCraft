@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { chevronDownOutline, chevronForwardOutline } from "ionicons/icons";
 import {
 	IonCol,
 	IonGrid,
@@ -12,7 +13,6 @@ import {
 	IonTextarea
 } from "@ionic/react";
 import Transaction from "./Transaction";
-import { chevronDownOutline, chevronForwardOutline, chevronUpOutline } from "ionicons/icons";
 
 interface DisplayTransactionsProps {
 	transactions: Transaction[];
@@ -66,65 +66,65 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
 
 						{/* Display the transactions */}
 						{groups[month].map((transaction) => (
-                            <div key={transaction.id}>
-                                <IonItem
-                                    button
-                                    detail={false}
-                                    onClick={() => {
-                                        toggleAccordion(transaction.id);
-                                    }}
-                                    id={transaction.id}
-                                >
-                                    <IonLabel>
-                                        <IonNote>
-                                            {transaction.category} - {transaction.subCategory}
-                                        </IonNote>
-                                        <IonGrid fixed={true} className="ion-no-padding">
-                                            <IonRow className="ion-text-left ion-padding-top">
-                                                <IonCol>
-                                                    <h2>{transaction.title}</h2>
-                                                </IonCol>
-                                                <IonCol className="ion-text-right">
-                                                    {transaction.type === "Income" ? "+" : "-"} $
-                                                    {transaction.amount}
-                                                </IonCol>
-                                            </IonRow>
-                                        </IonGrid>
-                                    </IonLabel>
-                                    {expandedTransactionId === transaction.id ? (
-                                        <IonIcon size="small" icon={chevronDownOutline} />
-                                    ) : (
-                                        <IonIcon size="small" icon={chevronForwardOutline} />
-                                    )}
-                                </IonItem>
+							<div key={transaction.id}>
+								<IonItem
+									button
+									detail={false}
+									onClick={() => {
+										toggleAccordion(transaction.id);
+									}}
+									id={transaction.id}
+								>
+									<IonLabel>
+										<IonNote>
+											{transaction.category} - {transaction.subCategory}
+										</IonNote>
+										<IonGrid fixed={true} className="ion-no-padding">
+											<IonRow className="ion-text-left ion-padding-top">
+												<IonCol>
+													<h2>{transaction.title}</h2>
+												</IonCol>
+												<IonCol className="ion-text-right">
+													{transaction.type === "Income" ? "+" : "-"} $
+													{transaction.amount}
+												</IonCol>
+											</IonRow>
+										</IonGrid>
+									</IonLabel>
+									{expandedTransactionId === transaction.id ? (
+										<IonIcon size="small" icon={chevronDownOutline} />
+									) : (
+										<IonIcon size="small" icon={chevronForwardOutline} />
+									)}
+								</IonItem>
 								{expandedTransactionId === transaction.id && (
-                                    <div className="accordion-content">
-                                        <IonItem color="light">
-                                            <IonGrid fixed={true} className="ion-no-padding">
-                                                <IonRow>
-                                                    <IonCol className="ion-padding-vertical">
-                                                        {new Date(
-                                                            transaction.date
-                                                        ).toLocaleDateString()}
-                                                    </IonCol>
-                                                </IonRow>
-                                                <IonRow>
-                                                    <IonTextarea
-                                                        className="custom ion-no-padding"
-                                                        shape="round"
-                                                        readonly={true}
-                                                        value={transaction.description}
-                                                        placeholder="No description available."
-                                                    />
-                                                </IonRow>
-                                                <IonRow>
-                                                    <IonCol className="ion-text-right ion-padding-vertical">
-                                                        <IonNote>{transaction.id}</IonNote>
-                                                    </IonCol>
-                                                </IonRow>
-                                            </IonGrid>
-                                        </IonItem>
-                                    </div>
+									<div className="accordion-content">
+										<IonItem color="light">
+											<IonGrid fixed={true} className="ion-no-padding">
+												<IonRow>
+													<IonCol className="ion-padding-vertical">
+														{new Date(
+															transaction.date
+														).toLocaleDateString()}
+													</IonCol>
+												</IonRow>
+												<IonRow>
+													<IonTextarea
+														className="custom ion-no-padding"
+														shape="round"
+														readonly={true}
+														value={transaction.description}
+														placeholder="No description available."
+													/>
+												</IonRow>
+												<IonRow>
+													<IonCol className="ion-text-right ion-padding-vertical">
+														<IonNote>{transaction.id}</IonNote>
+													</IonCol>
+												</IonRow>
+											</IonGrid>
+										</IonItem>
+									</div>
 								)}
 							</div>
 						))}
