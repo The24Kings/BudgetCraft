@@ -23,6 +23,8 @@ import {
 
 import useFirestoreStore from "../Firebase";
 import { Category, EntryCategories } from "../Categories";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
+import { firestore } from "../FirebaseConfig";
 
 //TODO: In the future this should probably be abstracted out into an object or a function that is called in the component
 interface AddTransactionProps {
@@ -82,22 +84,25 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	const handleAddTransaction = async () => {
 		const transactionID = uuidv4();
 
-		await addDocument(`users/${userID}/transactions`, {
-			id: transactionID,
-			type: type,
-			category: category,
-			subCategory: subCategory,
-			title: title,
-			date: date,
-			description: description,
-			amount: amount
-		}).finally(() => {
-			if (error) {
-				console.error("Error adding transaction:", error);
-			} else {
-				console.log("Transaction added to with ID:", transactionID);
-			}
-		});
+        try {
+            const docRef = collection(firestore, `users/${userID}/transactions/`);
+            const transactionRef = doc(docRef, transactionID);
+            
+            await setDoc(transactionRef, {
+                type: type,
+                category: category,
+                subCategory: subCategory,
+                title: title,
+                date: date,
+                description: description,
+                amount: amount
+            });
+        } catch (error) {
+            console.error("Failed to add transaction...", error);
+        } finally {
+            console.log("Transaction added successfully with ID:", transactionID);
+        }
+        
 
 		resetForm();
 
