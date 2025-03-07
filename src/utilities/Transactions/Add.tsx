@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, Timestamp } from "firebase/firestore";
 import { add } from "ionicons/icons";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -36,11 +36,9 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	const [category, setCategory] = useState("");
 	const [subCategory, setSubCategory] = useState("");
 	const [title, setTitle] = useState("");
-	const [date, setDate] = useState(new Date().toISOString());
+	const [date, setDate] = useState(Timestamp.now()); 
 	const [amount, setAmount] = useState(0.0);
 	const [description, setDescription] = useState("");
-
-	const { addDocument, error } = useFirestoreStore();
 
 	const modalStartRef = useRef<HTMLIonModalElement>(null);
 	const modalSubmitRef = useRef<HTMLIonModalElement>(null);
@@ -80,6 +78,9 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		}
 	}
 
+    /*
+     * Adds the transaction to the Firestore database.
+     */
 	const handleAddTransaction = async () => {
 		const transactionID = uuidv4();
 
@@ -107,6 +108,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		modalSubmitRef.current?.dismiss();
 	};
 
+    // Resets the form to its default values.
 	const resetForm = () => {
 		setTitle("");
 		setType("");
@@ -114,7 +116,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		setCategory("");
 		setSubCategory("");
 		setDescription("");
-		setDate(new Date().toISOString());
+		setDate(Timestamp.now());
 	};
 
 	return (
@@ -192,7 +194,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 						<IonButton
 							fill="default"
 							slot="end"
-							disabled={!title || !amount || !category || !subCategory}
+							disabled={!title || !amount || !category || !subCategory} // Disable the confirm button if any of the fields are empty
 							onClick={handleAddTransaction}
 						>
 							Confirm
@@ -215,20 +217,17 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 							className="ion-margin ion-justify-content-start"
 							datetime="datetime"
 						></IonDatetimeButton>
-						<IonModal keepContentsMounted={true}>
-							<IonDatetime
-								id="datetime"
-								value={date}
-								onIonChange={(e) => {
-									setDate(
-										Array.isArray(e.detail.value)
-											? e.detail.value[0]
-											: e.detail.value!
-									);
-								}}
-								presentation="date-time"
-							/>
-						</IonModal>
+                        <IonModal keepContentsMounted={true}>
+                            <IonDatetime
+                                id="datetime"
+                                onIonChange={(e) => {
+									const selectedDate = new Date(e.detail.value as string);
+                                    selectedDate.setMinutes(selectedDate.getMinutes() + selectedDate.getTimezoneOffset()); // Adjust for timezone offset
+                                    setDate(Timestamp.fromDate(selectedDate));
+                                }}
+                                presentation="date"
+                            />
+                        </IonModal>
 						<IonItem id="transaction-amount">
 							<IonLabel>Amount: </IonLabel>
 							<IonInput

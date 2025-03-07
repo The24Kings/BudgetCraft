@@ -23,10 +23,10 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
 
 	// Group the transactions by month
 	const groups = transactions
-		.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+		.sort((a, b) => b.date.toDate().getTime() - a.date.toDate().getTime())
 		.reduce(
 			(groups, transaction) => {
-				const month = new Date(transaction.date).toLocaleString("default", {
+				const month = transaction.date.toDate().toLocaleString("default", {
 					month: "long",
 					year: "numeric"
 				});
@@ -103,9 +103,7 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
 											<IonGrid fixed={true} className="ion-no-padding">
 												<IonRow>
 													<IonCol className="ion-padding-vertical">
-														{new Date(
-															transaction.date
-														).toLocaleDateString()}
+														{transaction.date.toDate().toLocaleDateString()}
 													</IonCol>
 												</IonRow>
 												<IonRow>
