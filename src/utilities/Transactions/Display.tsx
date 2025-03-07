@@ -66,11 +66,14 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
 
 						{/* Display the transactions */}
 						{groups[month].map((transaction) => (
-							<div key={transaction.id}>
+                            <div key={transaction.id}>
                                 <IonItem
                                     button
                                     detail={false}
-                                    onClick={() => toggleAccordion(transaction.id)}
+                                    onClick={() => {
+                                        toggleAccordion(transaction.id);
+                                    }}
+                                    id={transaction.id}
                                 >
                                     <IonLabel>
                                         <IonNote>

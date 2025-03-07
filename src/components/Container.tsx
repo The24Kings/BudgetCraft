@@ -32,7 +32,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
                 const transactionData = querySnapshot.docs.map((doc) => {
                     const data = doc.data();
 
-                    return new Transaction(data.id, data.type, data.category, data.subCategory, data.title, data.date, data.description, data.amount);
+                    return new Transaction(doc.id, data.type, data.category, data.subCategory, data.title, data.date, data.description, data.amount);
                 });
 
                 setTransactionData(transactionData);

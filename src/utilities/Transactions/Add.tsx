@@ -103,7 +103,6 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
             console.log("Transaction added successfully with ID:", transactionID);
         }
         
-
 		resetForm();
 
 		modalSubmitRef.current?.dismiss();
