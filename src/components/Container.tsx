@@ -25,7 +25,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
                 console.log("Fetching transactions...");
 
                 querySnapshot = await getDocs(
-					query(collection(firestore, `users/${userID}/transactions`), orderBy("date"), limit(10))
+					query(collection(firestore, `users/${userID}/transactions`), orderBy("date"), limit(10)) //TODO: Increase when user presses "Load More"
                 );
 			} catch (error) {
 				console.error("Failed to fetch transactions...");
