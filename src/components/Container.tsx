@@ -28,7 +28,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
                 console.log("Fetching transactions...");
 
                 querySnapshot = await getDocs(
-					query(collection(firestore, `users/${userID}/transactions`), orderBy("date"), limit(totalLoaded)) //FIXME: Doesn't appear to be sorting correctly
+                    query(collection(firestore, `users/${userID}/transactions`), orderBy("date", "desc"), limit(totalLoaded))
                 );
 			} catch (error) {
 				console.error("Failed to fetch transactions...");
