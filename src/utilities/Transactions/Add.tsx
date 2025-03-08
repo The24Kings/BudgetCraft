@@ -22,7 +22,6 @@ import {
 	IonToolbar
 } from "@ionic/react";
 import { Category, EntryCategories } from "../Categories";
-import useFirestoreStore from "../Firebase";
 import { firestore } from "../FirebaseConfig";
 
 //TODO: In the future this should probably be abstracted out into an object or a function that is called in the component
