@@ -7,14 +7,17 @@ import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
 import "./Container.css";
 import AddTransactions from "../utilities/Transactions/Add";
+import { IonButton, IonLabel } from "@ionic/react";
 
 interface ContainerProps {
 	userID: string;
 }
 
 const Container: React.FC<ContainerProps> = ({ userID }) => {
-	let [categoryData, setCategoryData] = useState<Category[]>([]);
-	let [transactionData, setTransactionData] = useState<Transaction[]>([]);
+	const [categoryData, setCategoryData] = useState<Category[]>([]);
+    const [transactionData, setTransactionData] = useState<Transaction[]>([]);
+    const [totalLoaded, setTotalLoaded] = useState(10);
+
 
 	// Load the transactions from Firebase
 	useEffect(() => {
@@ -25,7 +28,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
                 console.log("Fetching transactions...");
 
                 querySnapshot = await getDocs(
-					query(collection(firestore, `users/${userID}/transactions`), orderBy("date"), limit(10)) //TODO: Increase when user presses "Load More"
+					query(collection(firestore, `users/${userID}/transactions`), orderBy("date"), limit(totalLoaded)) //FIXME: Doesn't appear to be sorting correctly
                 );
 			} catch (error) {
 				console.error("Failed to fetch transactions...");
@@ -57,7 +60,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 		}, 1000);
 
 		return () => clearInterval(interval);
-	}, []);
+    }, [totalLoaded]);
 
 	// Load the JSON data
 	useEffect(() => {
@@ -75,6 +78,17 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
+
+            {/* Load More */}
+            <IonButton
+                onClick={() => {
+                    setTotalLoaded(totalLoaded + 10);
+
+                    console.log("Loading more transactions...", totalLoaded);
+                }}
+            >
+                <IonLabel>Load More</IonLabel>
+            </IonButton>
 		</div>
 	);
 };
