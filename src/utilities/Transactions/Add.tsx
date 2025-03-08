@@ -36,7 +36,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	const [category, setCategory] = useState("");
 	const [subCategory, setSubCategory] = useState("");
 	const [title, setTitle] = useState("");
-	const [date, setDate] = useState(Timestamp.now()); 
+	const [date, setDate] = useState(Timestamp.now());
 	const [amount, setAmount] = useState(0.0);
 	const [description, setDescription] = useState("");
 
@@ -78,9 +78,9 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		}
 	}
 
-    /*
-     * Adds the transaction to the Firestore database.
-     */
+	/*
+	 * Adds the transaction to the Firestore database.
+	 */
 	const handleAddTransaction = async () => {
 		const transactionID = uuidv4();
 
@@ -108,7 +108,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		modalSubmitRef.current?.dismiss();
 	};
 
-    // Resets the form to its default values.
+	// Resets the form to its default values.
 	const resetForm = () => {
 		setTitle("");
 		setType("");
@@ -208,7 +208,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 							<IonInput
 								value={title}
 								onIonInput={(e) => {
-									setTitle(e.detail.value!);
+									setTitle(e.detail.value!); //TODO: Add validation for title
 								}}
 								maxlength={20} // Prevents additional characters in UI
 							/>
@@ -217,17 +217,19 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 							className="ion-margin ion-justify-content-start"
 							datetime="datetime"
 						></IonDatetimeButton>
-                        <IonModal keepContentsMounted={true}>
-                            <IonDatetime
-                                id="datetime"
-                                onIonChange={(e) => {
+						<IonModal keepContentsMounted={true}>
+							<IonDatetime
+								id="datetime"
+								onIonChange={(e) => {
 									const selectedDate = new Date(e.detail.value as string);
-                                    selectedDate.setMinutes(selectedDate.getMinutes() + selectedDate.getTimezoneOffset()); // Adjust for timezone offset
-                                    setDate(Timestamp.fromDate(selectedDate));
-                                }}
-                                presentation="date"
-                            />
-                        </IonModal>
+									selectedDate.setMinutes(
+										selectedDate.getMinutes() + selectedDate.getTimezoneOffset()
+									); // Adjust for timezone offset
+									setDate(Timestamp.fromDate(selectedDate));
+								}}
+								presentation="date"
+							/>
+						</IonModal>
 						<IonItem id="transaction-amount">
 							<IonLabel>Amount: </IonLabel>
 							<IonInput
@@ -243,7 +245,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 							placeholder="Description (Optional)"
 							value={description}
 							rows={6}
-							onIonInput={(e) => setDescription(e.detail.value!)}
+							onIonInput={(e) => setDescription(e.detail.value!)} //TODO: Add validation for description
 							maxlength={256} // Prevents additional characters in UI
 						/>
 					</IonItem>

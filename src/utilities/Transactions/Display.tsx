@@ -21,6 +21,7 @@ interface DisplayTransactionsProps {
 const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions }) => {
 	const [expandedTransactionId, setExpandedTransactionId] = useState<string | null>(null);
 
+	//TODO: Allow the user to select which month they want to view
 	// Group the transactions by month
 	const groups = transactions
 		.sort((a, b) => b.date.toDate().getTime() - a.date.toDate().getTime())
@@ -103,7 +104,9 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
 											<IonGrid fixed={true} className="ion-no-padding">
 												<IonRow>
 													<IonCol className="ion-padding-vertical">
-														{transaction.date.toDate().toLocaleDateString()}
+														{transaction.date
+															.toDate()
+															.toLocaleDateString()}
 													</IonCol>
 												</IonRow>
 												<IonRow>
