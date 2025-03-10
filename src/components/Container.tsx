@@ -22,11 +22,15 @@ interface ContainerProps {
 }
 
 const Container: React.FC<ContainerProps> = ({ userID }) => {
+    const intialLoad = 10;
+
 	const [categoryData, setCategoryData] = useState<Category[]>([]);
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
-	const [totalLoaded, setTotalLoaded] = useState(10);
+    const [totalLoaded, setTotalLoaded] = useState(intialLoad);
+    const [actualTotalLoaded, setActualTotalLoaded] = useState(intialLoad);
 
 	// Load the transactions from Firebase
+    //TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
 	useEffect(() => {
 		const fetchTransactions = async () => {
 			let querySnapshot: QuerySnapshot<DocumentData>;
@@ -44,7 +48,9 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 			} catch (error) {
 				console.error("Failed to fetch transactions...");
 			} finally {
-				console.log("Transactions fetched successfully:", querySnapshot.docs.length);
+                setActualTotalLoaded(querySnapshot.docs.length);
+
+				console.log("Transactions fetched successfully:", actualTotalLoaded);
 
 				// Parse the documents into Transaction objects
 				const transactionData = querySnapshot.docs.map((doc) => {
@@ -71,7 +77,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 		}, 1000);
 
 		return () => clearInterval(interval);
-	}, [totalLoaded]);
+	}, [totalLoaded, actualTotalLoaded]);
 
 	// Load the JSON data
 	useEffect(() => {
@@ -93,7 +99,10 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 			{/* Load More */}
 			<IonButton
 				onClick={() => {
-					setTotalLoaded(totalLoaded + 10);
+                    // If we actually loaded all possible transactions, then we can load more
+                    if (actualTotalLoaded === totalLoaded) {
+					    setTotalLoaded(totalLoaded + 10);
+                    }
 				}}
 			>
 				<IonLabel>Load More</IonLabel>
