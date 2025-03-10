@@ -9,7 +9,7 @@ import {
 	updateDoc,
 	where
 } from "firebase/firestore";
-import { add, closeOutline } from "ionicons/icons";
+import { add, closeOutline, filter } from "ionicons/icons";
 import {
 	IonAccordion,
 	IonAccordionGroup,
@@ -247,14 +247,14 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 	};
 
 	/**
-	 * Validate the input field - replaces non alphanumeric characters
+	 * Validate the input field
 	 */
 	const validate = (event: Event) => {
 		// Get the value from the input
 		const value: string = (event.target as HTMLInputElement).value;
 
-		// Removes non alphanumeric characters
-		const filteredValue = value.replace(/[^a-zA-Z0-9\s]+/g, "");
+		// Scrub the input value and remove the extra spaces
+        const filteredValue = value.replace(/[^a-zA-Z0-9\s\-\(\)_\/']+/g, "").replace(/\s+/g, " ");
 
 		/**
 		 * Update both the state and

@@ -41,6 +41,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 
 	const modalStartRef = useRef<HTMLIonModalElement>(null);
 	const modalSubmitRef = useRef<HTMLIonModalElement>(null);
+	const input = useRef<HTMLIonInputElement>(null);
 
 	const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
 
@@ -76,6 +77,29 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 			setAmount(parseFloat(value));
 		}
 	}
+
+	/**
+	 * Validate the input field
+	 */
+	const validateTitle = (event: Event) => {
+		// Get the value from the input
+		const value: string = (event.target as HTMLInputElement).value;
+
+		// Scrub the input value and remove the extra spaces
+		const filteredValue = value.replace(/[^a-zA-Z0-9\s\-\(\)_\/']+/g, "").replace(/\s+/g, " ");
+
+		/**
+		 * Update both the state and
+		 * component to keep them in sync.
+		 */
+		setTitle(filteredValue);
+
+		const inputCmp = input.current;
+
+		if (inputCmp !== null) {
+			inputCmp.value = filteredValue;
+		}
+	};
 
 	/*
 	 * Adds the transaction to the Firestore database.
@@ -206,9 +230,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 							<IonLabel>Title: </IonLabel>
 							<IonInput
 								value={title}
-								onIonInput={(e) => {
-									setTitle(e.detail.value!); //TODO: Add validation for title
-								}}
+								onIonInput={(e) => validateTitle(e)}
 								maxlength={20} // Prevents additional characters in UI
 							/>
 						</IonItem>
