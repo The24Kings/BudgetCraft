@@ -24,15 +24,11 @@ import {
 import useFirestoreStore from "./Firebase";
 
 class Category {
-	Type: string;
-	Name: string;
-	Subcategories: SubCategory[];
-
-	constructor(Type: string, Name: string, Subcategories: SubCategory[]) {
-		this.Type = Type;
-		this.Name = Name;
-		this.Subcategories = Subcategories;
-	}
+	constructor(
+		public Type: string,
+		public Name: string,
+		public Subcategories: SubCategory[]
+	) {}
 
 	getType() {
 		return this.Type;
@@ -214,7 +210,9 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 	);
 };
 
+//TODO: In the future this should probably be abstracted out into an object or a function that is called in the component
 interface EntryCategoriesProps {
+    userID?: string;
 	categories: Category[];
 	disableHeader?: boolean;
 	onSelect?: (category: string, subcategory: string) => void;
@@ -226,11 +224,12 @@ interface EntryCategoriesProps {
  * This component displays the categories and subcategories from the JSON file.
  */
 const EntryCategories: React.FC<EntryCategoriesProps> = ({
+    userID = "",
 	disableHeader = false,
 	categories = [],
 	json,
 	onSelect,
-	hideDelete = false
+    hideDelete = false
 }) => {
 	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
 	const [subcategory, setSubcategory] = useState<string>("");

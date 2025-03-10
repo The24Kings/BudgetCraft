@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { collection, doc, setDoc, Timestamp } from "firebase/firestore";
 import { add } from "ionicons/icons";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -20,36 +21,23 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
-import { Category, EntryCategories } from "./Categories";
-import useFirestoreStore from "./Firebase";
+import { Category, EntryCategories } from "../Categories";
+import { firestore } from "../FirebaseConfig";
 
-class Transaction {
-	constructor(
-		public id: string,
-		public type: string,
-		public category: string,
-		public subCategory: string,
-		public title: string,
-		public date: string,
-		public description: string,
-		public amount: number
-	) {}
-}
-
-interface TransactionProps {
+//TODO: In the future this should probably be abstracted out into an object or a function that is called in the component
+interface AddTransactionProps {
 	categories: Category[];
+	userID: string;
 }
 
-const Transactions: React.FC<TransactionProps> = ({ categories }) => {
+const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) => {
 	const [type, setType] = useState("");
 	const [category, setCategory] = useState("");
 	const [subCategory, setSubCategory] = useState("");
 	const [title, setTitle] = useState("");
-	const [date, setDate] = useState(new Date().toISOString());
+	const [date, setDate] = useState(Timestamp.now());
 	const [amount, setAmount] = useState(0.0);
 	const [description, setDescription] = useState("");
-
-	const { addDocument, error } = useFirestoreStore();
 
 	const modalStartRef = useRef<HTMLIonModalElement>(null);
 	const modalSubmitRef = useRef<HTMLIonModalElement>(null);
@@ -89,31 +77,37 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 		}
 	}
 
+	/*
+	 * Adds the transaction to the Firestore database.
+	 */
 	const handleAddTransaction = async () => {
 		const transactionID = uuidv4();
 
-		await addDocument("test-transaction", {
-			id: transactionID,
-			type: type,
-			category: category,
-			subCategory: subCategory,
-			title: title,
-			date: date,
-			description: description,
-			amount: amount
-		}).finally(() => {
-			if (error) {
-				console.error("Error adding transaction:", error);
-			} else {
-				console.log("Transaction added to with ID:", transactionID);
-			}
-		});
+		try {
+			const docRef = collection(firestore, `users/${userID}/transactions/`);
+			const transactionRef = doc(docRef, transactionID);
+
+			await setDoc(transactionRef, {
+				type: type,
+				category: category,
+				subCategory: subCategory,
+				title: title,
+				date: date,
+				description: description,
+				amount: amount
+			});
+		} catch (error) {
+			console.error("Failed to add transaction...", error);
+		} finally {
+			console.log("Transaction added successfully with ID:", transactionID);
+		}
 
 		resetForm();
 
 		modalSubmitRef.current?.dismiss();
 	};
 
+	// Resets the form to its default values.
 	const resetForm = () => {
 		setTitle("");
 		setType("");
@@ -121,7 +115,7 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 		setCategory("");
 		setSubCategory("");
 		setDescription("");
-		setDate(new Date().toISOString());
+		setDate(Timestamp.now());
 	};
 
 	return (
@@ -199,7 +193,7 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 						<IonButton
 							fill="default"
 							slot="end"
-							disabled={!title || !amount || !category || !subCategory}
+							disabled={!title || !amount || !category || !subCategory} // Disable the confirm button if any of the fields are empty
 							onClick={handleAddTransaction}
 						>
 							Confirm
@@ -213,7 +207,7 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 							<IonInput
 								value={title}
 								onIonInput={(e) => {
-									setTitle(e.detail.value!);
+									setTitle(e.detail.value!); //TODO: Add validation for title
 								}}
 								maxlength={20} // Prevents additional characters in UI
 							/>
@@ -225,15 +219,14 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="datetime"
-								value={date}
 								onIonChange={(e) => {
-									setDate(
-										Array.isArray(e.detail.value)
-											? e.detail.value[0]
-											: e.detail.value!
-									);
+									const selectedDate = new Date(e.detail.value as string);
+									selectedDate.setMinutes(
+										selectedDate.getMinutes() + selectedDate.getTimezoneOffset()
+									); // Adjust for timezone offset
+									setDate(Timestamp.fromDate(selectedDate));
 								}}
-								presentation="date-time"
+								presentation="date"
 							/>
 						</IonModal>
 						<IonItem id="transaction-amount">
@@ -251,8 +244,8 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 							placeholder="Description (Optional)"
 							value={description}
 							rows={6}
-							onIonInput={(e) => setDescription(e.detail.value!)}
-							maxlength={100} // Prevents additional characters in UI
+							onIonInput={(e) => setDescription(e.detail.value!)} //TODO: Add validation for description
+							maxlength={256} // Prevents additional characters in UI
 						/>
 					</IonItem>
 				</IonContent>
@@ -261,9 +254,4 @@ const Transactions: React.FC<TransactionProps> = ({ categories }) => {
 	);
 };
 
-/*
-
-
-*/
-
-export default Transactions;
+export default AddTransactions;

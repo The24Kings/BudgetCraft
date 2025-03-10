@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IonButton } from "@ionic/react";
-import Transactions from "../utilities/Transactions";
+import AddTransactions from "../utilities/Transactions/Add";
 import { Category, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
 import useFirestoreStore from "../utilities/Firebase";
 import "./DebugContainer.css";
@@ -40,13 +40,13 @@ const DebugContainer: React.FC<ContainerProps> = () => {
             </IonButton>
 
             {/* Add new transactions */}
-            <Transactions categories={data}/>
+            <AddTransactions categories={data} userID="test-user"/> {/* TODO: Change to use the actual userID */}
 
             {/* Display the data validation */}
             <DataValidation categories={data} />
 
             {/* Display the categories */}
-            <EntryCategories categories={data} json={jsonData} />
+            <EntryCategories categories={data} json={jsonData} userID="test-user" />
 		</div>
 	);
 };
