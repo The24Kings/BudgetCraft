@@ -1,9 +1,19 @@
-import { render } from "@testing-library/react";
-import App from "./App";
-import { exists, getInfo, isStatic, parseJSON } from "./utilities/Categories";
-import useFirestoreStore from "./utilities/Firebase";
 import React from "react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { doc } from "firebase/firestore";
+import { vi } from "vitest";
+import App from "./App";
+import {
+	Category,
+	EntryCategories,
+	exists,
+	getInfo,
+	isStatic,
+	parseJSON,
+	SubCategory
+} from "./utilities/Categories";
+import useFirestoreStore from "./utilities/Firebase";
+import Transactions from "./utilities/Transactions/Transaction";
 
 const object = {
 	Type1: {
@@ -111,4 +121,18 @@ test("check if 'isStatic' function works with invalid data", () => {
 	const categories = parseJSON(object);
 
 	expect(isStatic("Category1", "Subcategory3", categories)).toBe(false);
+});
+
+const mockCategories: Category[] = [
+	new Category("Expense", "Food", [new SubCategory("Groceries", true)]),
+	new Category("Expense", "Custom Category", [new SubCategory("CustomSub", false)])
+];
+
+test("Does not show delete button for custom subcategories in transaction modal", () => {
+	const { queryByTestId } = render(
+		<EntryCategories categories={mockCategories} disableHeader={true} />
+	);
+
+	// Check that the delete button is hidden
+	expect(queryByTestId("delete-custom-subcategory")).not.toBeInTheDocument();
 });

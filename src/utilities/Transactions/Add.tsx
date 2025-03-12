@@ -144,7 +144,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 
 	return (
 		<div className="container">
-			<IonFab className="add-tansaction" vertical="bottom" horizontal="end" slot="fixed">
+			<IonFab className="add-transaction" vertical="bottom" horizontal="end" slot="fixed">
 				<IonFabButton id="add-transaction" onClick={() => resetForm()}>
 					<IonIcon icon={add} />
 				</IonFabButton>

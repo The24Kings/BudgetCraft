@@ -212,7 +212,7 @@ const DataValidation: React.FC<DataValidationProps> = ({ categories }) => {
 
 //TODO: In the future this should probably be abstracted out into an object or a function that is called in the component
 interface EntryCategoriesProps {
-    userID?: string;
+	userID?: string;
 	categories: Category[];
 	disableHeader?: boolean;
 	onSelect?: (category: string, subcategory: string) => void;
@@ -224,12 +224,12 @@ interface EntryCategoriesProps {
  * This component displays the categories and subcategories from the JSON file.
  */
 const EntryCategories: React.FC<EntryCategoriesProps> = ({
-    userID = "",
+	userID = "",
 	disableHeader = false,
 	categories = [],
 	json,
 	onSelect,
-    hideDelete = false
+	hideDelete = false
 }) => {
 	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
 	const [subcategory, setSubcategory] = useState<string>("");
@@ -254,7 +254,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 		const value: string = (event.target as HTMLInputElement).value;
 
 		// Scrub the input value and remove the extra spaces
-        const filteredValue = value.replace(/[^a-zA-Z0-9\s\-\(\)_\/']+/g, "").replace(/\s+/g, " ");
+		const filteredValue = value.replace(/[^a-zA-Z0-9\s\-\(\)_\/']+/g, "").replace(/\s+/g, " ");
 
 		/**
 		 * Update both the state and
@@ -336,41 +336,44 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 
 		try {
 			const db = getFirestore(getApp());
+			const userID = "test-user"; // TODO: Replace with actual user ID
 
-			// Update Firestore transactions where subCategory matches the deleted one
-			const transactionsRef = collection(db, "test-transaction");
+			// Corrected path: Looking in the right Firestore location
+			const transactionsRef = collection(db, `users/${userID}/transactions`);
 			const q = query(transactionsRef, where("subCategory", "==", subCategoryName));
 
 			const querySnapshot = await getDocs(q);
-			querySnapshot.forEach(async (docSnap) => {
-				const transactionRef = doc(db, "test-transaction", docSnap.id);
+
+			// Updating all transactions that had this subcategory
+			for (const docSnap of querySnapshot.docs) {
+				const transactionRef = doc(db, `users/${userID}/transactions`, docSnap.id);
 				await updateDoc(transactionRef, { subCategory: "Uncategorized" });
-			});
+			}
 
 			console.log(
 				`All transactions with subcategory "${subCategoryName}" are now "Uncategorized"`
 			);
 
-			// Remove subcategory from Firestore JSON
+			// Remove subcategory from Firestore JSON structure
 			const type = category.getType();
 			delete json[type][category.getCategory()][subCategoryName];
 
 			await addDocument("user-categories", {
-				id: "testUser", // TODO: Replace with actual user ID
+				id: userID, // Ensuring correct user ID usage
 				categories: json,
 				timestamp: new Date().toISOString()
 			});
 
 			console.log(`Subcategory "${subCategoryName}" removed from Firestore`);
 
-			// Update the local UI state by triggering a re-render
+			// Update the local UI state to reflect changes
 			const updatedCategories = category.Subcategories.filter(
 				(sub) => sub.Name !== subCategoryName
 			);
 			category.Subcategories = updatedCategories;
 
-			// Use setSubcategory to trigger a UI update
-			setSubcategory(""); // Force re-render
+			// Force UI refresh by resetting subcategory selection
+			setSubcategory("");
 
 			console.log(`Updated UI: Subcategory "${subCategoryName}" removed from local state`);
 		} catch (error) {
