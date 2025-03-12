@@ -111,7 +111,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 	return (
 		<div className="container">
 			{/* Display the transactions */}
-			<DisplayTransactions transactions={transactionData} categories={categoryData} />
+            <DisplayTransactions categories={categoryData} transactions={transactionData} />
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />

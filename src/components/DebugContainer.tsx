@@ -67,11 +67,13 @@ const DebugContainer: React.FC<ContainerProps> = ({ userID }) => {
 			>
 				Send Data
 			</IonButton>
+            
 			{/* Add new transactions */}
-			<AddTransactions categories={data} userID="test-user" />{" "}
-			{/* TODO: Change to use the actual userID */}
+			<AddTransactions categories={data} userID="test-user" />
+
 			{/* Display the data validation */}
 			<DataValidation categories={data} />
+            
 			{/* Display the categories */}
 			<EntryCategories categories={data} json={jsonData} userID="test-user" />
 		</div>
