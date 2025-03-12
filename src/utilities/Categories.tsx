@@ -2,11 +2,8 @@ import React, { useRef, useState } from "react";
 import {
 	collection,
 	doc,
-	getDocs,
-	query,
 	setDoc,
-	updateDoc,
-	where
+	Timestamp,
 } from "firebase/firestore";
 import { add, closeOutline } from "ionicons/icons";
 import {
@@ -20,7 +17,6 @@ import {
 	IonItemGroup,
 	IonLabel
 } from "@ionic/react";
-import useFirestoreStore from "./Firebase";
 import { firestore } from "./FirebaseConfig";
 
 class Category {
@@ -41,16 +37,27 @@ class Category {
 	getSubcategories() {
 		return this.Subcategories;
 	}
+
+	getSubcategoryIndex(subcategory: string) {
+		console.log("Searching for subcategory:", subcategory);
+		console.log(
+			"Found subcategory:",
+			this.Subcategories.findIndex((sub) => sub.name === subcategory)
+		);
+		return this.Subcategories.findIndex((sub) => sub.name === subcategory);
+	}
 }
 
 class SubCategory {
-    index: number;
+	index: number;
 	name: string;
-    icon: string;
+	icon: string;
 	isStatic: boolean;
 
-	constructor(name: string, isStatic: boolean = false) {
+	constructor(index: number, name: string, icon: string = "", isStatic: boolean = false) {
+		this.index = index;
 		this.name = name;
+		this.icon = icon;
 		this.isStatic = isStatic;
 	}
 
@@ -105,7 +112,7 @@ function parseJSON(jsonData: any): Category[] {
 				const subcategory = jsonData[_Type][_Category][_index];
 
 				subcategories.push(
-					new SubCategory(subcategory["name"], subcategory["static"])
+					new SubCategory(Number(_index), subcategory["name"], "", subcategory["static"])
 				);
 			});
 
@@ -237,7 +244,6 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 }) => {
 	const [showCustomEntry, setShowCustomEntry] = useState<boolean>(false);
 	const [subcategory, setSubcategory] = useState<string>("");
-	const { isLoading, error, addDocument } = useFirestoreStore();
 
 	const input = useRef<HTMLIonInputElement>(null);
 
@@ -246,7 +252,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 	 */
 	const keyPress = (e: React.KeyboardEvent<HTMLIonInputElement>, _category: string) => {
 		if (e.key === "Enter") {
-			submitCustom(_category);
+			submitCustom(categories.find((cat) => cat.getCategory() === _category)!);
 		}
 	};
 
@@ -276,41 +282,37 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 	/**
 	 * Submit the custom category
 	 */
-	const submitCustom = async (_category: string) => {
-		if (exists(_category, subcategory, categories)) {
+	const submitCustom = async (_category: Category) => {
+		if (exists(_category.name, subcategory, categories)) {
 			alert("Category already exists.");
 
 			return;
 		}
 
 		// Get the category type and increment
-		const type = categories.find((cat) => cat.getCategory() === _category)?.getType();
-        const increment = categories.find((cat) => cat.getCategory() === _category)?.Subcategories.length;
+		const type = categories.find((cat) => cat.getCategory() === _category.name)?.getType();
+		const increment = categories.find((cat) => cat.getCategory() === _category.name)
+			?.Subcategories.length;
 
 		// Add the subcategory to the JSON file
-		json[type][_category][increment] = {
-            name: subcategory,
-            icon: "",
-            static: false
-        };
-
-		console.log("Added:", _category, increment, subcategory);
+		json[type][_category.name][increment] = {
+			name: subcategory,
+			icon: "",
+			static: false
+		};
 
 		// Clear the input field
 		setSubcategory("");
 		setShowCustomEntry(false);
 
 		// Update the Firebase database
-        const settingsRef = collection(firestore, `users/${userID}/settings`);
-        const categoryDoc = doc(settingsRef, "categories");
+		const settingsRef = collection(firestore, `users/${userID}/settings`);
+		const categoryDoc = doc(settingsRef, "categories");
 
-        await setDoc(categoryDoc, {
-            categories: json,
-            timestamp: new Date().toISOString()
-        });
-
-		console.log("Error:", error);
-		console.log("Loading:", isLoading);
+		await setDoc(categoryDoc, {
+			categories: json,
+			lastUpdated: Timestamp.now()
+		});
 	};
 
 	/**
@@ -324,50 +326,21 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 		if (!isConfirmed) return;
 
 		try {
-			const userID = "test-user"; // TODO: Replace with actual user ID
-
-			// Corrected path: Looking in the right Firestore location
-			const transactionsRef = collection(firestore, `users/${userID}/transactions`);
-			const q = query(transactionsRef, where("subCategory", "==", subCategoryname));
-
-			const querySnapshot = await getDocs(q);
-
-			// Updating all transactions that had this subcategory
-			for (const docSnap of querySnapshot.docs) {
-				const transactionRef = doc(firestore, `users/${userID}/transactions`, docSnap.id);
-				await updateDoc(transactionRef, { subCategory: "Uncategorized" });
-			}
-
-			console.log(
-				`All transactions with subcategory "${subCategoryname}" are now "Uncategorized"`
-			);
+			// Update the Firebase database for user categories
+			const settingsRef = collection(firestore, `users/${userID}/settings`);
+			const categoryDoc = doc(settingsRef, "categories");
 
 			// Remove subcategory from Firestore JSON structure
 			const type = category.getType();
-            const index = category.Subcategories.findIndex(sub => sub.name === subCategoryname);
-
-            console.log("Found:", json[type][category.getCategory()][index]);
+			const index = category.Subcategories.findIndex((sub) => sub.name === subCategoryname);
 
 			delete json[type][category.getCategory()][index];
 
-			await addDocument("user-categories", {
-				id: userID, // Ensuring correct user ID usage
+			// Update the Firebase database
+			await setDoc(categoryDoc, {
 				categories: json,
-				timestamp: new Date().toISOString()
+				lastUpdated: Timestamp.now()
 			});
-
-			console.log(`Subcategory "${subCategoryname}" removed from Firestore`);
-
-			// Update the local UI state to reflect changes
-			const updatedCategories = category.Subcategories.filter(
-				(sub) => sub.name !== subCategoryname
-			);
-			category.Subcategories = updatedCategories;
-
-			// Force UI refresh by resetting subcategory selection
-			setSubcategory("");
-
-			console.log(`Updated UI: Subcategory "${subCategoryname}" removed from local state`);
 		} catch (error) {
 			console.error("Error deleting subcategory:", error);
 		}
@@ -434,10 +407,6 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 																category.getCategory(),
 																subCategory.name
 															); //  Call the onClick function if it exists and pass the category and subcategory
-														} else {
-															alert(
-																`Selected: ${category.getCategory()} - ${subCategory.name}`
-															);
 														}
 													}}
 												>
@@ -508,9 +477,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 														</IonButton>
 														<IonButton
 															fill="clear"
-															onClick={() =>
-																submitCustom(category.getCategory())
-															}
+															onClick={() => submitCustom(category)}
 															disabled={!subcategory}
 														>
 															<IonIcon slot="icon-only" icon={add} />
