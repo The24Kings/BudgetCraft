@@ -99,9 +99,11 @@ function parseJSON(jsonData: any): Category[] {
 			const subcategories: SubCategory[] = [];
 
 			// Iterate through the subcategories
-			Object.keys(jsonData[_Type][_Category]).forEach((_subCategory) => {
+			Object.keys(jsonData[_Type][_Category]).forEach((_index) => {
+				const subcategory = jsonData[_Type][_Category][_index];
+
 				subcategories.push(
-					new SubCategory(_subCategory, jsonData[_Type][_Category][_subCategory])
+					new SubCategory(subcategory["name"], subcategory["static"])
 				);
 			});
 
@@ -279,13 +281,18 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 			return;
 		}
 
-		// Get the category type
+		// Get the category type and increment
 		const type = categories.find((cat) => cat.getCategory() === _category)?.getType();
+        const increment = categories.find((cat) => cat.getCategory() === _category)?.Subcategories.length;
 
 		// Add the subcategory to the JSON file
-		json[type][_category][subcategory] = false;
+		json[type][_category][increment] = {
+            name: subcategory,
+            icon: "",
+            static: false
+        };
 
-		console.log("Added:", _category, subcategory);
+		console.log("Added:", _category, increment, subcategory);
 
 		// Clear the input field
 		setSubcategory("");
@@ -356,7 +363,11 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 
 			// Remove subcategory from Firestore JSON structure
 			const type = category.getType();
-			delete json[type][category.getCategory()][subCategoryName];
+            const index = category.Subcategories.findIndex(sub => sub.Name === subCategoryName);
+
+            console.log("Found:", json[type][category.getCategory()][index]);
+
+			delete json[type][category.getCategory()][index];
 
 			await addDocument("user-categories", {
 				id: userID, // Ensuring correct user ID usage

@@ -1,88 +1,343 @@
 {
 	"Income": {
 		"Salary & Wages": {
-			"Paycheck": true,
-			"Bonus": true,
-			"Overtime": true,
-			"Commissions": true
+			"0": {
+				"name": "Salary",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Bonus",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Overtime",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Commissions",
+				"icon": "",
+				"static": true
+			}
+		},
+		"Investments": {
+			"0": {
+				"name": "Dividends",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Interest",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Capital Gains",
+				"icon": "",
+				"static": true
+			}
+		},
+		"Other Income": {
+			"0": {
+				"name": "Alimony",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Child Support",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Lottery Winnings",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Other",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Business Revenue": {
-			"Sales": true,
-			"Services": true,
-			"Other": true
+			"0": {
+				"name": "Sales",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Services",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Other",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Gifts": {
-			"Cash": true,
-			"Gift Cards": true,
-			"Other": true
+			"0": {
+				"name": "Cash",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Gift Cards",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Other",
+				"icon": "",
+				"static": true
+			}
 		}
 	},
 	"Expenses": {
 		"Housing": {
-			"Rent/ Mortgage": true,
-			"Utilities": true,
-			"Home Maintenance": true
+			"0": {
+				"name": "Rent/ Mortgage",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Utilities",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Home Maintenance",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Transportation": {
-			"Car Payment": true,
-			"Gas": true,
-			"Insurance": true,
-			"Public Transportation": true,
-			"Parking Tolls": true,
-			"Maintenance": true
+			"0": {
+				"name": "Car Payment",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Gas",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Insurance",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Public Transportation",
+				"icon": "",
+				"static": true
+			},
+			"4": {
+				"name": "Parking Tolls",
+				"icon": "",
+				"static": true
+			},
+			"5": {
+				"name": "Maintenance",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Food": {
-			"Groceries": true,
-			"Dining Out": true,
-			"Coffee/ Snacks": true,
-			"Fast Food": true
+			"0": {
+				"name": "Groceries",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Dining Out",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Coffee/ Snacks",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Fast Food",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Health": {
-			"Insurance": true,
-			"Medical Bills": true,
-			"Dental/ Vision": true,
-			"Medication": true
+			"0": {
+				"name": "Insurance",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Medical Bills",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Dental/ Vision",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Medication",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Debt & Loans": {
-			"Credit Card": true,
-			"Student Loan": true,
-			"Personal Loan": true,
-			"Other": true
+			"0": {
+				"name": "Credit Card",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Student Loan",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Personal Loan",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Other",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Savings": {
-			"Emergency Fund": true,
-			"Retirement": true,
-			"Stocks & Investments": true,
-			"Investment Accounts Tracking": true
+			"0": {
+				"name": "Emergency Fund",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Retirement",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Stocks & Investments",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Investment Accounts Tracking",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Entertainment & Leisure": {
-			"Subscriptions": true,
-			"Movies/ Concerts": true,
-			"Hobbies": true,
-			"Books and Magazines": true
+			"0": {
+				"name": "Subscriptions",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Movies/ Concerts",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Hobbies",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Books and Magazines",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Shopping & Personal Care": {
-			"Clothing & Accesories": true,
-			"Beauty and Grooming": true,
-			"Electronics": true,
-			"Home Decor": true
+			"0": {
+				"name": "Clothing & Accesories",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Beauty and Grooming",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Electronics",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Home Decor",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Children & Education": {
-			"Childcare": true,
-			"Tuition & School Supplies": true,
-			"College Fund": true
+			"0": {
+				"name": "Childcare",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Tuition & School Supplies",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "College Fund",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Business Expenses": {
-			"Office Supplies": true,
-			"Marketing & Advertising": true,
-			"Business Travel": true,
-			"Software & Subscriptions": true
+			"0": {
+				"name": "Office Supplies",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Marketing & Advertising",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Business Travel",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Software & Subscriptions",
+				"icon": "",
+				"static": true
+			}
 		},
 		"Miscellaneous": {
-			"Pet Expenses": true,
-			"Legal Fees": true,
-			"Other Expenses": true,
-			"Uncategorized": true
+			"0": {
+				"name": "Pet Expenses",
+				"icon": "",
+				"static": true
+			},
+			"1": {
+				"name": "Legal Fees",
+				"icon": "",
+				"static": true
+			},
+			"2": {
+				"name": "Other Expenses",
+				"icon": "",
+				"static": true
+			},
+			"3": {
+				"name": "Uncategorized",
+				"icon": "",
+				"static": true
+			}
 		}
 	}
 }
