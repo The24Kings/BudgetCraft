@@ -58,7 +58,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 						doc.id,
 						data.type,
 						data.category,
-						data.subCategoryIndex,
+						data.subCategoryID,
 						data.title,
 						data.date,
 						data.description,
@@ -87,9 +87,9 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 			// Order the categories by type in descending order
 			const categories = categoriesSnapshot.data().categories;
 			const orderedCategories = parseJSON(categories).sort((a: Category, b: Category) => {
-				if (a.Type !== b.Type) {
-					if (a.Type === "Income") return -1;
-					if (b.Type === "Income") return 1;
+				if (a.type !== b.type) {
+					if (a.type === "Income") return -1;
+					if (b.type === "Income") return 1;
 				}
 
 				if (a.name !== b.name) {

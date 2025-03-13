@@ -5,7 +5,7 @@ class Transaction {
 		public id: string = "",
 		public type: string = "",
 		public category: string = "",
-        public subCategoryIndex: number = 0,
+        public subCategoryID: string = "",
 		public title: string = "",
 		public date: Timestamp = Timestamp.now(),
 		public description: string = "",
