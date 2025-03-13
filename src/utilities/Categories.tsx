@@ -291,7 +291,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 
 		// Get the category type and increment
 		const type = categories.find((cat) => cat.getCategory() === _category.name)?.getType();
-		const increment = categories.find((cat) => cat.getCategory() === _category.name)
+		const increment = categories.find((cat) => cat.getCategory() === _category.name) //FIXME: Rather than incrementing as the ID, it should be a simple unique ID (use short-uuid maybe?)
 			?.Subcategories.length;
 
 		// Add the subcategory to the JSON file

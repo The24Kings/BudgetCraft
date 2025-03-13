@@ -53,15 +53,8 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 	const subCategory = (category: String, index: number) => {
 		const subCategory = categories.find((cat) => cat.name === category)?.Subcategories[index];
 
-		return subCategory ? subCategory.name : "Uncategorized";
-	};
-
-	const toggleAccordion = (transactionId: string) => {
-		if (expandedTransactionId === transactionId) {
-			setExpandedTransactionId(null);
-		} else {
-			setExpandedTransactionId(transactionId);
-		}
+		//FIXME: When the category is not found, the subcategory is undefined, BUT if the user adds another subcategory, the subcategory is found but different from the one selected originally
+		return subCategory ? subCategory.name : "Uncategorized"; 
 	};
 
 	return (
