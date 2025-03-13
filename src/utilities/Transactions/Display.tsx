@@ -72,14 +72,14 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 				</div>
 
 				{/* Group the transactions by month */}
-				{Object.keys(groups).map((month) => (
-					<IonItemGroup key={month}>
-						<IonItemDivider>
-							<IonLabel>{month}</IonLabel>
-						</IonItemDivider>
+				<IonAccordionGroup>
+					{Object.keys(groups).map((month) => (
+						<IonItemGroup key={month}>
+							<IonItemDivider>
+								<IonLabel>{month}</IonLabel>
+							</IonItemDivider>
 
-						{/* Display the transactions */}
-						<IonAccordionGroup>
+							{/* Display the transactions */}
 							{groups[month].map((transaction) => (
 								<IonAccordion value={transaction.id} key={transaction.id}>
 									<IonItem
@@ -136,9 +136,9 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 									</div>
 								</IonAccordion>
 							))}
-						</IonAccordionGroup>
-					</IonItemGroup>
-				))}
+						</IonItemGroup>
+					))}
+				</IonAccordionGroup>
 			</div>
 		</React.Fragment>
 	);
