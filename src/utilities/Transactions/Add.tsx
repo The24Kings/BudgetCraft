@@ -120,13 +120,13 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 			console.log("Transaction added successfully with ID:", transactionID);
 		}
 
-		resetForm();
+		openForm();
 
 		modalSubmitRef.current?.dismiss();
 	};
 
 	// Resets the form to its default values.
-	const resetForm = () => {
+	const openForm = () => {
 		setTitle("");
 		setType("");
 		setAmount(null);
@@ -138,14 +138,14 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 
 	return (
 		<div className="container">
-			<IonFab className="add-transaction" vertical="bottom" horizontal="end" slot="fixed">
-				<IonFabButton id="add-transaction" onClick={() => resetForm()}>
+			<IonFab vertical="bottom" horizontal="end" slot="fixed">
+				<IonFabButton id="add-transaction" onClick={() => { openForm(); modalStartRef.current?.present(); }}>
 					<IonIcon icon={add} />
 				</IonFabButton>
 			</IonFab>
 
 			{/* Add Transaction Popup */}
-			<IonModal id="custom-category-modal" ref={modalStartRef} trigger="add-transaction">
+			<IonModal id="custom-category-modal" ref={modalStartRef}>
 				<IonHeader>
 					<IonToolbar>
 						<IonTitle className="ion-text-center">New Transaction</IonTitle>
