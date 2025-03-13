@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from "react";
 import {
 	collection,
+	doc,
 	DocumentData,
+	getDoc,
 	getDocs,
 	limit,
 	orderBy,
 	query,
 	QuerySnapshot
 } from "firebase/firestore";
-import jsonData from "../categories.json";
 import { Category, parseJSON } from "../utilities/Categories";
 import { firestore } from "../utilities/FirebaseConfig";
 import DisplayTransactions from "../utilities/Transactions/Display";
@@ -22,22 +23,21 @@ interface ContainerProps {
 }
 
 const Container: React.FC<ContainerProps> = ({ userID }) => {
-    const intialLoad = 10;
+	const intialLoad = 10;
 
+	const [jsonData, setJSONData] = useState<any>(null);
 	const [categoryData, setCategoryData] = useState<Category[]>([]);
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
-    const [totalLoaded, setTotalLoaded] = useState(intialLoad);
-    const [actualTotalLoaded, setActualTotalLoaded] = useState(intialLoad);
+	const [totalLoaded, setTotalLoaded] = useState(intialLoad);
+	const [actualTotalLoaded, setActualTotalLoaded] = useState(intialLoad);
 
 	// Load the transactions from Firebase
-    //TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
+	//TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
 	useEffect(() => {
 		const fetchTransactions = async () => {
 			let querySnapshot: QuerySnapshot<DocumentData>;
 
 			try {
-				console.log("Fetching transactions...");
-
 				querySnapshot = await getDocs(
 					query(
 						collection(firestore, `users/${userID}/transactions`),
@@ -48,9 +48,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 			} catch (error) {
 				console.error("Failed to fetch transactions...");
 			} finally {
-                setActualTotalLoaded(querySnapshot.docs.length);
-
-				console.log("Transactions fetched successfully:", actualTotalLoaded);
+				setActualTotalLoaded(querySnapshot.docs.length);
 
 				// Parse the documents into Transaction objects
 				const transactionData = querySnapshot.docs.map((doc) => {
@@ -60,7 +58,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 						doc.id,
 						data.type,
 						data.category,
-						data.subCategory,
+						data.subCategoryIndex,
 						data.title,
 						data.date,
 						data.description,
@@ -81,9 +79,31 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 
 	// Load the JSON data
 	useEffect(() => {
+		const fetchJSON = async () => {
+			const settingsRef = collection(firestore, `users/${userID}/settings`);
+			const categoriesRef = doc(settingsRef, "categories");
+			const categoriesSnapshot = await getDoc(categoriesRef);
+
+			// Order the categories by type in descending order
+			const categories = categoriesSnapshot.data().categories;
+			const orderedCategories = parseJSON(categories).sort((a: Category, b: Category) => {
+				if (a.Type !== b.Type) {
+					if (a.Type === "Income") return -1;
+					if (b.Type === "Income") return 1;
+				}
+
+				if (a.name !== b.name) {
+					return a.name.localeCompare(b.name);
+				}
+			});
+
+			setJSONData(categories);
+			setCategoryData(orderedCategories);
+		};
+
 		const interval = setInterval(() => {
-			setCategoryData(parseJSON(jsonData));
-		}, 100);
+			fetchJSON();
+		}, 500);
 
 		return () => clearInterval(interval);
 	}, []);
@@ -91,7 +111,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 	return (
 		<div className="container">
 			{/* Display the transactions */}
-			<DisplayTransactions transactions={transactionData} />
+            <DisplayTransactions categories={categoryData} transactions={transactionData} />
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
@@ -99,10 +119,10 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 			{/* Load More */}
 			<IonButton
 				onClick={() => {
-                    // If we actually loaded all possible transactions, then we can load more
-                    if (actualTotalLoaded === totalLoaded) {
-					    setTotalLoaded(totalLoaded + 10);
-                    }
+					// If we actually loaded all possible transactions, then we can load more
+					if (actualTotalLoaded === totalLoaded) {
+						setTotalLoaded(totalLoaded + 10);
+					}
 				}}
 			>
 				<IonLabel>Load More</IonLabel>

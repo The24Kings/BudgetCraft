@@ -33,7 +33,7 @@ interface AddTransactionProps {
 const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) => {
 	const [type, setType] = useState("");
 	const [category, setCategory] = useState("");
-	const [subCategory, setSubCategory] = useState("");
+	const [subCategoryIndex, setSubCategoryIndex] = useState(0);
 	const [title, setTitle] = useState("");
 	const [date, setDate] = useState(Timestamp.now());
 	const [amount, setAmount] = useState(0.0);
@@ -47,20 +47,14 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 
 	useEffect(() => {
 		if (!type) {
-			console.log("No Type selected. Resetting Categories.");
 			setFilteredCategories([]);
-
 			return;
 		}
-
-		console.log("Filtering Categories for:", type);
 
 		// Filter categories based on selected type
 		const filtered = categories.filter((cat) => {
 			return cat.getType() === type;
 		});
-
-		console.log(`Filtered Categories for ${type}:`, filtered);
 
 		setFilteredCategories(filtered);
 	}, [type]);
@@ -114,7 +108,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 			await setDoc(transactionRef, {
 				type: type,
 				category: category,
-				subCategory: subCategory,
+				subCategoryIndex: subCategoryIndex,
 				title: title,
 				date: date,
 				description: description,
@@ -137,7 +131,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		setType("");
 		setAmount(null);
 		setCategory("");
-		setSubCategory("");
+		setSubCategoryIndex(0);
 		setDescription("");
 		setDate(Timestamp.now());
 	};
@@ -185,7 +179,12 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 						hideDelete={true} // Hide the delete button on custom subcategories when selecting subcategories for transactions
 						onSelect={(category, subCategory) => {
 							setCategory(category);
-							setSubCategory(subCategory);
+
+							categories.forEach((cat) => {
+								if (cat.name === category) {
+									setSubCategoryIndex(cat.getSubcategoryIndex(subCategory));
+								}
+							});
 
 							// Close and open the next modal
 							modalStartRef.current?.dismiss();
@@ -217,7 +216,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 						<IonButton
 							fill="default"
 							slot="end"
-							disabled={!title || !amount || !category || !subCategory} // Disable the confirm button if any of the fields are empty
+							disabled={!title || !amount || !category} // Disable the confirm button if any of the fields are empty
 							onClick={handleAddTransaction}
 						>
 							Confirm

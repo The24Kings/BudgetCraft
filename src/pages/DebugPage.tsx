@@ -17,7 +17,7 @@ const DebugPage: React.FC = () => {
 						<IonTitle size="large">DEBUG</IonTitle>
 					</IonToolbar>
 				</IonHeader>
-				<DebugContainer name="Debug Page" />
+				<DebugContainer userID="test-user" />
 			</IonContent>
 		</IonPage>
 	);

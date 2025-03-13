@@ -12,13 +12,15 @@ import {
 	IonRow,
 	IonTextarea
 } from "@ionic/react";
+import { Category } from "../Categories";
 import Transaction from "./Transaction";
 
 interface DisplayTransactionsProps {
 	transactions: Transaction[];
+	categories: Category[];
 }
 
-const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions }) => {
+const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories }) => {
 	const [expandedTransactionId, setExpandedTransactionId] = useState<string | null>(null);
 
 	//TODO: Allow the user to select which month they want to view
@@ -42,6 +44,15 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
 			},
 			{} as { [key: string]: Transaction[] }
 		);
+
+	/*
+	 * Get the subcategory of a transaction from the name of the category and the index of the subcategory
+	 */
+	const subCategory = (category: String, index: number) => {
+		const subCategory = categories.find((cat) => cat.name === category)?.Subcategories[index];
+
+		return subCategory ? subCategory.name : "Uncategorized";
+	};
 
 	const toggleAccordion = (transactionId: string) => {
 		if (expandedTransactionId === transactionId) {
@@ -78,7 +89,11 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions 
 								>
 									<IonLabel>
 										<IonNote>
-											{transaction.category} - {transaction.subCategory}
+											{transaction.category} -{" "}
+											{subCategory(
+												transaction.category,
+												transaction.subCategoryIndex
+											)}
 										</IonNote>
 										<IonGrid fixed={true} className="ion-no-padding">
 											<IonRow className="ion-text-left ion-padding-top">
