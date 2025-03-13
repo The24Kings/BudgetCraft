@@ -23,6 +23,8 @@ interface DisplayTransactionsProps {
 }
 
 const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories }) => {
+	const [expandedTransactionId, setExpandedTransactionId] = useState<string | null>(null);
+
 	//TODO: Allow the user to select which month they want to view
 	// Group the transactions by month
 	const groups = transactions
@@ -52,6 +54,14 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 		const subCategory = categories.find((cat) => cat.name === category)?.Subcategories[index];
 
 		return subCategory ? subCategory.name : "Uncategorized";
+	};
+
+	const toggleAccordion = (transactionId: string) => {
+		if (expandedTransactionId === transactionId) {
+			setExpandedTransactionId(null);
+		} else {
+			setExpandedTransactionId(transactionId);
+		}
 	};
 
 	return (
