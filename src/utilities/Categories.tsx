@@ -258,6 +258,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 
 	/*
 	 * Generate a hash for a string
+	 * https://github.com/bryc/code/blob/master/jshash/experimental/cyrb53.js (public domain)
 	 */
 	const cyrb53 = (str: string, seed = 0) => {
 		let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
