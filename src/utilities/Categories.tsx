@@ -21,13 +21,13 @@ import { firestore } from "./FirebaseConfig";
 
 class Category {
 	constructor(
-		public Type: string,
+		public type: string,
 		public name: string,
 		public Subcategories: SubCategory[]
 	) {}
 
 	getType() {
-		return this.Type;
+		return this.type;
 	}
 
 	getCategory() {
@@ -49,13 +49,13 @@ class Category {
 }
 
 class SubCategory {
-	index: number;
+	id: string;
 	name: string;
 	icon: string;
 	isStatic: boolean;
 
-	constructor(index: number, name: string, icon: string = "", isStatic: boolean = false) {
-		this.index = index;
+	constructor(id: string, name: string, icon: string = "", isStatic: boolean = false) {
+		this.id = id;
 		this.name = name;
 		this.icon = icon;
 		this.isStatic = isStatic;
@@ -102,21 +102,21 @@ const isStatic = (category: string, subcategory: string, categories: Category[])
 function parseJSON(jsonData: any): Category[] {
 	const categories: Category[] = [];
 
-	Object.keys(jsonData).forEach((_Type) => {
-		Object.keys(jsonData[_Type]).forEach((_Category) => {
+	Object.keys(jsonData).forEach((_type) => {
+		Object.keys(jsonData[_type]).forEach((_Category) => {
 			// Create an array to store the subcategories
 			const subcategories: SubCategory[] = [];
 
 			// Iterate through the subcategories
-			Object.keys(jsonData[_Type][_Category]).forEach((_index) => {
-				const subcategory = jsonData[_Type][_Category][_index];
+			Object.keys(jsonData[_type][_Category]).forEach((_id) => {
+				const subcategory = jsonData[_type][_Category][_id];
 
 				subcategories.push(
-					new SubCategory(Number(_index), subcategory["name"], "", subcategory["static"])
+					new SubCategory(_id, subcategory["name"], "", subcategory["static"])
 				);
 			});
 
-			categories.push(new Category(_Type, _Category, subcategories));
+			categories.push(new Category(_type, _Category, subcategories));
 		});
 	});
 
@@ -256,6 +256,25 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 		}
 	};
 
+	/*
+	 * Generate a hash for a string
+	 * https://github.com/bryc/code/blob/master/jshash/experimental/cyrb53.js (public domain)
+	 */
+	const cyrb53 = (str: string, seed = 0) => {
+		let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
+		for(let i = 0, ch; i < str.length; i++) {
+			ch = str.charCodeAt(i);
+			h1 = Math.imul(h1 ^ ch, 2654435761);
+			h2 = Math.imul(h2 ^ ch, 1597334677);
+		}
+		h1  = Math.imul(h1 ^ (h1 >>> 16), 2246822507);
+		h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+		h2  = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
+		h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+	  
+		return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+	};
+
 	/**
 	 * Validate the input field
 	 */
@@ -291,11 +310,10 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 
 		// Get the category type and increment
 		const type = categories.find((cat) => cat.getCategory() === _category.name)?.getType();
-		const increment = categories.find((cat) => cat.getCategory() === _category.name) //FIXME: Rather than incrementing as the ID, it should be a simple unique ID (use short-uuid maybe?)
-			?.Subcategories.length;
+		const id = cyrb53(_category.getCategory() + subcategory);
 
 		// Add the subcategory to the JSON file
-		json[type][_category.name][increment] = {
+		json[type][_category.name][id] = {
 			name: subcategory,
 			icon: "",
 			static: false
@@ -332,9 +350,9 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 
 			// Remove subcategory from Firestore JSON structure
 			const type = category.getType();
-			const index = category.Subcategories.findIndex((sub) => sub.name === subCategoryname);
+			const id = cyrb53(category.getCategory() + subCategoryname);
 
-			delete json[type][category.getCategory()][index];
+			delete json[type][category.getCategory()][id];
 
 			// Update the Firebase database
 			await setDoc(categoryDoc, {

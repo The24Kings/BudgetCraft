@@ -33,7 +33,7 @@ interface AddTransactionProps {
 const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) => {
 	const [type, setType] = useState("");
 	const [category, setCategory] = useState("");
-	const [subCategoryIndex, setSubCategoryIndex] = useState(0);
+	const [subCategoryID, setSubCategoryID] = useState("");
 	const [title, setTitle] = useState("");
 	const [date, setDate] = useState(Timestamp.now());
 	const [amount, setAmount] = useState(0.0);
@@ -108,7 +108,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 			await setDoc(transactionRef, {
 				type: type,
 				category: category,
-				subCategoryIndex: subCategoryIndex,
+				subCategoryID: subCategoryID,
 				title: title,
 				date: date,
 				description: description,
@@ -131,7 +131,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		setType("");
 		setAmount(null);
 		setCategory("");
-		setSubCategoryIndex(0);
+		setSubCategoryID("");
 		setDescription("");
 		setDate(Timestamp.now());
 	};
@@ -182,7 +182,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 
 							categories.forEach((cat) => {
 								if (cat.name === category) {
-									setSubCategoryIndex(cat.getSubcategoryIndex(subCategory));
+									setSubCategoryID(cat.Subcategories.find((subCat) => subCat.name === subCategory).id);
 								}
 							});
 
