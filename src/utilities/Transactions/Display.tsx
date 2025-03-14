@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { chevronDownOutline, chevronForwardOutline } from "ionicons/icons";
 import {
+	IonAccordion,
+	IonAccordionGroup,
 	IonCol,
 	IonGrid,
 	IonIcon,
@@ -10,8 +11,6 @@ import {
 	IonLabel,
 	IonNote,
 	IonRow,
-	IonAccordion,
-	IonAccordionGroup,
 	IonTextarea
 } from "@ionic/react";
 import { Category } from "../Categories";
@@ -23,8 +22,6 @@ interface DisplayTransactionsProps {
 }
 
 const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories }) => {
-	const [expandedTransactionId, setExpandedTransactionId] = useState<string | null>(null);
-
 	//TODO: Allow the user to select which month they want to view
 	// Group the transactions by month
 	const groups = transactions
@@ -51,9 +48,11 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 	 * Get the subcategory of a transaction from the name of the category and the index of the subcategory
 	 */
 	const subCategory = (category: String, id: string) => {
-		const subCategory = categories.find((cat) => cat.name === category).Subcategories.find((subCat) => subCat.id === id);
+		const subCategory = categories
+			.find((cat) => cat.name === category)
+			.Subcategories.find((subCat) => subCat.id === id);
 
-		return subCategory ? subCategory.name : "Uncategorized"; 
+		return subCategory ? subCategory.name : "Uncategorized";
 	};
 
 	return (
@@ -74,10 +73,7 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 							{/* Display the transactions */}
 							{groups[month].map((transaction) => (
 								<IonAccordion value={transaction.id} key={transaction.id}>
-									<IonItem
-										slot="header"
-										button
-									>
+									<IonItem slot="header" button>
 										<IonLabel>
 											<IonNote>
 												{transaction.category} -{" "}
@@ -92,8 +88,8 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 														<h2>{transaction.title}</h2>
 													</IonCol>
 													<IonCol className="ion-text-right">
-														{transaction.type === "Income" ? "+" : "-"} $
-														{transaction.amount}
+														{transaction.type === "Income" ? "+ " : "- "}
+														${transaction.amount}
 													</IonCol>
 												</IonRow>
 											</IonGrid>

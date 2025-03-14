@@ -24,7 +24,6 @@ import {
 	IonItem,
 	IonLabel,
 	IonMenu,
-	IonMenuButton,
 	IonMenuToggle,
 	IonPage,
 	IonText,
