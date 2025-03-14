@@ -48,8 +48,8 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 	/*
 	 * Get the subcategory of a transaction from the name of the category and the index of the subcategory
 	 */
-	const subCategory = (category: String, index: number) => {
-		const subCategory = categories.find((cat) => cat.name === category)?.Subcategories[index];
+	const subCategory = (category: String, id: string) => {
+		const subCategory = categories.find((cat) => cat.name === category).Subcategories.find((subCat) => subCat.id === id);
 
 		return subCategory ? subCategory.name : "Uncategorized";
 	};
@@ -92,7 +92,7 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 											{transaction.category} -{" "}
 											{subCategory(
 												transaction.category,
-												transaction.subCategoryIndex
+												transaction.subCategoryID
 											)}
 										</IonNote>
 										<IonGrid fixed={true} className="ion-no-padding">
