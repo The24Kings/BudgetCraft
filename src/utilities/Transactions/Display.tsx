@@ -53,7 +53,6 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 	const subCategory = (category: String, id: string) => {
 		const subCategory = categories.find((cat) => cat.name === category).Subcategories.find((subCat) => subCat.id === id);
 
-		//FIXME: When the category is not found, the subcategory is undefined, BUT if the user adds another subcategory, the subcategory is found but different from the one selected originally
 		return subCategory ? subCategory.name : "Uncategorized"; 
 	};
 
