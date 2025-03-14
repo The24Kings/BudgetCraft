@@ -11,7 +11,7 @@ const DebugPage: React.FC = () => {
 					<IonTitle>Debug Page</IonTitle>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent fullscreen>
+			<IonContent>
 				<IonHeader collapse="condense">
 					<IonToolbar>
 						<IonTitle size="large">DEBUG</IonTitle>
