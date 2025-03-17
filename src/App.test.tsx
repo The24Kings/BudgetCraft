@@ -8,7 +8,6 @@ import {
 	EntryCategories,
 	exists,
 	getInfo,
-	isStatic,
 	parseJSON,
 	SubCategory
 } from "./utilities/Categories";
@@ -45,7 +44,7 @@ test("parses JSON data correctly", () => {
 	// Check if the categories are parsed correctly
 	expect(categories[0].getType()).toBe("Type1");
 	expect(categories[0].getCategory()).toBe("Category1");
-	expect(categories[0].getSubcategories()[0].Name).toBe("Subcategory1");
+	expect(categories[0].getSubcategories()[0].name).toBe("Subcategory1");
 });
 
 test("checks if subcategory exists", () => {
@@ -111,21 +110,9 @@ test("check is 'exists' function works with invalid data", () => {
 	expect(exists("Category1", "Subcategory3", categories)).toBe(false);
 });
 
-test("check if 'isStatic' function works", () => {
-	const categories = parseJSON(object);
-
-	expect(isStatic("Category1", "Subcategory1", categories)).toBe(true);
-});
-
-test("check if 'isStatic' function works with invalid data", () => {
-	const categories = parseJSON(object);
-
-	expect(isStatic("Category1", "Subcategory3", categories)).toBe(false);
-});
-
 const mockCategories: Category[] = [
-	new Category("Expense", "Food", [new SubCategory("Groceries", true)]),
-	new Category("Expense", "Custom Category", [new SubCategory("CustomSub", false)])
+	new Category("Expense", "Food", [new SubCategory("0", "Groceries", "", true)]),
+	new Category("Expense", "Custom Category", [new SubCategory("1", "CustomSub", "", false)])
 ];
 
 test("Does not show delete button for custom subcategories in transaction modal", () => {
