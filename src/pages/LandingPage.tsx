@@ -15,6 +15,7 @@ import {
 	updateDoc
 } from "firebase/firestore";
 import {
+    IonAvatar,
 	IonButton,
 	IonButtons,
 	IonContent,
@@ -168,10 +169,15 @@ const LandingPage: React.FC = () => {
 				</IonHeader>
 				{user && (
 					<IonContent className="ion-padding">
+                        <IonAvatar className="menu-avatar" style={{justifySelf: "center"}}>
+                            <img
+                                src={user.photoURL ? user.photoURL : "https://ionicframework.com/docs/img/demos/avatar.svg"}
+                                alt="User Avatar"
+                            />
+                        </IonAvatar>
 						<IonText className="center-text">
 							<h2>Welcome, {userData?.displayName}!</h2>
 						</IonText>
-						<IonImg src={user.photoURL} alt="User  Avatar" className="user-avatar" />
 						<IonButton onClick={handleLogout}>Logout</IonButton>{" "}
 						{/*TODO figure out how to store image, maybe an default user avatar */}
 					</IonContent>
@@ -184,12 +190,12 @@ const LandingPage: React.FC = () => {
 						<IonButtons slot="end">
 							{user ? (
 								<IonMenuToggle>
-									<IonImg
-										src={user.photoURL}
-										alt="User  Profile"
-										className="menu-avatar"
-										style={{ cursor: "pointer" }}
-									/>
+                                    <IonAvatar className="user-avatar" style={{ cursor: "pointer" }}>
+                                        <img
+                                            src={user.photoURL ? user.photoURL : "https://ionicframework.com/docs/img/demos/avatar.svg"}
+                                            alt="User Avatar"
+                                        />
+                                    </IonAvatar>
 								</IonMenuToggle>
 							) : null}
 						</IonButtons>

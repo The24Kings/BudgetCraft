@@ -62,3 +62,7 @@ ion-textarea.custom {
 .custom .textarea-wrapper.sc-ion-textarea-md textarea.sc-ion-textarea-md {
     cursor: default;
 }
+
+.user-avatar img {
+    padding: 15%;
+}
