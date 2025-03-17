@@ -16,16 +16,6 @@ const DebugContainer: React.FC<ContainerProps> = ({ userID }) => {
 	const [jsonData, setJSONData] = useState<any>(null);
 	const [data, setData] = useState<Category[]>([]);
 
-	// Button click handler
-	const handleButtonClick = async () => {
-		console.log("Sending Data to Firebase...");
-
-		await addDocument("testCollection", {
-			testField: "Hello Firebase!",
-			timestamp: new Date().toISOString()
-		});
-	};
-
 	// Load the JSON data
 	useEffect(() => {
 		const fetchJSON = async () => {
@@ -59,15 +49,6 @@ const DebugContainer: React.FC<ContainerProps> = ({ userID }) => {
 
 	return (
 		<div className="container">
-			<IonButton
-				className="database-test"
-				size="large"
-				color="danger"
-				onClick={handleButtonClick}
-			>
-				Send Data
-			</IonButton>
-            
 			{/* Add new transactions */}
             <AddTransactions categories={data} userID={userID} />
 
