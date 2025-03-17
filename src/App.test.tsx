@@ -1,7 +1,5 @@
 import React from "react";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { doc } from "firebase/firestore";
-import { vi } from "vitest";
+import { render } from "@testing-library/react";
 import App from "./App";
 import {
 	Category,
@@ -11,24 +9,38 @@ import {
 	parseJSON,
 	SubCategory
 } from "./utilities/Categories";
-import useFirestoreStore from "./utilities/Firebase";
-import Transactions from "./utilities/Transactions/Transaction";
 
 const object = {
 	Type1: {
 		Category1: {
-			Subcategory1: true
+			"0": {
+                name: "Subcategory1",
+                icon: "",
+                static: true
+            }
 		},
 		Category2: {
-			Subcategory1: true
+			"0": {
+                name: "Subcategory1",
+                icon: "",
+                static: true
+            }
 		}
 	},
 	Type2: {
 		Category1: {
-			Subcategory1: true
+			"0": {
+                name: "Subcategory1",
+                icon: "",
+                static: true
+            }
 		},
 		Category2: {
-			Subcategory1: true
+			"0": {
+                name: "Subcategory1",
+                icon: "",
+                static: true
+            }
 		}
 	}
 };
@@ -65,38 +77,6 @@ test("checks if subcategory does not exist", () => {
 	expect(getInfo(categories, "Subcategory3").length).toBe(0);
 	window.alert = jsdomAlert; // Restore the alert
 });
-
-/*FIXME: Doesn't actually work :/
-test("connects to Firebase", async () => {
-	let docId: string | undefined;
-
-	const TestComponent: React.FC = () => {
-		const { documents, addDocument } = useFirestoreStore();
-
-		// Call the function and handle the promise
-		React.useEffect(() => {
-			addDocument("testCollection", {
-				testField: "Hello Firebase!",
-				timestamp: new Date().toISOString()
-			}).then(() => {
-				console.log("Document successfully added!");
-			}).catch((error) => {
-				console.error("Error adding document: ", error);
-			});
-
-			documents.forEach((doc) => {
-				docId = doc.id;
-			});
-
-		}, [addDocument]);
-
-		return null;
-	};
-
-	const { container } = render(<TestComponent />);
-	expect(container).toBeDefined();
-});
-*/
 
 test("check is 'exists' function works", () => {
 	const categories = parseJSON(object);
