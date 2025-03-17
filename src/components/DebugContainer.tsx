@@ -69,13 +69,13 @@ const DebugContainer: React.FC<ContainerProps> = ({ userID }) => {
 			</IonButton>
             
 			{/* Add new transactions */}
-			<AddTransactions categories={data} userID="test-user" />
+            <AddTransactions categories={data} userID={userID} />
 
 			{/* Display the data validation */}
 			<DataValidation categories={data} />
             
 			{/* Display the categories */}
-			<EntryCategories categories={data} json={jsonData} userID="test-user" />
+			<EntryCategories categories={data} json={jsonData} userID={userID}/>
 		</div>
 	);
 };

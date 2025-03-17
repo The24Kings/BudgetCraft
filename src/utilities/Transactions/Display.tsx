@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { chevronDownOutline, chevronForwardOutline } from "ionicons/icons";
 import {
+	IonAccordion,
+	IonAccordionGroup,
 	IonCol,
 	IonGrid,
 	IonIcon,
@@ -21,8 +22,6 @@ interface DisplayTransactionsProps {
 }
 
 const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories }) => {
-	const [expandedTransactionId, setExpandedTransactionId] = useState<string | null>(null);
-
 	//TODO: Allow the user to select which month they want to view
 	// Group the transactions by month
 	const groups = transactions
@@ -49,17 +48,11 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 	 * Get the subcategory of a transaction from the name of the category and the index of the subcategory
 	 */
 	const subCategory = (category: String, id: string) => {
-		const subCategory = categories.find((cat) => cat.name === category).Subcategories.find((subCat) => subCat.id === id);
+		const subCategory = categories
+			.find((cat) => cat.name === category)
+			.Subcategories.find((subCat) => subCat.id === id);
 
 		return subCategory ? subCategory.name : "Uncategorized";
-	};
-
-	const toggleAccordion = (transactionId: string) => {
-		if (expandedTransactionId === transactionId) {
-			setExpandedTransactionId(null);
-		} else {
-			setExpandedTransactionId(transactionId);
-		}
 	};
 
 	return (
@@ -70,51 +63,39 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 				</div>
 
 				{/* Group the transactions by month */}
-				{Object.keys(groups).map((month) => (
-					<IonItemGroup key={month}>
-						<IonItemDivider>
-							<IonLabel>{month}</IonLabel>
-						</IonItemDivider>
+				<IonAccordionGroup>
+					{Object.keys(groups).map((month) => (
+						<IonItemGroup key={month}>
+							<IonItemDivider>
+								<IonLabel>{month}</IonLabel>
+							</IonItemDivider>
 
-						{/* Display the transactions */}
-						{groups[month].map((transaction) => (
-							<div key={transaction.id}>
-								<IonItem
-									button
-									detail={false}
-									onClick={() => {
-										toggleAccordion(transaction.id);
-									}}
-									id={transaction.id}
-								>
-									<IonLabel>
-										<IonNote>
-											{transaction.category} -{" "}
-											{subCategory(
-												transaction.category,
-												transaction.subCategoryID
-											)}
-										</IonNote>
-										<IonGrid fixed={true} className="ion-no-padding">
-											<IonRow className="ion-text-left ion-padding-top">
-												<IonCol>
-													<h2>{transaction.title}</h2>
-												</IonCol>
-												<IonCol className="ion-text-right">
-													{transaction.type === "Income" ? "+" : "-"} $
-													{transaction.amount}
-												</IonCol>
-											</IonRow>
-										</IonGrid>
-									</IonLabel>
-									{expandedTransactionId === transaction.id ? (
-										<IonIcon size="small" icon={chevronDownOutline} />
-									) : (
-										<IonIcon size="small" icon={chevronForwardOutline} />
-									)}
-								</IonItem>
-								{expandedTransactionId === transaction.id && (
-									<div className="accordion-content">
+							{/* Display the transactions */}
+							{groups[month].map((transaction) => (
+								<IonAccordion value={transaction.id} key={transaction.id}>
+									<IonItem slot="header" button>
+										<IonLabel>
+											<IonNote>
+												{transaction.category} -{" "}
+												{subCategory(
+													transaction.category,
+													transaction.subCategoryID
+												)}
+											</IonNote>
+											<IonGrid fixed={true} className="ion-no-padding">
+												<IonRow className="ion-text-left ion-padding-top">
+													<IonCol>
+														<h2>{transaction.title}</h2>
+													</IonCol>
+													<IonCol className="ion-text-right">
+														{transaction.type === "Income" ? "+ " : "- "}
+														${transaction.amount}
+													</IonCol>
+												</IonRow>
+											</IonGrid>
+										</IonLabel>
+									</IonItem>
+									<div className="accordion-content" slot="content">
 										<IonItem color="light">
 											<IonGrid fixed={true} className="ion-no-padding">
 												<IonRow>
@@ -141,11 +122,11 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 											</IonGrid>
 										</IonItem>
 									</div>
-								)}
-							</div>
-						))}
-					</IonItemGroup>
-				))}
+								</IonAccordion>
+							))}
+						</IonItemGroup>
+					))}
+				</IonAccordionGroup>
 			</div>
 		</React.Fragment>
 	);
