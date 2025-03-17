@@ -32,15 +32,6 @@ class Category {
 	getSubcategories() {
 		return this.Subcategories;
 	}
-
-	getSubcategoryIndex(subcategory: string) {
-		console.log("Searching for subcategory:", subcategory);
-		console.log(
-			"Found subcategory:",
-			this.Subcategories.findIndex((sub) => sub.name === subcategory)
-		);
-		return this.Subcategories.findIndex((sub) => sub.name === subcategory);
-	}
 }
 
 class SubCategory {
@@ -75,19 +66,6 @@ const exists = (category: string, subcategory: string, categories: Category[]): 
 		(cat) =>
 			cat.getCategory() === category &&
 			cat.getSubcategories().some((sub) => sub.name === subcategory)
-	);
-};
-
-/**
- * Check if a category is static
- */
-const isStatic = (category: string, subcategory: string, categories: Category[]): boolean => {
-	return (
-		categories
-			.find((cat) => cat.getCategory().toLowerCase() === category.toLowerCase())
-			?.getSubcategories()
-			.find((sub) => sub.name.toLowerCase() === subcategory.toLowerCase())
-			?.isStaticCategory() ?? false
 	);
 };
 
@@ -519,7 +497,6 @@ export {
 	parseJSON,
 	getInfo,
 	exists,
-	isStatic,
 	Category,
 	SubCategory
 };
