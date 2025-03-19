@@ -1,5 +1,5 @@
 import { collection, getDocs, getFirestore } from "firebase/firestore";
-import { Category } from "../utilities/Categories"; // Import Category if needed
+import { Category } from "../utilities/Categories";
 
 // Function to retrieve the subcategory name instead of ID
 const subCategory = (categories: Category[], category: string, id: string) => {
@@ -35,7 +35,7 @@ const exportUserDataJSON = async (userID: string, categories: Category[]) => {
 				type: data.type || "",
 				amount: data.amount || 0,
 				date: formattedDate,
-				subCategory: subCategoryName, // ✅ Use subcategory name instead of ID
+				subCategory: subCategoryName,
 				category: data.category || "",
 				description: data.description || ""
 			};
