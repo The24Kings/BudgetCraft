@@ -97,3 +97,7 @@ ion-item ion-input {
 .subCat-delete-button {
 	margin-left: auto; /* Moves the delete button to the far right */
 }
+
+.export-button {
+	margin-top: 10px;
+}

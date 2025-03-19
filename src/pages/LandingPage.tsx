@@ -15,10 +15,11 @@ import {
 	updateDoc
 } from "firebase/firestore";
 import {
-    IonAvatar,
+	IonAvatar,
 	IonButton,
 	IonButtons,
 	IonContent,
+	IonFooter,
 	IonHeader,
 	IonImg,
 	IonInput,
@@ -33,6 +34,8 @@ import {
 } from "@ionic/react";
 import categoriesData from "../categories.json";
 import Container from "../components/Container";
+import { Category, parseJSON } from "../utilities/Categories";
+import { exportUserDataJSON } from "../utilities/DataExport";
 import { auth, firestore } from "../utilities/FirebaseConfig";
 
 const LandingPage: React.FC = () => {
@@ -44,6 +47,7 @@ const LandingPage: React.FC = () => {
 	const [isRegistering, setIsRegistering] = useState<boolean>(false);
 	const [errorMessage, setErrorMessage] = useState<string>("");
 	const [userData, setUserData] = useState<any>(null);
+	const [categories, setCategories] = useState<Category[]>([]);
 
 	// Handle user registration
 	const handleRegister = async () => {
@@ -66,9 +70,9 @@ const LandingPage: React.FC = () => {
 				"categories"
 			);
 			await setDoc(settingsRef, {
-                categories: categoriesData,
-                lastUpdated: Timestamp.now()
-            }); // Fill with data from categories.json
+				categories: categoriesData,
+				lastUpdated: Timestamp.now()
+			}); // Fill with data from categories.json
 
 			console.log("User  registered successfully and documents created");
 
@@ -134,30 +138,58 @@ const LandingPage: React.FC = () => {
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			if (user) {
-				console.log("User  signed in using Auth Change Listener");
+				console.log("User signed in using Auth Change Listener");
 				setUser(user);
-				// Fetch user data from Firestore
-				const fetchUserData = async (uid: string) => {
-					const userRef = doc(firestore, "users", uid);
-					const userDoc = await getDoc(userRef);
-					if (userDoc.exists()) {
-						const userData = userDoc.data();
-						setUserData(userData);
-					} else {
-						console.log("No such document!");
+
+				// Fetch user data and categories from Firestore
+				const fetchUserDataAndCategories = async (uid: string) => {
+					try {
+						// Fetch user data
+						const userRef = doc(firestore, "users", uid);
+						const userDoc = await getDoc(userRef);
+						if (userDoc.exists()) {
+							const userData = userDoc.data();
+							setUserData(userData);
+						} else {
+							console.log("No such document!");
+						}
+
+						// Fetch categories
+						const settingsRef = collection(firestore, `users/${uid}/settings`);
+						const categoriesRef = doc(settingsRef, "categories");
+						const categoriesSnapshot = await getDoc(categoriesRef);
+
+						if (categoriesSnapshot.exists()) {
+							const categoriesData = categoriesSnapshot.data().categories;
+							setCategories(parseJSON(categoriesData)); // ✅ Parse and set categories
+						}
+					} catch (error) {
+						console.error("Error fetching data:", error);
 					}
 				};
-				fetchUserData(user.uid);
+
+				fetchUserDataAndCategories(user.uid);
 			} else {
 				console.log("No user signed in");
 				setUser(null);
 				setUserData(null);
+				setCategories([]); // Clear categories when user logs out
 				setFirstName("");
 				setLastName("");
 			}
 		});
+
 		return () => unsubscribe();
 	}, []);
+
+	// Export user data as JSON
+	const handleExportJSON = () => {
+		if (user && categories.length > 0) {
+			exportUserDataJSON(user.uid, categories);
+		} else {
+			console.warn("No user logged in or categories not loaded, cannot export.");
+		}
+	};
 
 	return (
 		<React.Fragment>
@@ -169,12 +201,16 @@ const LandingPage: React.FC = () => {
 				</IonHeader>
 				{user && (
 					<IonContent className="ion-padding">
-                        <IonAvatar className="menu-avatar" style={{justifySelf: "center"}}>
-                            <img
-                                src={user.photoURL ? user.photoURL : "https://ionicframework.com/docs/img/demos/avatar.svg"}
-                                alt="User Avatar"
-                            />
-                        </IonAvatar>
+						<IonAvatar className="menu-avatar" style={{ justifySelf: "center" }}>
+							<img
+								src={
+									user.photoURL
+										? user.photoURL
+										: "https://ionicframework.com/docs/img/demos/avatar.svg"
+								}
+								alt="User Avatar"
+							/>
+						</IonAvatar>
 						<IonText className="center-text">
 							<h2>Welcome, {userData?.displayName}!</h2>
 						</IonText>
@@ -182,6 +218,12 @@ const LandingPage: React.FC = () => {
 						{/*TODO figure out how to store image, maybe an default user avatar */}
 					</IonContent>
 				)}
+				{/* Footer Export Button */}
+				<IonFooter className="ion-padding">
+					<IonButton expand="full" color="secondary" onClick={handleExportJSON}>
+						Export JSON
+					</IonButton>
+				</IonFooter>
 			</IonMenu>
 
 			<IonPage id="main-content">
@@ -190,12 +232,19 @@ const LandingPage: React.FC = () => {
 						<IonButtons slot="end">
 							{user ? (
 								<IonMenuToggle>
-                                    <IonAvatar className="user-avatar" style={{ cursor: "pointer" }}>
-                                        <img
-                                            src={user.photoURL ? user.photoURL : "https://ionicframework.com/docs/img/demos/avatar.svg"}
-                                            alt="User Avatar"
-                                        />
-                                    </IonAvatar>
+									<IonAvatar
+										className="user-avatar"
+										style={{ cursor: "pointer" }}
+									>
+										<img
+											src={
+												user.photoURL
+													? user.photoURL
+													: "https://ionicframework.com/docs/img/demos/avatar.svg"
+											}
+											alt="User Avatar"
+										/>
+									</IonAvatar>
 								</IonMenuToggle>
 							) : null}
 						</IonButtons>
