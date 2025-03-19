@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IonButton } from "@ionic/react";
-import jsonData from "../categories.json";
 import { Category, DataValidation, EntryCategories, parseJSON } from "../utilities/Categories";
 import { exportUserDataJSON } from "../utilities/DataExport";
-import useFirestoreStore from "../utilities/Firebase";
 import AddTransactions from "../utilities/Transactions/Add";
 import "./DebugContainer.css";
 import { collection, doc, getDoc } from "firebase/firestore";
@@ -14,11 +12,10 @@ interface ContainerProps {
 }
 
 const DebugContainer: React.FC<ContainerProps> = ({ userID }) => {
-	const { addDocument } = useFirestoreStore();
 	const [jsonData, setJSONData] = useState<any>(null);
 	const [data, setData] = useState<Category[]>([]);
 
-	// ✅ Export event handler with categories
+	// Export event handler with categories
 	const handleExportJSON = () => {
 		if (userID && data.length > 0) {
 			exportUserDataJSON(userID, data);
@@ -27,7 +24,7 @@ const DebugContainer: React.FC<ContainerProps> = ({ userID }) => {
 		}
 	};
 
-	// ✅ Load and store categories from Firestore
+	// Load and store categories from Firestore
 	useEffect(() => {
 		const fetchJSON = async () => {
 			try {
@@ -59,7 +56,7 @@ const DebugContainer: React.FC<ContainerProps> = ({ userID }) => {
 		fetchJSON();
 
 		const interval = setInterval(fetchJSON, 500);
-		return () => clearInterval(interval); // ✅ Cleanup on unmount
+		return () => clearInterval(interval); // Cleanup on unmount
 	}, [userID]);
 
 	return (
