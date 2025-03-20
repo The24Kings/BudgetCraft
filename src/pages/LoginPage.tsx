@@ -12,6 +12,7 @@ import {
 import { IonButton, IonInput, IonItem, IonLabel, IonText } from "@ionic/react";
 import categoriesData from "../categories.json";
 import { auth, firestore } from "../utilities/FirebaseConfig";
+import { useHistory } from "react-router";
 
 const LoginPage: React.FC<{
 	setUser: (user: any) => void;
@@ -23,6 +24,8 @@ const LoginPage: React.FC<{
 	const [lastName, setLastName] = useState<string>("");
 	const [isRegistering, setIsRegistering] = useState<boolean>(false);
 	const [errorMessage, setErrorMessageLocal] = useState<string>("");
+
+    const history = useHistory();
 
 	// Handle user registration
 	const handleRegister = async () => {
@@ -51,11 +54,15 @@ const LoginPage: React.FC<{
 
 			console.log("User  registered successfully and documents created");
 
+            // Clear input fields
 			setEmail("");
 			setPassword("");
 			setFirstName("");
 			setLastName("");
 			setErrorMessageLocal("");
+
+            // Redirect to home page after successful sign in
+            history.push("/home");
 		} catch (error) {
 			console.error("Registration Error:", error);
 			setErrorMessageLocal(error.message);
@@ -89,6 +96,9 @@ const LoginPage: React.FC<{
 			// Clear input fields
 			setEmail("");
 			setPassword("");
+
+            // Redirect to home page after successful sign in
+            history.push("/home");
 		} catch (error) {
 			console.error("Sign in Error:", error);
 			setErrorMessageLocal(error.message);
