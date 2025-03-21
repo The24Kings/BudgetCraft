@@ -51,8 +51,9 @@ const LandingPage: React.FC = () => {
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			if (user) {
-				console.log("User  signed in using Auth Change Listener");
+				console.log("User signed in using Auth Change Listener");
 				setUser(user);
+
 				// Fetch user data from Firestore
 				const fetchUserData = async (uid: string) => {
 					const userRef = doc(firestore, "users", uid);
@@ -64,6 +65,7 @@ const LandingPage: React.FC = () => {
 						console.log("No such document!");
 					}
 				};
+
 				fetchUserData(user.uid);
 			} else {
 				console.log("No user signed in");
