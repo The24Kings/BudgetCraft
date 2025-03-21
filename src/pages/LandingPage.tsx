@@ -1,30 +1,12 @@
 import React, { useEffect, useState } from "react";
-import {
-	createUserWithEmailAndPassword,
-	onAuthStateChanged,
-	signInWithEmailAndPassword,
-	signOut
-} from "firebase/auth";
-import {
-	collection,
-	doc,
-	getDoc,
-	serverTimestamp,
-	setDoc,
-	Timestamp,
-	updateDoc
-} from "firebase/firestore";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 import {
 	IonAvatar,
 	IonButton,
 	IonButtons,
 	IonContent,
-	IonFooter,
 	IonHeader,
-	IonImg,
-	IonInput,
-	IonItem,
-	IonLabel,
 	IonMenu,
 	IonMenuToggle,
 	IonPage,
@@ -32,92 +14,14 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
-import categoriesData from "../categories.json";
 import Container from "../components/Container";
-import { Category, parseJSON } from "../utilities/Categories";
 import { exportUserDataJSON } from "../utilities/DataExport";
 import { auth, firestore } from "../utilities/FirebaseConfig";
+import LoginPage from "./LoginPage";
 
 const LandingPage: React.FC = () => {
 	const [user, setUser] = useState<any>(null);
-	const [email, setEmail] = useState<string>("");
-	const [password, setPassword] = useState<string>("");
-	const [firstName, setFirstName] = useState<string>("");
-	const [lastName, setLastName] = useState<string>("");
-	const [isRegistering, setIsRegistering] = useState<boolean>(false);
-	const [errorMessage, setErrorMessage] = useState<string>("");
 	const [userData, setUserData] = useState<any>(null);
-	const [categories, setCategories] = useState<Category[]>([]);
-
-	// Handle user registration
-	const handleRegister = async () => {
-		try {
-			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-			const user = userCredential.user;
-
-			// Create a document in Firestore for the new user
-			const userRef = doc(collection(firestore, "users"), user.uid);
-			await setDoc(userRef, {
-				email: email,
-				displayName: `${firstName} ${lastName}`,
-				createdAt: Timestamp.now(),
-				lastSignIn: null
-			});
-
-			// Create a "Settings" collection and "Categories" document for the user
-			const settingsRef = doc(
-				collection(firestore, `users/${user.uid}/settings`),
-				"categories"
-			);
-			await setDoc(settingsRef, {
-				categories: categoriesData,
-				lastUpdated: Timestamp.now()
-			}); // Fill with data from categories.json
-
-			console.log("User  registered successfully and documents created");
-
-			// Clear input fields
-			setEmail("");
-			setPassword("");
-			setFirstName("");
-			setLastName("");
-		} catch (error) {
-			console.error("Registration Error:", error);
-			setErrorMessage(error.message);
-		}
-	};
-
-	// Handle user sign in
-	const handleSignIn = async () => {
-		try {
-			const userCredential = await signInWithEmailAndPassword(auth, email, password);
-			const user = userCredential.user;
-
-			// Fetch user data from Firestore
-			const userRef = doc(firestore, "users", user.uid);
-			const userDoc = await getDoc(userRef);
-			if (userDoc.exists()) {
-				const userData = userDoc.data();
-				setUserData(userData);
-
-				await updateDoc(userRef, {
-					lastSignIn: serverTimestamp() // Update last sign-in time
-				});
-			} else {
-				console.log("No such document!");
-			}
-
-			console.log("User  signed in successfully");
-			setUser(user);
-			setErrorMessage("");
-
-			setEmail("");
-			setPassword("");
-		} catch (error) {
-			console.error("Sign in Error:", error);
-			setErrorMessage(error.message);
-		}
-	};
 
 	// Handle user logout
 	const handleLogout = async () => {
@@ -126,70 +30,48 @@ const LandingPage: React.FC = () => {
 				console.log("User  signed out");
 				setUser(null);
 				setUserData(null);
-				setFirstName("");
-				setLastName("");
 			})
 			.catch((error) => {
 				console.error("Logout Error:", error);
 			});
 	};
 
+	// Handle user data export
+	const handleExportJSON = () => {
+		if (user) {
+			const categories = [];
+			exportUserDataJSON(user.uid, categories);
+		} else {
+			console.warn("No user logged in, cannot export.");
+		}
+	};
+
 	// Check if user is signed in
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			if (user) {
-				console.log("User signed in using Auth Change Listener");
+				console.log("User  signed in using Auth Change Listener");
 				setUser(user);
-
-				// Fetch user data and categories from Firestore
-				const fetchUserDataAndCategories = async (uid: string) => {
-					try {
-						// Fetch user data
-						const userRef = doc(firestore, "users", uid);
-						const userDoc = await getDoc(userRef);
-						if (userDoc.exists()) {
-							const userData = userDoc.data();
-							setUserData(userData);
-						} else {
-							console.log("No such document!");
-						}
-
-						// Fetch categories
-						const settingsRef = collection(firestore, `users/${uid}/settings`);
-						const categoriesRef = doc(settingsRef, "categories");
-						const categoriesSnapshot = await getDoc(categoriesRef);
-
-						if (categoriesSnapshot.exists()) {
-							const categoriesData = categoriesSnapshot.data().categories;
-							setCategories(parseJSON(categoriesData)); // ✅ Parse and set categories
-						}
-					} catch (error) {
-						console.error("Error fetching data:", error);
+				// Fetch user data from Firestore
+				const fetchUserData = async (uid: string) => {
+					const userRef = doc(firestore, "users", uid);
+					const userDoc = await getDoc(userRef);
+					if (userDoc.exists()) {
+						const userData = userDoc.data();
+						setUserData(userData);
+					} else {
+						console.log("No such document!");
 					}
 				};
-
-				fetchUserDataAndCategories(user.uid);
+				fetchUserData(user.uid);
 			} else {
 				console.log("No user signed in");
 				setUser(null);
 				setUserData(null);
-				setCategories([]); // Clear categories when user logs out
-				setFirstName("");
-				setLastName("");
 			}
 		});
-
 		return () => unsubscribe();
 	}, []);
-
-	// Export user data as JSON
-	const handleExportJSON = () => {
-		if (user && categories.length > 0) {
-			exportUserDataJSON(user.uid, categories);
-		} else {
-			console.warn("No user logged in or categories not loaded, cannot export.");
-		}
-	};
 
 	return (
 		<React.Fragment>
@@ -208,22 +90,18 @@ const LandingPage: React.FC = () => {
 										? user.photoURL
 										: "https://ionicframework.com/docs/img/demos/avatar.svg"
 								}
-								alt="User Avatar"
+								alt="User  Avatar"
 							/>
 						</IonAvatar>
 						<IonText className="center-text">
 							<h2>Welcome, {userData?.displayName}!</h2>
 						</IonText>
-						<IonButton onClick={handleLogout}>Logout</IonButton>{" "}
-						{/*TODO figure out how to store image, maybe an default user avatar */}
+						<IonButton onClick={handleLogout}>Logout</IonButton>
+						<IonButton expand="full" color="secondary" onClick={handleExportJSON}>
+							Export JSON
+						</IonButton>
 					</IonContent>
 				)}
-				{/* Footer Export Button */}
-				<IonFooter className="ion-padding">
-					<IonButton expand="full" color="secondary" onClick={handleExportJSON}>
-						Export JSON
-					</IonButton>
-				</IonFooter>
 			</IonMenu>
 
 			<IonPage id="main-content">
@@ -242,7 +120,7 @@ const LandingPage: React.FC = () => {
 													? user.photoURL
 													: "https://ionicframework.com/docs/img/demos/avatar.svg"
 											}
-											alt="User Avatar"
+											alt="User  Avatar"
 										/>
 									</IonAvatar>
 								</IonMenuToggle>
@@ -253,63 +131,10 @@ const LandingPage: React.FC = () => {
 				</IonHeader>
 				<IonContent>
 					{!user ? (
-						<div className="login-container">
-							<h2>{isRegistering ? "Register" : "Sign In"}</h2>
-							{errorMessage && <p className="error-message">{errorMessage}</p>}
-							{isRegistering && (
-								<>
-									<IonItem>
-										<IonLabel position="floating">First Name</IonLabel>
-										<IonInput
-											value={firstName}
-											onIonChange={(e) => setFirstName(e.detail.value!)}
-											required
-										/>
-									</IonItem>
-									<IonItem>
-										<IonLabel position="floating">Last Name</IonLabel>
-										<IonInput
-											value={lastName}
-											onIonChange={(e) => setLastName(e.detail.value!)}
-											required
-										/>
-									</IonItem>
-								</>
-							)}
-							<IonItem>
-								<IonLabel position="floating">Email</IonLabel>
-								<IonInput
-									type="email"
-									value={email}
-									onIonChange={(e) => setEmail(e.detail.value!)}
-									required
-								/>
-							</IonItem>
-							<IonItem>
-								<IonLabel position="floating">Password</IonLabel>
-								<IonInput
-									type="password"
-									value={password}
-									onIonChange={(e) => setPassword(e.detail.value!)}
-									required
-								/>
-							</IonItem>
-							<IonButton
-								expand="full"
-								onClick={isRegistering ? handleRegister : handleSignIn}
-							>
-								{isRegistering ? "Register" : "Sign In"}
-							</IonButton>
-							<IonButton
-								expand="full"
-								fill="clear"
-								onClick={() => setIsRegistering(!isRegistering)}
-							>
-								{isRegistering
-									? "Already have an account? Sign In"
-									: "Don't have an account? Register"}
-							</IonButton>
-						</div>
+						<LoginPage
+							setUser={setUser}
+							setErrorMessage={(msg) => console.error(msg)}
+						/>
 					) : (
 						<Container userID={user.uid} />
 					)}
