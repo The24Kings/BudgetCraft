@@ -407,19 +407,20 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 
 												{/* Only show delete button for non-static (custom) subcategories */}
 												{!subCategory.isStatic && !hideDelete && (
-													<IonButton
-														fill="clear"
-														color="danger"
-														className="subCat-delete-button"
-														onClick={() =>
-															confirmDeleteSubcategory(
-																category,
-																subCategory.name
-															)
-														}
-													>
-														<IonIcon icon={closeOutline} />
-													</IonButton>
+                                                    <IonButton
+                                                        slot="end"
+                                                        fill="clear"
+                                                        color="danger"
+                                                        className="subCat-delete-button"
+                                                        onClick={() =>
+                                                            confirmDeleteSubcategory(
+                                                                category,
+                                                                subCategory.name
+                                                            )
+                                                        }
+                                                    >
+                                                        <IonIcon icon={closeOutline} />
+                                                    </IonButton>
 												)}
 											</IonItem>
 										</div>
