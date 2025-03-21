@@ -3,7 +3,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    height: calc(100vh - 120px); /* Subtract header heights */
+    height: calc(100vh - 125px);
+    /* Subtract header heights */
     width: 100%;
     padding: 10px;
     overflow-y: auto;
@@ -25,27 +26,6 @@
     text-decoration: none;
 }
 
-ion-modal#custom-category-modal {
-	--height: 50%;
-	--border-radius: 16px;
-	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-ion-modal#custom-category-modal::part(backdrop) {
-	background: rgba(209, 213, 219);
-	opacity: 1;
-}
-
-ion-modal#custom-category-modal ion-toolbar {
-	--background: rgb(14 116 144);
-	--color: white;
-}
-
-.add-tansaction {
-    padding-bottom: 100px;
-    padding-right: 40px;
-}
-
 ion-textarea.custom {
     --background: #373737;
     --color: #fff;
@@ -65,4 +45,8 @@ ion-textarea.custom {
 
 .user-avatar img {
     padding: 15%;
+}
+
+ion-item {
+    white-space: nowrap;
 }

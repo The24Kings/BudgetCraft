@@ -6,6 +6,7 @@ import {
 	IonButton,
 	IonButtons,
 	IonContent,
+	IonFooter,
 	IonHeader,
 	IonMenu,
 	IonMenuToggle,
@@ -97,11 +98,13 @@ const LandingPage: React.FC = () => {
 							<h2>Welcome, {userData?.displayName}!</h2>
 						</IonText>
 						<IonButton onClick={handleLogout}>Logout</IonButton>
-						<IonButton expand="full" color="secondary" onClick={handleExportJSON}>
-							Export JSON
-						</IonButton>
 					</IonContent>
 				)}
+                <IonFooter>
+                    <IonButton expand="full" color="secondary" onClick={handleExportJSON}>
+                        Export JSON
+                    </IonButton>
+                </IonFooter>
 			</IonMenu>
 
 			<IonPage id="main-content">
