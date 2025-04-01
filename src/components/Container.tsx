@@ -15,16 +15,8 @@ import { firestore } from "../utilities/FirebaseConfig";
 import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
 import "./Container.css";
-import { filter } from "ionicons/icons";
-import {
-	IonButton,
-	IonIcon,
-	IonInput,
-	IonLabel,
-	IonModal,
-	IonSelect,
-	IonSelectOption
-} from "@ionic/react";
+import { IonButton, IonLabel } from "@ionic/react";
+import FilterButton from "../utilities/FilterButton";
 import AddTransactions from "../utilities/Transactions/Add";
 
 interface ContainerProps {
@@ -39,12 +31,13 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
 	const [totalLoaded, setTotalLoaded] = useState(intialLoad);
 	const [actualTotalLoaded, setActualTotalLoaded] = useState(intialLoad);
+
+	// Filter states for the FilterButton component
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const [filterType, setFilterType] = useState<string>("All");
 	const [minAmount, setMinAmount] = useState<number | null>(null);
 	const [maxAmount, setMaxAmount] = useState<number | null>(null);
 	const [filterDate, setFilterDate] = useState<string>("");
-	const [isFilterOpen, setIsFilterOpen] = useState(false);
 
 	// Load the transactions from Firebase
 	//TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
@@ -138,63 +131,19 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 
 	return (
 		<div className="container">
-			{/* Search Bar with Filter Button */}
-			<div className="search-bar">
-				<IonInput
-					className="search-input"
-					placeholder="Search transactions..."
-					value={searchTerm}
-					onIonInput={(e) => setSearchTerm(e.detail.value ?? "")}
-					clearInput
-				/>
-				<IonButton fill="clear" onClick={() => setIsFilterOpen(true)}>
-					<IonIcon icon={filter} />
-				</IonButton>
-			</div>
-
-			{/* Filter Modal */}
-			<IonModal isOpen={isFilterOpen} onDidDismiss={() => setIsFilterOpen(false)}>
-				<div className="filter-modal">
-					<h2>Filters</h2>
-
-					<IonSelect
-						value={filterType}
-						placeholder="Type"
-						onIonChange={(e) => setFilterType(e.detail.value)}
-					>
-						<IonSelectOption value="All">All</IonSelectOption>
-						<IonSelectOption value="Income">Income</IonSelectOption>
-						<IonSelectOption value="Expense">Expense</IonSelectOption>
-					</IonSelect>
-
-					<IonInput
-						type="number"
-						placeholder="Min Amount"
-						value={minAmount ?? ""}
-						onIonChange={(e) =>
-							setMinAmount(e.detail.value ? parseFloat(e.detail.value) : null)
-						}
-					/>
-
-					<IonInput
-						type="number"
-						placeholder="Max Amount"
-						value={maxAmount ?? ""}
-						onIonChange={(e) =>
-							setMaxAmount(e.detail.value ? parseFloat(e.detail.value) : null)
-						}
-					/>
-
-					<IonInput
-						type="date"
-						placeholder="Filter by Date"
-						value={filterDate}
-						onIonChange={(e) => setFilterDate(e.detail.value!)}
-					/>
-
-					<IonButton onClick={() => setIsFilterOpen(false)}>Close</IonButton>
-				</div>
-			</IonModal>
+			{/* Search Bar + Filter */}
+			<FilterButton
+				searchTerm={searchTerm}
+				setSearchTerm={setSearchTerm}
+				filterType={filterType}
+				setFilterType={setFilterType}
+				minAmount={minAmount}
+				setMinAmount={setMinAmount}
+				maxAmount={maxAmount}
+				setMaxAmount={setMaxAmount}
+				filterDate={filterDate}
+				setFilterDate={setFilterDate}
+			/>
 
 			{/* Display the transactions */}
 			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} />

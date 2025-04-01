@@ -88,3 +88,32 @@ ion-textarea.custom {
 	flex-direction: column;
 	gap: 12px;
 }
+
+.filter-modal-custom {
+	--width: 90%;
+	--max-width: 400px;
+	--height: auto;
+	--max-height: 80%;
+	--border-radius: 14px;
+	--background: #fff;
+}
+
+.filter-modal {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	color: #000;
+}
+
+.filter-modal ion-input,
+.filter-modal ion-select {
+	--color: #000;
+	--placeholder-color: #888;
+}
+
+.filter-modal input[type="date"]::-webkit-calendar-picker-indicator {
+	filter: brightness(0); /* Makes icon black */
+	opacity: 1;
+	display: block;
+}
