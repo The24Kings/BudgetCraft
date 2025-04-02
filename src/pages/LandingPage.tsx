@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import { M } from "vite/dist/node/types.d-aGj9QkWt";
 import {
 	IonAvatar,
 	IonButton,
 	IonButtons,
 	IonContent,
 	IonHeader,
+	IonImg,
 	IonMenu,
 	IonMenuToggle,
 	IonPage,
@@ -17,11 +19,14 @@ import {
 import Container from "../components/Container";
 import { exportUserDataJSON } from "../utilities/DataExport";
 import { auth, firestore } from "../utilities/FirebaseConfig";
+import MonthPicker from "../utilities/MonthPicker";
 import LoginPage from "./LoginPage";
 
 const LandingPage: React.FC = () => {
 	const [user, setUser] = useState<any>(null);
 	const [userData, setUserData] = useState<any>(null);
+	const [month, setMonth] = useState(new Date().getMonth());
+	const [year, setYear] = useState(new Date().getFullYear());
 
 	// Handle user logout
 	const handleLogout = async () => {
@@ -107,26 +112,31 @@ const LandingPage: React.FC = () => {
 			<IonPage id="main-content">
 				<IonHeader>
 					<IonToolbar>
-						<IonButtons slot="end">
-							{user ? (
-								<IonMenuToggle>
-									<IonAvatar
-										className="user-avatar"
-										style={{ cursor: "pointer" }}
-									>
-										<img
-											src={
-												user.photoURL
-													? user.photoURL
-													: "https://ionicframework.com/docs/img/demos/avatar.svg"
-											}
-											alt="User  Avatar"
-										/>
-									</IonAvatar>
-								</IonMenuToggle>
-							) : null}
-						</IonButtons>
-						<IonTitle>Landing Page</IonTitle>
+						<MonthPicker
+							month={month}
+							year={year}
+							setMonth={setMonth}
+							setYear={setYear}
+						/>
+                        <IonButtons slot="start"> {/* TODO: In the future this needs to be removed because on mobile it looks like shit */}
+                            {user ? (
+                                <IonMenuToggle>
+                                    <IonAvatar
+                                        className="user-avatar"
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        <img
+                                            src={
+                                                user.photoURL
+                                                    ? user.photoURL
+                                                    : "https://ionicframework.com/docs/img/demos/avatar.svg"
+                                            }
+                                            alt="User  Avatar"
+                                        />
+                                    </IonAvatar>
+                                </IonMenuToggle>
+                            ) : null}
+                        </IonButtons>
 					</IonToolbar>
 				</IonHeader>
 				<IonContent>
