@@ -67,20 +67,20 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 		setMaxAmount(null);
 		setFilterDate("");
 		setDate(Timestamp.now());
-		setStartDate(""); // reset start date
-		setEndDate(""); // reset end date
+		setStartDate("");
+		setEndDate("");
 	};
 
 	return (
 		<div className="search-bar">
-			{/* Search input for transaction title - now using IonSearchbar */}
+			{/* Search input for transaction title */}
 			<IonSearchbar
 				className="search-input"
 				placeholder="Search transactions..."
 				value={inputRef.current}
 				onIonInput={(e) => {
 					inputRef.current = e.detail.value ?? "";
-					setSearchTerm(inputRef.current); // optional, or debounce this instead
+					setSearchTerm(inputRef.current);
 				}}
 				style={{ color: "#000" }}
 			/>
@@ -130,7 +130,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						}
 					/>
 
-					{/* Date picker for filtering by date - now using IonDatetimeButton */}
+					{/* Date picker for filtering by date */}
 					<h4>Date Range</h4>
 
 					<IonDatetimeButton datetime="start-date" />
