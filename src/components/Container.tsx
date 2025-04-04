@@ -16,6 +16,7 @@ import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
 import "./Container.css";
 import { IonButton, IonLabel } from "@ionic/react";
+import FilterButton from "../utilities/FilterButton";
 import AddTransactions from "../utilities/Transactions/Add";
 
 interface ContainerProps {
@@ -30,6 +31,15 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
 	const [totalLoaded, setTotalLoaded] = useState(intialLoad);
 	const [actualTotalLoaded, setActualTotalLoaded] = useState(intialLoad);
+
+	// Filter states for the FilterButton component
+	const [searchTerm, setSearchTerm] = useState<string>("");
+	const [filterType, setFilterType] = useState<string>("All");
+	const [minAmount, setMinAmount] = useState<number | null>(null);
+	const [maxAmount, setMaxAmount] = useState<number | null>(null);
+	const [filterDate, setFilterDate] = useState<string>("");
+	const [startDate, setStartDate] = useState<string>("");
+	const [endDate, setEndDate] = useState<string>("");
 
 	// Load the transactions from Firebase
 	//TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
@@ -108,10 +118,41 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 		return () => clearInterval(interval);
 	}, []);
 
+	// Filter transactions before rendering
+	const filteredTransactions = transactionData.filter((tx) => {
+		const matchesSearch = tx.title.toLowerCase().includes(searchTerm.toLowerCase());
+		const matchesType = filterType === "All" || tx.type === filterType;
+		const matchesMin = minAmount === null || tx.amount >= minAmount;
+		const matchesMax = maxAmount === null || tx.amount <= maxAmount;
+		const txDateStr = new Date(tx.date.seconds * 1000).toISOString().split("T")[0];
+		const matchesDate =
+			(!startDate || txDateStr >= startDate) && (!endDate || txDateStr <= endDate);
+
+		return matchesSearch && matchesType && matchesMin && matchesMax && matchesDate;
+	});
+
 	return (
 		<div className="container">
+			{/* Search Bar + Filter */}
+			<FilterButton
+				searchTerm={searchTerm}
+				setSearchTerm={setSearchTerm}
+				filterType={filterType}
+				setFilterType={setFilterType}
+				minAmount={minAmount}
+				setMinAmount={setMinAmount}
+				maxAmount={maxAmount}
+				setMaxAmount={setMaxAmount}
+				startDate={startDate}
+				setStartDate={setStartDate}
+				endDate={endDate}
+				setEndDate={setEndDate}
+				filterDate={filterDate}
+				setFilterDate={setFilterDate}
+			/>
+
 			{/* Display the transactions */}
-            <DisplayTransactions categories={categoryData} transactions={transactionData} />
+			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} />
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
