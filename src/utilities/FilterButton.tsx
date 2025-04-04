@@ -78,6 +78,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 				className="search-input"
 				placeholder="Search"
 				value={inputRef.current}
+                showClearButton="never"
 				onIonInput={(e) => {
 					inputRef.current = e.detail.value ?? "";
 					setSearchTerm(inputRef.current);
@@ -136,7 +137,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
                         <IonDatetimeButton datetime="start-date" />
                         <IonDatetimeButton datetime="end-date" />
                     </div>
-                    
 					<IonModal keepContentsMounted={true}>
 						<IonDatetime
 							id="start-date"

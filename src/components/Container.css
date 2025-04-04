@@ -68,8 +68,13 @@ ion-textarea.custom {
 }
 
 .search-input {
-	flex: 1;
-	padding-right: 10px;
+    width: 100%;
+    flex-direction: row-reverse;
+}
+
+.search-input ion-button {
+   position: absolute;
+   z-index: 2;
 }
 
 .filter-modal {
