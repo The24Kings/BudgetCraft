@@ -137,7 +137,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
                         <IonDatetimeButton datetime="start-date" />
                         <IonDatetimeButton datetime="end-date" />
                     </div>
-
 					<IonModal keepContentsMounted={true}>
 						<IonDatetime
 							id="start-date"
