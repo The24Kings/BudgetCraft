@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { M } from "vite/dist/node/types.d-aGj9QkWt";
 import {
 	IonAvatar,
 	IonButton,
 	IonButtons,
 	IonContent,
+	IonFooter,
 	IonHeader,
-	IonImg,
 	IonMenu,
 	IonMenuToggle,
 	IonPage,
@@ -27,12 +26,13 @@ const LandingPage: React.FC = () => {
 	const [userData, setUserData] = useState<any>(null);
 	const [month, setMonth] = useState(new Date().getMonth());
 	const [year, setYear] = useState(new Date().getFullYear());
+	const [swipeGestureEnabled, setSwipeGestureEnabled] = useState<boolean>(false);
 
 	// Handle user logout
 	const handleLogout = async () => {
 		await signOut(auth)
 			.finally(() => {
-				console.log("User  signed out");
+				console.log("User signed out");
 				setUser(null);
 				setUserData(null);
 			})
@@ -55,7 +55,7 @@ const LandingPage: React.FC = () => {
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			if (user) {
-				console.log("User  signed in using Auth Change Listener");
+				console.log("User signed in using Auth Change Listener");
 				setUser(user);
 				// Fetch user data from Firestore
 				const fetchUserData = async (uid: string) => {
@@ -78,9 +78,23 @@ const LandingPage: React.FC = () => {
 		return () => unsubscribe();
 	}, []);
 
+	// Use ionDidOpen and ionDidClose events to control swipe gesture
+	const handleMenuDidOpen = () => {
+		setSwipeGestureEnabled(true);
+	};
+
+	const handleMenuDidClose = () => {
+		setSwipeGestureEnabled(false);
+	};
+
 	return (
 		<React.Fragment>
-			<IonMenu contentId="main-content">
+			<IonMenu
+				contentId="main-content"
+				swipeGesture={swipeGestureEnabled}
+				onIonDidOpen={handleMenuDidOpen}
+				onIonDidClose={handleMenuDidClose}
+			>
 				<IonHeader>
 					<IonToolbar>
 						<IonTitle>User Settings</IonTitle>
@@ -95,7 +109,7 @@ const LandingPage: React.FC = () => {
 										? user.photoURL
 										: "https://ionicframework.com/docs/img/demos/avatar.svg"
 								}
-								alt="User  Avatar"
+								alt="User Avatar"
 							/>
 						</IonAvatar>
 						<IonText className="center-text">
@@ -118,25 +132,6 @@ const LandingPage: React.FC = () => {
 							setMonth={setMonth}
 							setYear={setYear}
 						/>
-                        <IonButtons slot="start"> {/* TODO: In the future this needs to be removed because on mobile it looks like shit */}
-                            {user ? (
-                                <IonMenuToggle>
-                                    <IonAvatar
-                                        className="user-avatar"
-                                        style={{ cursor: "pointer" }}
-                                    >
-                                        <img
-                                            src={
-                                                user.photoURL
-                                                    ? user.photoURL
-                                                    : "https://ionicframework.com/docs/img/demos/avatar.svg"
-                                            }
-                                            alt="User  Avatar"
-                                        />
-                                    </IonAvatar>
-                                </IonMenuToggle>
-                            ) : null}
-                        </IonButtons>
 					</IonToolbar>
 				</IonHeader>
 				<IonContent>
@@ -150,6 +145,27 @@ const LandingPage: React.FC = () => {
 					)}
 				</IonContent>
 			</IonPage>
+
+			<IonFooter>
+				<IonToolbar>
+					<IonButtons slot="start">
+						{user ? (
+							<IonMenuToggle>
+								<IonAvatar className="user-avatar" style={{ cursor: "pointer" }}>
+									<img
+										src={
+											user.photoURL
+												? user.photoURL
+												: "https://ionicframework.com/docs/img/demos/avatar.svg"
+										}
+										alt="User Avatar"
+									/>
+								</IonAvatar>
+							</IonMenuToggle>
+						) : null}
+					</IonButtons>
+				</IonToolbar>
+			</IonFooter>
 		</React.Fragment>
 	);
 };
