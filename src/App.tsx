@@ -5,8 +5,10 @@ import { onAuthStateChanged } from "firebase/auth";
 import { ellipse, triangle } from "ionicons/icons";
 import {
 	IonApp,
+	IonAvatar,
 	IonIcon,
 	IonLabel,
+	IonMenuToggle,
 	IonRouterOutlet,
 	IonTabBar,
 	IonTabButton,
@@ -78,7 +80,7 @@ const App: React.FC = () => {
 						/>
 					</IonRouterOutlet>
 
-					{user && ( // only show the tab bar once signed in
+					{user && (
 						<IonTabBar slot="bottom">
 							<IonTabButton tab="home" href="/home">
 								<IonIcon aria-hidden="true" icon={triangle} />
@@ -87,6 +89,30 @@ const App: React.FC = () => {
 							<IonTabButton tab="debug" href="/debug">
 								<IonIcon aria-hidden="true" icon={ellipse} />
 								<IonLabel>Debug</IonLabel>
+							</IonTabButton>
+
+							<IonTabButton
+								style={{ position: "absolute", left: "0", marginLeft: "10px" }}
+							>
+								<IonMenuToggle>
+									<IonAvatar
+										className="user-avatar"
+										style={{
+											cursor: "pointer",
+											width: "60px",
+											height: "60px"
+										}}
+									>
+										<img
+											src={
+												user?.photoURL
+													? user.photoURL
+													: "https://ionicframework.com/docs/img/demos/avatar.svg"
+											}
+											alt="User Avatar"
+										/>
+									</IonAvatar>
+								</IonMenuToggle>
 							</IonTabButton>
 						</IonTabBar>
 					)}
