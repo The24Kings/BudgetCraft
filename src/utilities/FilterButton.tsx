@@ -1,6 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Timestamp } from "firebase/firestore";
 import { filter } from "ionicons/icons";
-import { IonButton, IonIcon, IonInput, IonModal, IonSelect, IonSelectOption } from "@ionic/react";
+import {
+	IonButton,
+	IonDatetime,
+	IonDatetimeButton,
+	IonIcon,
+	IonModal,
+	IonSearchbar,
+	IonSelect,
+	IonSelectOption
+} from "@ionic/react";
 
 // Props to control filter and search state from parent (Container)
 interface FilterButtonProps {
@@ -14,6 +24,10 @@ interface FilterButtonProps {
 	setMaxAmount: (value: number | null) => void;
 	filterDate: string;
 	setFilterDate: (value: string) => void;
+	startDate: string;
+	setStartDate: (value: string) => void;
+	endDate: string;
+	setEndDate: (value: string) => void;
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
@@ -26,10 +40,25 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 	maxAmount,
 	setMaxAmount,
 	filterDate,
-	setFilterDate
+	setFilterDate,
+	startDate,
+	setStartDate,
+	endDate,
+	setEndDate
 }) => {
-	// Controls whether the filter modal is open
+	const [date, setDate] = useState(Timestamp.now());
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
+	const [tempSearch, setTempSearch] = useState(searchTerm);
+	const inputRef = useRef<string>(searchTerm);
+
+	// Debounce effect: updates actual searchTerm after user stops typing
+	useEffect(() => {
+		const delay = setTimeout(() => {
+			setSearchTerm(inputRef.current);
+		}, 300);
+
+		return () => clearTimeout(delay);
+	}, [searchTerm]); // triggers only when external searchTerm changes
 
 	// Resets all filter fields to their default values
 	const clearFilters = () => {
@@ -37,17 +66,22 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 		setMinAmount(null);
 		setMaxAmount(null);
 		setFilterDate("");
+		setDate(Timestamp.now());
+		setStartDate(""); // reset start date
+		setEndDate(""); // reset end date
 	};
 
 	return (
 		<div className="search-bar">
-			{/* Search input for transaction title */}
-			<IonInput
+			{/* Search input for transaction title - now using IonSearchbar */}
+			<IonSearchbar
 				className="search-input"
 				placeholder="Search transactions..."
-				value={searchTerm}
-				onIonInput={(e) => setSearchTerm(e.detail.value ?? "")}
-				clearInput
+				value={inputRef.current}
+				onIonInput={(e) => {
+					inputRef.current = e.detail.value ?? "";
+					setSearchTerm(inputRef.current); // optional, or debounce this instead
+				}}
 				style={{ color: "#000" }}
 			/>
 
@@ -77,32 +111,51 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 					</IonSelect>
 
 					{/* Input for minimum amount */}
-					<IonInput
+					<input
 						type="number"
 						placeholder="Min Amount"
 						value={minAmount ?? ""}
-						onIonInput={(e) =>
-							setMinAmount(e.detail.value ? parseFloat(e.detail.value) : null)
+						onChange={(e) =>
+							setMinAmount(e.target.value ? parseFloat(e.target.value) : null)
 						}
 					/>
 
 					{/* Input for maximum amount */}
-					<IonInput
+					<input
 						type="number"
 						placeholder="Max Amount"
 						value={maxAmount ?? ""}
-						onIonInput={(e) =>
-							setMaxAmount(e.detail.value ? parseFloat(e.detail.value) : null)
+						onChange={(e) =>
+							setMaxAmount(e.target.value ? parseFloat(e.target.value) : null)
 						}
 					/>
 
-					{/* Date picker for filtering by date */}
-					<IonInput
-						type="date"
-						placeholder="Filter by Date"
-						value={filterDate}
-						onIonInput={(e) => setFilterDate(e.detail.value ?? "")}
-					/>
+					{/* Date picker for filtering by date - now using IonDatetimeButton */}
+					<h4>Date Range</h4>
+
+					<IonDatetimeButton datetime="start-date" />
+					<IonModal keepContentsMounted={true}>
+						<IonDatetime
+							id="start-date"
+							presentation="date"
+							onIonChange={(e) => {
+								const selected = new Date(e.detail.value as string);
+								setStartDate(selected.toISOString().split("T")[0]);
+							}}
+						/>
+					</IonModal>
+
+					<IonDatetimeButton datetime="end-date" />
+					<IonModal keepContentsMounted={true}>
+						<IonDatetime
+							id="end-date"
+							presentation="date"
+							onIonChange={(e) => {
+								const selected = new Date(e.detail.value as string);
+								setEndDate(selected.toISOString().split("T")[0]);
+							}}
+						/>
+					</IonModal>
 
 					{/* Clears all filters */}
 					<IonButton expand="full" onClick={clearFilters}>

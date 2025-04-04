@@ -117,3 +117,33 @@ ion-textarea.custom {
 	opacity: 1;
 	display: block;
 }
+
+ion-searchbar.search-input {
+	--background: #f4f4f4; /* same as .search-bar */
+	--color: #000000;
+	--box-shadow: none;
+	--border-color: transparent;
+	--border-radius: 8px;
+	--placeholder-color: #888;
+	--icon-color: #888;
+	--cancel-button-color: #888;
+}
+
+ion-searchbar::part(container) {
+	background: #f4f4f4 !important;
+	box-shadow: none !important;
+	border: none !important;
+}
+
+ion-datetime-button::part(native) {
+	color: #000;
+	fill: #000;
+}
+
+.filter-modal input[type="number"] {
+	background-color: #ffffff;
+	color: #000000;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	padding: 8px;
+}

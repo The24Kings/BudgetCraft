@@ -38,6 +38,8 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 	const [minAmount, setMinAmount] = useState<number | null>(null);
 	const [maxAmount, setMaxAmount] = useState<number | null>(null);
 	const [filterDate, setFilterDate] = useState<string>("");
+	const [startDate, setStartDate] = useState<string>("");
+	const [endDate, setEndDate] = useState<string>("");
 
 	// Load the transactions from Firebase
 	//TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
@@ -122,9 +124,9 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 		const matchesType = filterType === "All" || tx.type === filterType;
 		const matchesMin = minAmount === null || tx.amount >= minAmount;
 		const matchesMax = maxAmount === null || tx.amount <= maxAmount;
+		const txDateStr = new Date(tx.date.seconds * 1000).toISOString().split("T")[0];
 		const matchesDate =
-			!filterDate ||
-			new Date(tx.date.seconds * 1000).toISOString().split("T")[0] === filterDate;
+			(!startDate || txDateStr >= startDate) && (!endDate || txDateStr <= endDate);
 
 		return matchesSearch && matchesType && matchesMin && matchesMax && matchesDate;
 	});
@@ -141,6 +143,10 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 				setMinAmount={setMinAmount}
 				maxAmount={maxAmount}
 				setMaxAmount={setMaxAmount}
+				startDate={startDate}
+				setStartDate={setStartDate}
+				endDate={endDate}
+				setEndDate={setEndDate}
 				filterDate={filterDate}
 				setFilterDate={setFilterDate}
 			/>
