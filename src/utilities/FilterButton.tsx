@@ -76,19 +76,18 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 			{/* Search input for transaction title */}
 			<IonSearchbar
 				className="search-input"
-				placeholder="Search transactions..."
+				placeholder="Search"
 				value={inputRef.current}
 				onIonInput={(e) => {
 					inputRef.current = e.detail.value ?? "";
 					setSearchTerm(inputRef.current);
 				}}
-				style={{ color: "#000" }}
-			/>
-
-			{/* Filter icon button to open modal */}
-			<IonButton fill="clear" onClick={() => setIsFilterOpen(true)}>
-				<IonIcon icon={filter} />
-			</IonButton>
+            >
+                {/* Filter icon button to open modal */}
+                <IonButton fill="clear" onClick={() => setIsFilterOpen(true)}>
+                    <IonIcon icon={filter} />
+                </IonButton>
+            </IonSearchbar>
 
 			{/* Filter modal popup */}
 			<IonModal
@@ -131,9 +130,13 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 					/>
 
 					{/* Date picker for filtering by date */}
-					<h4>Date Range</h4>
+                    <h4>Date Range</h4>
 
-					<IonDatetimeButton datetime="start-date" />
+                    <div style={{ display: "flex", flexDirection: "row", gap: "10px", justifyContent: "center" }}>
+                        <IonDatetimeButton datetime="start-date" />
+                        <IonDatetimeButton datetime="end-date" />
+                    </div>
+                    
 					<IonModal keepContentsMounted={true}>
 						<IonDatetime
 							id="start-date"
@@ -145,7 +148,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						/>
 					</IonModal>
 
-					<IonDatetimeButton datetime="end-date" />
 					<IonModal keepContentsMounted={true}>
 						<IonDatetime
 							id="end-date"

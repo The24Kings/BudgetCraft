@@ -3,7 +3,7 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: flex-start;
-	height: calc(100vh - 120px); /* Subtract header heights */
+	height: calc(100vh - 125px); /* Subtract header heights */
 	width: 100%;
 	padding: 10px;
 	overflow-y: auto;
@@ -65,16 +65,6 @@ ion-textarea.custom {
 
 .user-avatar img {
 	padding: 15%;
-}
-
-.search-bar {
-	display: flex;
-	align-items: center;
-	width: 100%;
-	padding: 8px 12px;
-	background-color: #f4f4f4;
-	border-radius: 8px;
-	margin-bottom: 15px;
 }
 
 .search-input {
