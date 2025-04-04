@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonReactRouter } from "@ionic/react-router";
 import { onAuthStateChanged } from "firebase/auth";
-import { ellipse, triangle } from "ionicons/icons";
+import { bulb, construct, home, settings, wallet } from "ionicons/icons";
 import {
 	IonApp,
 	IonIcon,
@@ -13,9 +13,12 @@ import {
 	IonTabs,
 	setupIonicReact
 } from "@ionic/react";
-import DebugPage from "./pages/DebugPage";
-import LandingPage from "./pages/LandingPage";
+import BudgetPage from "./pages/BudgetPage";
+import GoalsPage from "./pages/GoalsPage";
+import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
+import SettingsPage from "./pages/SettingsPage";
+import ToolsPage from "./pages/ToolsPage";
 import { auth } from "./utilities/FirebaseConfig";
 import "@ionic/react/css/core.css";
 import "@ionic/react/css/normalize.css";
@@ -41,13 +44,10 @@ const App: React.FC = () => {
 			setUser(user);
 			setLoading(false);
 		});
-
 		return () => unsubscribe();
 	}, []);
 
-	if (loading) {
-		return <div>Loading...</div>;
-	}
+	if (loading) return <div>Loading...</div>;
 
 	return (
 		<IonApp>
@@ -58,13 +58,28 @@ const App: React.FC = () => {
 
 						<Route
 							path="/home"
-							render={() => (user ? <LandingPage /> : <Redirect to="/login" />)}
-							exact={true}
+							render={() => (user ? <HomePage /> : <Redirect to="/login" />)}
+							exact
 						/>
 						<Route
-							path="/debug"
-							render={() => (user ? <DebugPage /> : <Redirect to="/login" />)}
-							exact={true}
+							path="/budget"
+							render={() => (user ? <BudgetPage /> : <Redirect to="/login" />)}
+							exact
+						/>
+						<Route
+							path="/goals"
+							render={() => (user ? <GoalsPage /> : <Redirect to="/login" />)}
+							exact
+						/>
+						<Route
+							path="/tools"
+							render={() => (user ? <ToolsPage /> : <Redirect to="/login" />)}
+							exact
+						/>
+						<Route
+							path="/settings"
+							render={() => (user ? <SettingsPage /> : <Redirect to="/login" />)}
+							exact
 						/>
 						<Route
 							path="/login"
@@ -74,19 +89,31 @@ const App: React.FC = () => {
 									setErrorMessage={(msg) => console.error(msg)}
 								/>
 							)}
-							exact={true}
+							exact
 						/>
 					</IonRouterOutlet>
 
-					{user && ( // only show the tab bar once signed in
+					{user && (
 						<IonTabBar slot="bottom">
 							<IonTabButton tab="home" href="/home">
-								<IonIcon aria-hidden="true" icon={triangle} />
+								<IonIcon icon={home} />
 								<IonLabel>Home</IonLabel>
 							</IonTabButton>
-							<IonTabButton tab="debug" href="/debug">
-								<IonIcon aria-hidden="true" icon={ellipse} />
-								<IonLabel>Debug</IonLabel>
+							<IonTabButton tab="budget" href="/budget">
+								<IonIcon icon={wallet} />
+								<IonLabel>Budget</IonLabel>
+							</IonTabButton>
+							<IonTabButton tab="goals" href="/goals">
+								<IonIcon icon={bulb} />
+								<IonLabel>Goals</IonLabel>
+							</IonTabButton>
+							<IonTabButton tab="tools" href="/tools">
+								<IonIcon icon={construct} />
+								<IonLabel>Tools</IonLabel>
+							</IonTabButton>
+							<IonTabButton tab="settings" href="/settings">
+								<IonIcon icon={settings} />
+								<IonLabel>Settings</IonLabel>
 							</IonTabButton>
 						</IonTabBar>
 					)}
