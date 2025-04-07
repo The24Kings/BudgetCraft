@@ -6,12 +6,10 @@ import { firestore } from "../utilities/FirebaseConfig";
 import { Category, parseJSON } from "../utilities/Categories";
 import DisplayGoals from "../utilities/Goals/Display";
 import Goal from "../utilities/Goals/Goal";
-import Transaction from "../utilities/Transactions/Transaction";
 
 const GoalsPage: React.FC<{user: any}> = ({ user }) => {
     const [jsonData, setJSONData] = React.useState<any>(null);
     const [categoryData, setCategoryData] = React.useState<any[]>([]);
-    const [transactionData, setTransactionData] = React.useState<any[]>([]);
     const [goalData, setGoalData] = React.useState<any[]>([]);
     const [totalLoaded, setTotalLoaded] = React.useState(10);
     const [actualTotalLoaded, setActualTotalLoaded] = React.useState(10);
@@ -55,8 +53,8 @@ const GoalsPage: React.FC<{user: any}> = ({ user }) => {
             try {
                 querySnapshot = await getDocs(
                     query(
-                        collection(firestore, `users/${user.uid}/transactions`),
-                        orderBy("date", "desc"),
+                        collection(firestore, `users/${user.uid}/budget`),
+                        orderBy("createdAt", "desc"),
                         limit(totalLoaded)
                     )
                 );
@@ -66,47 +64,26 @@ const GoalsPage: React.FC<{user: any}> = ({ user }) => {
                 setActualTotalLoaded(querySnapshot.docs.length);
 
                 // Parse the documents into Transaction objects
-                const transactionData = await Promise.all(
-                    querySnapshot.docs.map(async (docSnapshot) => {
-                        const data = docSnapshot.data();
+                const goals = querySnapshot.docs.map((doc) => {
+                    const data = doc.data();
 
-                        const transactions = await Promise.all(
-                            data.transactions.map(async (transactionID: string) => {
-                                const transactionDoc = await getDoc(
-                                    doc(firestore, `users/${user.uid}/transactions`, transactionID)
-                                );
-                                const transactionData = transactionDoc.data();
-                                return new Transaction(
-                                    transactionDoc.id,
-                                    transactionData.type,
-                                    transactionData.category,
-                                    transactionData.subCategoryID,
-                                    transactionData.title,
-                                    transactionData.date,
-                                    transactionData.description,
-                                    transactionData.amount
-                                );
-                            })
-                        );
-        
-                        return new Goal(
-                            docSnapshot.id,
-                            data.type,
-                            data.category,
-                            data.subCategoryID,
-                            data.goal,
-                            data.recurring,
-                            data.reminder,
-                            data.createdAt,
-                            data.targetDate,
-                            data.reminderDate,
-                            data.description,
-                            transactions
-                        );
-                    })
-                );
+                    return new Goal(
+                        doc.id,
+                        data.type,
+                        data.category,
+                        data.subCategoryID,
+                        data.goal,
+                        data.recurring,
+                        data.reminder,
+                        data.createdAt,
+                        data.targetDate,
+                        data.reminderDate,
+                        data.description,
+                        data.transactions // Later when displaying the transactions, we will need to fetch them from the database: https://stackoverflow.com/questions/47876754/query-firestore-database-for-document-id
+                    );
+                });
 
-                setTransactionData(transactionData);
+                setGoalData(goals);
             }
         };
 

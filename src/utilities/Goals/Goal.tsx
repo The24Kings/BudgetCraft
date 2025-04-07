@@ -14,7 +14,7 @@ class Goal {
         public targetDate: Timestamp = Timestamp.now(),
         public reminderDate: Timestamp = Timestamp.now(),
         public description: string = "",
-        public transactions: Transaction[] = [],
+        public transactions: String[] = [],
     ) {}
 }
 
