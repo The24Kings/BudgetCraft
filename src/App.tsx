@@ -62,43 +62,57 @@ const App: React.FC = () => {
 			<IonReactRouter>
 				<IonTabs>
 					<IonRouterOutlet>
-						<Redirect exact path="/" to={user ? "/home" : "/login"} />
-
 						<Route
 							path="/home"
-							render={() =>
-								user ? <HomePage user={user} /> : <Redirect to="/login" />
-							}
+							render={() => {
+								console.log("HomePage loaded");
+								return user ? <HomePage user={user} /> : <Redirect to="/login" />;
+							}}
 							exact
 						/>
 						<Route
 							path="/budget"
-							render={() => (user ? <BudgetPage /> : <Redirect to="/login" />)}
+							render={() => {
+								console.log("BudgetPage loaded");
+								return user ? <BudgetPage /> : <Redirect to="/login" />;
+							}}
 							exact
 						/>
 						<Route
 							path="/goals"
-							render={() => (user ? <GoalsPage /> : <Redirect to="/login" />)}
+							render={() => {
+								console.log("GoalsPage loaded");
+								return user ? <GoalsPage /> : <Redirect to="/login" />;
+							}}
 							exact
 						/>
 						<Route
 							path="/tools"
-							render={() => (user ? <ToolsPage /> : <Redirect to="/login" />)}
+							render={() => {
+								console.log("ToolsPage loaded");
+								return user ? <ToolsPage /> : <Redirect to="/login" />;
+							}}
 							exact
 						/>
 						<Route
 							path="/settings"
-							render={() => (user ? <SettingsPage /> : <Redirect to="/login" />)}
+							render={() => {
+								console.log("SettingsPage loaded");
+								return user ? <SettingsPage /> : <Redirect to="/login" />;
+							}}
 							exact
 						/>
 						<Route
 							path="/login"
-							render={() => (
-								<LoginPage
-									setUser={setUser}
-									setErrorMessage={(msg) => console.error(msg)}
-								/>
-							)}
+							render={() => {
+								console.log("LoginPage loaded");
+								return (
+									<LoginPage
+										setUser={setUser}
+										setErrorMessage={(msg) => console.error(msg)}
+									/>
+								);
+							}}
 							exact
 						/>
 					</IonRouterOutlet>
