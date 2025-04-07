@@ -78,6 +78,7 @@ const LoginPage: React.FC<{
 
 			console.log("User registered successfully and documents created");
 
+			// Clear input fields
 			setEmail("");
 			setPassword("");
 			setConfirmPassword("");

@@ -1,7 +1,7 @@
 import React from "react";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
 import DebugContainer from "../components/DebugContainer";
-import "./DebugPage.css";
+import "./BudgetPage.css";
 
 const DebugPage: React.FC = () => {
 	return (
