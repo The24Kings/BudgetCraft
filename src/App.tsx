@@ -5,6 +5,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { bulb, construct, home, settings, wallet } from "ionicons/icons";
 import {
 	IonApp,
+	IonAvatar,
 	IonContent,
 	IonHeader,
 	IonIcon,

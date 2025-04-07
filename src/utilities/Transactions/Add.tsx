@@ -145,7 +145,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 			</IonFab>
 
 			{/* Add Transaction Popup */}
-			<IonModal id="custom-category-modal" ref={modalStartRef}>
+            <IonModal id="add-transact-modal" ref={modalStartRef}>
 				<IonHeader>
 					<IonToolbar>
 						<IonTitle className="ion-text-center">New Transaction</IonTitle>
@@ -153,7 +153,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 				</IonHeader>
 
 				<IonContent className="ion-padding">
-					<IonItem className="ion-margin-bottom ion-padding-start ion-padding-end">
+					<IonItem className="ion-margin-bottom">
 						<IonSelect
 							placeholder="Select Type"
 							value={type}
@@ -196,7 +196,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 				</IonContent>
 			</IonModal>
 
-			<IonModal id="custom-category-modal" ref={modalSubmitRef}>
+            <IonModal id="add-transact-modal" ref={modalSubmitRef}>
 				<IonHeader>
 					<IonToolbar>
 						<IonButton
@@ -233,10 +233,12 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 								maxlength={20} // Prevents additional characters in UI
 							/>
 						</IonItem>
-						<IonDatetimeButton
-							className="ion-margin ion-justify-content-start"
-							datetime="datetime"
-						></IonDatetimeButton>
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                            <IonDatetimeButton
+                                className="ion-margin ion-justify-content-start"
+                                datetime="datetime"
+                            />
+                        </div>
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="datetime"
@@ -264,7 +266,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 						<IonTextarea
 							placeholder="Description (Optional)"
 							value={description}
-							rows={6}
+							rows={10}
 							onIonInput={(e) => setDescription(e.detail.value!)} //TODO: Add validation for description
 							maxlength={256} // Prevents additional characters in UI
 						/>

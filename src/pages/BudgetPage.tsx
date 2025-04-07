@@ -7,9 +7,7 @@ const DebugPage: React.FC = () => {
 	return (
 		<IonPage>
 			<IonHeader>
-				<IonToolbar>
-					<IonTitle>Debug Page</IonTitle>
-				</IonToolbar>
+				<IonToolbar></IonToolbar>
 			</IonHeader>
 			<IonContent>
 				<IonHeader collapse="condense">

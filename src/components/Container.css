@@ -25,20 +25,26 @@
 	text-decoration: none;
 }
 
-ion-modal#custom-category-modal {
-	--height: 50%;
+ion-modal#add-transact-modal {
+    padding: 20px;
+    --max-height: 80%;
 	--border-radius: 16px;
 	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-ion-modal#custom-category-modal::part(backdrop) {
+ion-modal#add-transact-modal::part(backdrop) {
 	background: rgba(209, 213, 219);
 	opacity: 1;
 }
 
-ion-modal#custom-category-modal ion-toolbar {
+ion-modal#add-transact-modal ion-toolbar {
 	--background: rgb(14 116 144);
 	--color: white;
+}
+
+ion-modal#add-transact-modal .categories {
+    height: 80%;
+    overflow-y: auto;
 }
 
 .add-tansaction {
