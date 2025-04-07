@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import { M } from "vite/dist/node/types.d-aGj9QkWt";
 import {
 	IonAvatar,
 	IonButton,
 	IonButtons,
 	IonContent,
 	IonHeader,
-	IonImg,
 	IonMenu,
 	IonMenuToggle,
 	IonPage,
@@ -20,63 +18,40 @@ import Container from "../components/Container";
 import { exportUserDataJSON } from "../utilities/DataExport";
 import { auth, firestore } from "../utilities/FirebaseConfig";
 import MonthPicker from "../utilities/MonthPicker";
-import LoginPage from "./LoginPage";
 
-const LandingPage: React.FC = () => {
-	const [user, setUser] = useState<any>(null);
+const HomePage: React.FC<{ user: any }> = ({ user }) => {
 	const [userData, setUserData] = useState<any>(null);
 	const [month, setMonth] = useState(new Date().getMonth());
 	const [year, setYear] = useState(new Date().getFullYear());
 
-	// Handle user logout
-	const handleLogout = async () => {
-		await signOut(auth)
-			.finally(() => {
-				console.log("User  signed out");
-				setUser(null);
-				setUserData(null);
-			})
-			.catch((error) => {
-				console.error("Logout Error:", error);
-			});
-	};
+	// Fetch extra Firestore user data on mount
+	useEffect(() => {
+		const fetchUserData = async () => {
+			if (!user) return;
+			const userRef = doc(firestore, "users", user.uid);
+			const userDoc = await getDoc(userRef);
+			if (userDoc.exists()) {
+				setUserData(userDoc.data());
+			}
+		};
+		fetchUserData();
+	}, [user]);
 
-	// Handle user data export
-	const handleExportJSON = () => {
-		if (user) {
-			const categories = [];
-			exportUserDataJSON(user.uid, categories);
-		} else {
-			console.warn("No user logged in, cannot export.");
+	const handleLogout = async () => {
+		try {
+			await signOut(auth);
+			console.log("User signed out");
+		} catch (error) {
+			console.error("Logout Error:", error);
 		}
 	};
 
-	// Check if user is signed in
-	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			if (user) {
-				console.log("User  signed in using Auth Change Listener");
-				setUser(user);
-				// Fetch user data from Firestore
-				const fetchUserData = async (uid: string) => {
-					const userRef = doc(firestore, "users", uid);
-					const userDoc = await getDoc(userRef);
-					if (userDoc.exists()) {
-						const userData = userDoc.data();
-						setUserData(userData);
-					} else {
-						console.log("No such document!");
-					}
-				};
-				fetchUserData(user.uid);
-			} else {
-				console.log("No user signed in");
-				setUser(null);
-				setUserData(null);
-			}
-		});
-		return () => unsubscribe();
-	}, []);
+	const handleExportJSON = () => {
+		if (user) {
+			const categories: any[] = [];
+			exportUserDataJSON(user.uid, categories);
+		}
+	};
 
 	return (
 		<React.Fragment>
@@ -86,27 +61,24 @@ const LandingPage: React.FC = () => {
 						<IonTitle>User Settings</IonTitle>
 					</IonToolbar>
 				</IonHeader>
-				{user && (
-					<IonContent className="ion-padding">
-						<IonAvatar className="menu-avatar" style={{ justifySelf: "center" }}>
-							<img
-								src={
-									user.photoURL
-										? user.photoURL
-										: "https://ionicframework.com/docs/img/demos/avatar.svg"
-								}
-								alt="User  Avatar"
-							/>
-						</IonAvatar>
-						<IonText className="center-text">
-							<h2>Welcome, {userData?.displayName}!</h2>
-						</IonText>
-						<IonButton onClick={handleLogout}>Logout</IonButton>
-						<IonButton expand="full" color="secondary" onClick={handleExportJSON}>
-							Export JSON
-						</IonButton>
-					</IonContent>
-				)}
+				<IonContent className="ion-padding">
+					<IonAvatar className="menu-avatar" style={{ justifySelf: "center" }}>
+						<img
+							src={
+								user?.photoURL ??
+								"https://ionicframework.com/docs/img/demos/avatar.svg"
+							}
+							alt="User Avatar"
+						/>
+					</IonAvatar>
+					<IonText className="center-text">
+						<h2>Welcome, {userData?.displayName}!</h2>
+					</IonText>
+					<IonButton onClick={handleLogout}>Logout</IonButton>
+					<IonButton expand="full" color="secondary" onClick={handleExportJSON}>
+						Export JSON
+					</IonButton>
+				</IonContent>
 			</IonMenu>
 
 			<IonPage id="main-content">
@@ -118,35 +90,26 @@ const LandingPage: React.FC = () => {
 							setMonth={setMonth}
 							setYear={setYear}
 						/>
-                        <IonButtons slot="start"> {/* TODO: In the future this needs to be removed because on mobile it looks like shit */}
-                            {user ? (
-                                <IonMenuToggle>
-                                    <IonAvatar
-                                        className="user-avatar"
-                                        style={{ cursor: "pointer" }}
-                                    >
-                                        <img
-                                            src={
-                                                user.photoURL
-                                                    ? user.photoURL
-                                                    : "https://ionicframework.com/docs/img/demos/avatar.svg"
-                                            }
-                                            alt="User  Avatar"
-                                        />
-                                    </IonAvatar>
-                                </IonMenuToggle>
-                            ) : null}
-                        </IonButtons>
+						<IonButtons slot="start">
+							<IonMenuToggle>
+								<IonAvatar className="user-avatar" style={{ cursor: "pointer" }}>
+									<img
+										src={
+											user?.photoURL ??
+											"https://ionicframework.com/docs/img/demos/avatar.svg"
+										}
+										alt="User Avatar"
+									/>
+								</IonAvatar>
+							</IonMenuToggle>
+						</IonButtons>
 					</IonToolbar>
 				</IonHeader>
 				<IonContent>
-					{!user ? (
-						<LoginPage
-							setUser={setUser}
-							setErrorMessage={(msg) => console.error(msg)}
-						/>
-					) : (
+					{user ? (
 						<Container userID={user.uid} />
+					) : (
+						<IonText className="ion-padding">Loading user data...</IonText>
 					)}
 				</IonContent>
 			</IonPage>
@@ -154,4 +117,4 @@ const LandingPage: React.FC = () => {
 	);
 };
 
-export default LandingPage;
+export default HomePage;

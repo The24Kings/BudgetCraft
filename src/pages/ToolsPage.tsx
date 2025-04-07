@@ -3,7 +3,7 @@ import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/rea
 
 const ToolsPage: React.FC = () => {
 	return (
-		<IonPage>
+		<IonPage id="main-content">
 			<IonHeader>
 				<IonToolbar>
 					<IonTitle>Tools</IonTitle>

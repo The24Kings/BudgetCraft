@@ -5,12 +5,20 @@ import { onAuthStateChanged } from "firebase/auth";
 import { bulb, construct, home, settings, wallet } from "ionicons/icons";
 import {
 	IonApp,
+	IonContent,
+	IonHeader,
 	IonIcon,
+	IonItem,
 	IonLabel,
+	IonList,
+	IonMenu,
+	IonMenuToggle,
 	IonRouterOutlet,
 	IonTabBar,
 	IonTabButton,
 	IonTabs,
+	IonTitle,
+	IonToolbar,
 	setupIonicReact
 } from "@ionic/react";
 import BudgetPage from "./pages/BudgetPage";
@@ -58,7 +66,9 @@ const App: React.FC = () => {
 
 						<Route
 							path="/home"
-							render={() => (user ? <HomePage /> : <Redirect to="/login" />)}
+							render={() =>
+								user ? <HomePage user={user} /> : <Redirect to="/login" />
+							}
 							exact
 						/>
 						<Route

@@ -5,7 +5,7 @@ import "./BudgetPage.css";
 
 const DebugPage: React.FC = () => {
 	return (
-		<IonPage>
+		<IonPage id="main-content">
 			<IonHeader>
 				<IonToolbar>
 					<IonTitle>Debug Page</IonTitle>
