@@ -33,11 +33,11 @@ const MonthPicker: React.FC<MonthPickerProps> = ({ month, year, setMonth, setYea
 
 	return (
         <div
+            className="month-picker"
             style={{
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                width: "100%",
             }}
         >
             {[-2, -1, 0, 1, 2].map((offset) => {
@@ -51,8 +51,8 @@ const MonthPicker: React.FC<MonthPickerProps> = ({ month, year, setMonth, setYea
                         key={offset}
                         style={{
                             textAlign: "center",
-                            display: "block",
-                            minWidth: "70px",
+                            fontSize: "0.75em",
+                            fontWeight: "bold",
                             padding: offset === 0 ? "5px 12px" : "5px",
                             transform: offset === 0 ? "scale(1.25)" : "scale(1)",
                         }}

@@ -82,7 +82,7 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 													transaction.subCategoryID
 												)}
 											</IonNote>
-											<IonGrid fixed={true} className="ion-no-padding">
+											<IonGrid fixed={true} className="ion-no-padding ion-no-margin">
 												<IonRow className="ion-text-left ion-padding-top">
 													<IonCol>
 														<h2>{transaction.title}</h2>

@@ -7,6 +7,9 @@
 	width: 100%;
 	padding: 10px;
 	overflow-y: auto;
+    scrollbar-width: none;  /* Firefox */
+    overflow: -moz-scrollbars-none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
 }
 
 .container strong {
@@ -147,4 +150,8 @@ ion-datetime-button::part(native) {
 	border: 1px solid #ccc;
 	border-radius: 6px;
 	padding: 8px;
+}
+
+.transactions {
+    min-width: 100%;
 }
