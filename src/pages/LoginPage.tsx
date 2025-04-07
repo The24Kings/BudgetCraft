@@ -60,6 +60,9 @@ const LoginPage: React.FC<{
 			setFirstName("");
 			setLastName("");
 			setErrorMessageLocal("");
+
+			// Redirect to home page after successful sign in
+			history.push("/home");
 		} catch (error) {
 			console.error("Registration Error:", error);
 			setErrorMessageLocal(error.message);
@@ -93,6 +96,9 @@ const LoginPage: React.FC<{
 			// Clear input fields
 			setEmail("");
 			setPassword("");
+
+			// Redirect to home page after successful sign in
+			history.push("/home");
 		} catch (error) {
 			console.error("Sign in Error:", error);
 			setErrorMessageLocal(error.message);
