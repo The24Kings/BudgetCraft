@@ -83,7 +83,7 @@ const App: React.FC = () => {
 							path="/goals"
 							render={() => {
 								console.log("GoalsPage loaded");
-								return user ? <GoalsPage /> : <Redirect to="/login" />;
+                                return user ? <GoalsPage user={user} /> : <Redirect to="/login" />;
 							}}
 							exact
 						/>
