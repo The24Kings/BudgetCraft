@@ -101,6 +101,8 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	const handleAddTransaction = async () => {
 		const transactionID = uuidv4();
 
+        //TODO: When one is added, check the budget items and update them if they match the category and subcategory of the transaction: add this to the budget item
+
 		try {
 			const docRef = collection(firestore, `users/${userID}/transactions/`);
 			const transactionRef = doc(docRef, transactionID);
