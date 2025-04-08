@@ -1,15 +1,5 @@
 import React, { useEffect } from "react";
-import {
-	collection,
-	doc,
-	DocumentData,
-	getDoc,
-	getDocs,
-	limit,
-	orderBy,
-	query,
-	QuerySnapshot
-} from "firebase/firestore";
+import { collection, doc, DocumentData, getDoc, getDocs, limit, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
 import { IonContent, IonHeader, IonPage, IonToolbar } from "@ionic/react";
 import { Category, parseJSON } from "../utilities/Categories";
 import { firestore } from "../utilities/FirebaseConfig";
@@ -18,6 +8,8 @@ import "../components/HomeContainer.css";
 import AddGoal from "../utilities/Goals/Add";
 import DisplayGoals from "../utilities/Goals/Display";
 import MonthPicker from "../utilities/MonthPicker";
+import Transaction from "../utilities/Transactions/Transaction";
+
 
 const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 	const [month, setMonth] = React.useState<number>(new Date().getMonth());
@@ -28,6 +20,21 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 	const [goalData, setGoalData] = React.useState<any[]>([]);
 	const [totalLoaded, setTotalLoaded] = React.useState(10);
 	const [actualTotalLoaded, setActualTotalLoaded] = React.useState(10);
+
+    const months = [
+		"Jan",
+		"Feb",
+		"Mar",
+		"Apr",
+		"May",
+		"Jun",
+		"Jul",
+		"Aug",
+		"Sep",
+		"Oct",
+		"Nov",
+		"Dec"
+	];
 
 	// Load the JSON data
 	useEffect(() => {
@@ -62,7 +69,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 	}, []);
 
 	useEffect(() => {
-		const fetchTransactions = async () => {
+		const fetchGoals = async () => {
 			let querySnapshot: QuerySnapshot<DocumentData>;
 
 			try {
@@ -94,7 +101,8 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 						data.targetDate,
 						data.reminderDate,
 						data.description,
-						data.transactions // Later when displaying the transactions, we will need to fetch them from the database: https://stackoverflow.com/questions/47876754/query-firestore-database-for-document-id
+						data.transactionIDs, // Later when displaying the transactions, we will need to fetch them from the database: https://stackoverflow.com/questions/47876754/query-firestore-database-for-document-id
+						[] // Transactions related to this goal
 					);
 				});
 
@@ -102,12 +110,49 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 			}
 		};
 
-		const interval = setInterval(() => {
-			fetchTransactions();
-		}, 1000);
-
-		return () => clearInterval(interval);
+        fetchGoals();
 	}, [totalLoaded, actualTotalLoaded]);
+
+	// Get each transaction associated with the Goal
+	useEffect(() => {
+		const fetchTransactions = async () => {
+			const transactionsRef = collection(firestore, `users/${user.uid}/transactions`);
+
+			for (const goal of goalData) {
+				if (goal.transactionIDs.length == 0) {
+					return;
+				}
+
+				const transactionsSnapshot = await getDocs(
+					query(
+						transactionsRef,
+						orderBy("date", "desc"),
+						where("__name__", "in", goal.transactionIDs)
+					)
+				);
+
+				// Parse the documents into Transaction objects
+				const transactions = transactionsSnapshot.docs.map((doc) => {
+					const data = doc.data();
+
+					return new Transaction(
+						doc.id,
+						data.type,
+						data.category,
+						data.subCategoryID,
+						data.title,
+						data.date,
+						data.description,
+						data.amount
+					);
+				});
+
+				goal.transactions = transactions;
+			}
+		};
+
+        fetchTransactions();
+	}, [goalData]);
 
 	return (
 		<IonPage id="main-content">
@@ -118,7 +163,11 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 			</IonHeader>
 			<IonContent>
 				<div className="container">
-					<DisplayGoals goals={goalData} categories={categoryData} />
+					<DisplayGoals
+						goals={goalData}
+						categories={categoryData}
+						selectedMonth={months[month]}
+					/>
 					<AddGoal categories={categoryData} userID={user.uid} />
 				</div>
 			</IonContent>

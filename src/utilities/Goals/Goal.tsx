@@ -1,4 +1,5 @@
 import { Timestamp } from "firebase/firestore";
+import Transaction from "../Transactions/Transaction";
 
 class Goal {
 	constructor(
@@ -13,7 +14,8 @@ class Goal {
 		public targetDate: Timestamp = Timestamp.now(),
 		public reminderDate: Timestamp = Timestamp.now(),
 		public description: string = "",
-		public transactions: String[] = []
+		public transactionIDs: String[] = [],
+        public transactions: Transaction[] = [], // Transactions related to this goal
 	) {}
 }
 

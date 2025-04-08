@@ -1,48 +1,24 @@
 import React from "react";
-import {
-	IonAccordion,
-	IonAccordionGroup,
-	IonCol,
-	IonGrid,
-	IonIcon,
-	IonItem,
-	IonItemDivider,
-	IonItemGroup,
-	IonLabel,
-	IonNote,
-	IonRow,
-	IonTextarea
-} from "@ionic/react";
+import { IonCol, IonGrid, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonRow } from "@ionic/react";
 import { Category } from "../Categories";
+import Transaction from "../Transactions/Transaction";
 import Goal from "./Goal";
 
-interface DisplayTransactionsProps {
+
+interface DisplayGoalsProps {
 	goals: Goal[];
 	categories: Category[];
+    selectedMonth: string;
 }
 
-const DisplayGoals: React.FC<DisplayTransactionsProps> = ({ goals, categories }) => {
+const DisplayGoals: React.FC<DisplayGoalsProps> = ({ goals, categories, selectedMonth }) => {
 	//TODO: Allow the user to select which month they want to view
-	// Group the transactions by month
-	const groups = goals
-		.sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime())
-		.reduce(
-			(groups, goal) => {
-				const month = goal.createdAt.toDate().toLocaleString("default", {
-					month: "long",
-					year: "numeric"
-				});
-
-				if (!groups[month]) {
-					groups[month] = [];
-				}
-
-				groups[month].push(goal);
-
-				return groups;
-			},
-			{} as { [key: string]: Goal[] }
-		);
+	//  Filter goals by month and recurring
+    const filteredGoals = 
+        goals.filter(goal => {
+            const createdAtMonth = goal.createdAt.toDate().toLocaleString('default', { month: 'short'});
+            return createdAtMonth === selectedMonth || goal.recurring;
+        })
 
 	/*
 	 * Get the subcategory of a goal from the name of the category and the index of the subcategory
@@ -55,6 +31,9 @@ const DisplayGoals: React.FC<DisplayTransactionsProps> = ({ goals, categories })
 		return subCategory ? subCategory.name : "Uncategorized";
 	};
 
+	const calculateSaved = (transactions: Transaction[]): number =>
+		transactions.reduce((total, transaction) => total + transaction.amount, 0);
+
 	return (
 		<React.Fragment>
 			<div className="goals">
@@ -63,67 +42,38 @@ const DisplayGoals: React.FC<DisplayTransactionsProps> = ({ goals, categories })
 				</div>
 
 				{/* Group the transactions by month */}
-				<IonAccordionGroup>
-					{Object.keys(groups).map((month) => (
-						<IonItemGroup key={month}>
-							<IonItemDivider>
-								<IonLabel>{month}</IonLabel>
-							</IonItemDivider>
+				<IonItemGroup>
+					<IonItemDivider>
+						<IonLabel>
+							<IonGrid>
+								<IonRow>
+									<IonCol>Description</IonCol>
+									<IonCol>Target</IonCol>
+									<IonCol>Goal</IonCol>
+									<IonCol>Saved</IonCol>
+								</IonRow>
+							</IonGrid>
+						</IonLabel>
+					</IonItemDivider>
 
-							{/* Display the transactions */}
-							{groups[month].map((goal) => (
-								<IonAccordion value={goal.id} key={goal.id}>
-									<IonItem slot="header" button>
-										<IonLabel>
-											<IonGrid
-												fixed={true}
-												className="ion-no-padding ion-no-margin"
-											>
-												<IonRow className="ion-text-left ion-padding-top">
-													<IonCol>
-														<h2>
-															{subCategory(
-																goal.category,
-																goal.subCategoryID
-															)}
-														</h2>
-													</IonCol>
-												</IonRow>
-											</IonGrid>
-										</IonLabel>
-									</IonItem>
-									<div className="accordion-content" slot="content">
-										<IonItem color="light">
-											<IonGrid fixed={true} className="ion-no-padding">
-												<IonRow>
-													<IonCol className="ion-padding-vertical">
-														{goal.createdAt
-															.toDate()
-															.toLocaleDateString()}
-													</IonCol>
-												</IonRow>
-												<IonRow>
-													<IonTextarea
-														className="custom ion-no-padding"
-														shape="round"
-														readonly={true}
-														value={goal.description}
-														placeholder="No description available."
-													/>
-												</IonRow>
-												<IonRow>
-													<IonCol className="ion-text-right ion-padding-vertical">
-														<IonNote>{goal.id}</IonNote>
-													</IonCol>
-												</IonRow>
-											</IonGrid>
-										</IonItem>
-									</div>
-								</IonAccordion>
-							))}
-						</IonItemGroup>
+					{/* Display the transactions */}
+					{filteredGoals.map((goal) => (
+						<IonItem key={goal.id} button>
+							<IonLabel>
+								<IonGrid>
+									<IonRow>
+										<IonCol>{subCategory(goal.category, goal.subCategoryID)}</IonCol>
+										<IonCol>
+											{goal.targetDate.toDate().toLocaleDateString()}
+										</IonCol>
+										<IonCol>${goal.goal}</IonCol>
+										<IonCol>${calculateSaved(goal.transactions)}</IonCol>
+									</IonRow>
+								</IonGrid>
+							</IonLabel>
+						</IonItem>
 					))}
-				</IonAccordionGroup>
+				</IonItemGroup>
 			</div>
 		</React.Fragment>
 	);

@@ -35,7 +35,7 @@ const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID }) => {
     const [category, setCategory] = useState("");
     const [subCategoryID, setSubCategoryID] = useState("");
     const [targetDate, setTargetDate] = useState(Timestamp.now());
-    const [recuring, setRecuring] = useState(false);
+    const [recurring, setRecuring] = useState(false);
     const [reminder, setReminder] = useState(false);
     const [remindDate, setRemindDate] = useState(Timestamp.now());
     const [goal, setGoal] = useState(0.0);
@@ -91,11 +91,11 @@ const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID }) => {
                 type: type,
                 category: category,
                 subCategoryID: subCategoryID,
-                recuring: recuring,
+                recurring: recurring,
                 reminder: reminder,
                 goal: goal,
                 description: description,
-                transactions: [], // Initialize with an empty array; Fill as new transactions are added
+                transactionIDs: [], // Initialize with an empty array; Fill as new transactions are added
             });
         } catch (error) {
             console.error("Failed to add goal...", error);
@@ -211,14 +211,14 @@ const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID }) => {
                 <IonContent>
                     <div className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
                         <IonItem>
-                            <IonToggle className="ion-padding-end" justify="start" enableOnOffLabels checked={recuring} onIonChange={(e) => setRecuring(e.detail.checked)}>
+                            <IonToggle className="ion-padding-end" justify="start" enableOnOffLabels checked={recurring} onIonChange={(e) => setRecuring(e.detail.checked)}>
                                 Recurring
                             </IonToggle>
                             <IonToggle className="ion-padding-end" justify="end" enableOnOffLabels checked={reminder} onIonChange={(e) => setReminder(e.detail.checked)}>
                                 Reminder
                             </IonToggle>
                         </IonItem>
-                        {!recuring && (
+                        {!recurring && (
                             <IonItem>
                                 <IonLabel>Target Date: </IonLabel>
                                 <IonDatetimeButton
