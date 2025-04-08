@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	IonAccordion,
 	IonAccordionGroup,
@@ -57,7 +57,7 @@ const DisplayGoals: React.FC<DisplayTransactionsProps> = ({ goals, categories })
 
 	return (
 		<React.Fragment>
-			<div className="transactions">
+			<div className="goals">
 				<div hidden={!(goals.length === 0)}>
 					<h1>Loading...</h1>
 				</div>
@@ -82,7 +82,10 @@ const DisplayGoals: React.FC<DisplayTransactionsProps> = ({ goals, categories })
 												<IonRow className="ion-text-left ion-padding-top">
 													<IonCol>
 														<h2>
-															{subCategory(goal.category, goal.subCategoryID)}
+															{subCategory(
+																goal.category,
+																goal.subCategoryID
+															)}
 														</h2>
 													</IonCol>
 												</IonRow>
