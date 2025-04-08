@@ -8,6 +8,7 @@ class Goal {
 		public category: string = "",
 		public subCategoryID: string = "",
 		public goal: number = 0,
+        public budgetItem: boolean = true,
 		public recurring: boolean = false,
 		public reminder: boolean = false,
 		public createdAt: Timestamp = Timestamp.now(),
@@ -15,7 +16,7 @@ class Goal {
 		public reminderDate: Timestamp = Timestamp.now(),
 		public description: string = "",
 		public transactionIDs: String[] = [],
-        public transactions: Transaction[] = [], // Transactions related to this goal
+		public transactions: Transaction[] = [] // Transactions related to this goal
 	) {}
 }
 

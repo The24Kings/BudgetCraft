@@ -12,9 +12,6 @@ import Transaction from "../utilities/Transactions/Transaction";
 
 
 const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
-	const [month, setMonth] = React.useState<number>(new Date().getMonth());
-	const [year, setYear] = React.useState<number>(new Date().getFullYear());
-
 	const [jsonData, setJSONData] = React.useState<any>(null);
 	const [categoryData, setCategoryData] = React.useState<any[]>([]);
 	const [goalData, setGoalData] = React.useState<any[]>([]);
@@ -95,6 +92,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 						data.category,
 						data.subCategoryID,
 						data.goal,
+                        data.budgetItem,
 						data.recurring,
 						data.reminder,
 						data.createdAt,
@@ -110,7 +108,11 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 			}
 		};
 
-        fetchGoals();
+        const interval = setInterval(() => {
+            fetchGoals();
+        }, 1000);
+
+        return () => clearInterval(interval);
 	}, [totalLoaded, actualTotalLoaded]);
 
 	// Get each transaction associated with the Goal
@@ -120,6 +122,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 
 			for (const goal of goalData) {
 				if (goal.transactionIDs.length == 0) {
+                    console.log(`No transactions for: ${goal.id}`) //FIXME: Not retrieving the correct data??
 					return;
 				}
 
@@ -156,19 +159,14 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 
 	return (
 		<IonPage id="main-content">
-			<IonHeader>
-				<IonToolbar>
-					<MonthPicker month={month} year={year} setMonth={setMonth} setYear={setYear} />
-				</IonToolbar>
-			</IonHeader>
 			<IonContent>
 				<div className="container">
 					<DisplayGoals
 						goals={goalData}
 						categories={categoryData}
-						selectedMonth={months[month]}
+                        onlyGoals
 					/>
-					<AddGoal categories={categoryData} userID={user.uid} />
+					<AddGoal categories={categoryData} userID={user.uid} onlyGoals />
 				</div>
 			</IonContent>
 		</IonPage>

@@ -1,29 +1,46 @@
 import React from "react";
-import { IonCol, IonGrid, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonRow } from "@ionic/react";
+import {
+	IonCol,
+	IonGrid,
+	IonItem,
+	IonItemDivider,
+	IonItemGroup,
+	IonLabel,
+	IonRow
+} from "@ionic/react";
 import { Category } from "../Categories";
 import Transaction from "../Transactions/Transaction";
 import Goal from "./Goal";
 
-
 interface DisplayGoalsProps {
 	goals: Goal[];
 	categories: Category[];
-    selectedMonth: string;
+	selectedMonth?: string;
+	onlyGoals?: boolean;
 }
 
-const DisplayGoals: React.FC<DisplayGoalsProps> = ({ goals, categories, selectedMonth }) => {
-	//TODO: Allow the user to select which month they want to view
-	//  Filter goals by month and recurring
-    const filteredGoals = 
-        goals.filter(goal => {
-            const createdAtMonth = goal.createdAt.toDate().toLocaleString('default', { month: 'short'});
-            return createdAtMonth === selectedMonth || goal.recurring;
-        })
+const DisplayGoals: React.FC<DisplayGoalsProps> = ({
+	goals,
+	categories,
+	selectedMonth = "",
+	onlyGoals = false
+}) => {
+	// Filter goals by month and recurring
+	const filteredGoals = goals.filter((goal) => {
+		const createdAtMonth = goal.createdAt
+			.toDate()
+			.toLocaleString("default", { month: "short" });
+		return (!onlyGoals && createdAtMonth === selectedMonth) || (onlyGoals && !goal.budgetItem);
+	});
 
 	/*
 	 * Get the subcategory of a goal from the name of the category and the index of the subcategory
 	 */
 	const subCategory = (category: String, id: string) => {
+		if (!categories.length) {
+			return;
+		}
+
 		const subCategory = categories
 			.find((cat) => cat.name === category)
 			.Subcategories.find((subCat) => subCat.id === id);
@@ -62,7 +79,9 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({ goals, categories, selected
 							<IonLabel>
 								<IonGrid>
 									<IonRow>
-										<IonCol>{subCategory(goal.category, goal.subCategoryID)}</IonCol>
+										<IonCol>
+											{subCategory(goal.category, goal.subCategoryID)}
+										</IonCol>
 										<IonCol>
 											{goal.targetDate.toDate().toLocaleDateString()}
 										</IonCol>
