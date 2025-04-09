@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { collection, doc, DocumentData, getDoc, getDocs, limit, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
+import { collection, doc, DocumentData, getDoc, getDocs, limit, onSnapshot, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
 import { IonContent, IonHeader, IonPage, IonToolbar } from "@ionic/react";
 import { Category, parseJSON } from "../utilities/Categories";
 import { firestore } from "../utilities/FirebaseConfig";
@@ -108,11 +108,13 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 			}
 		};
 
-        const interval = setInterval(() => {
-            fetchGoals();
-        }, 1000);
+        fetchGoals();
 
-        return () => clearInterval(interval);
+		const unsubscribe = onSnapshot(collection(firestore, `users/${user.uid}/budget`), () => {
+            fetchGoals();
+        });
+
+        return () => unsubscribe();
 	}, [totalLoaded, actualTotalLoaded]);
 
 	// Get each transaction associated with the Goal
@@ -122,8 +124,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 
 			for (const goal of goalData) {
 				if (goal.transactionIDs.length == 0) {
-                    console.log(`No transactions for: ${goal.id}`) //FIXME: Not retrieving the correct data??
-					return;
+					continue;
 				}
 
 				const transactionsSnapshot = await getDocs(
