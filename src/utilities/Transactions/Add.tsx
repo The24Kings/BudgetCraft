@@ -139,13 +139,20 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	return (
 		<div className="container">
 			<IonFab vertical="bottom" horizontal="end" slot="fixed">
-				<IonFabButton id="add-transaction" onClick={() => { openForm(); modalStartRef.current?.present(); }}>
+				<IonFabButton
+					id="add-transaction"
+					className="add-transaction-button"
+					onClick={() => {
+						openForm();
+						modalStartRef.current?.present();
+					}}
+				>
 					<IonIcon icon={add} />
 				</IonFabButton>
 			</IonFab>
 
 			{/* Add Transaction Popup */}
-            <IonModal id="add-transact-modal" ref={modalStartRef}>
+			<IonModal id="add-transact-modal" ref={modalStartRef}>
 				<IonHeader>
 					<IonToolbar>
 						<IonTitle className="ion-text-center">New Transaction</IonTitle>
@@ -182,7 +189,11 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 
 							categories.forEach((cat) => {
 								if (cat.name === category) {
-									setSubCategoryID(cat.Subcategories.find((subCat) => subCat.name === subCategory).id);
+									setSubCategoryID(
+										cat.Subcategories.find(
+											(subCat) => subCat.name === subCategory
+										).id
+									);
 								}
 							});
 
@@ -196,7 +207,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 				</IonContent>
 			</IonModal>
 
-            <IonModal id="add-transact-modal" ref={modalSubmitRef}>
+			<IonModal id="add-transact-modal" ref={modalSubmitRef}>
 				<IonHeader>
 					<IonToolbar>
 						<IonButton
@@ -233,12 +244,12 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 								maxlength={20} // Prevents additional characters in UI
 							/>
 						</IonItem>
-                        <div style={{ display: "flex", justifyContent: "center" }}>
-                            <IonDatetimeButton
-                                className="ion-margin ion-justify-content-start"
-                                datetime="datetime"
-                            />
-                        </div>
+						<div style={{ display: "flex", justifyContent: "center" }}>
+							<IonDatetimeButton
+								className="ion-margin ion-justify-content-start"
+								datetime="datetime"
+							/>
+						</div>
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="datetime"

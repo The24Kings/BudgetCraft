@@ -158,6 +158,7 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 
 			{/* Load More */}
 			<IonButton
+				className="action-button"
 				onClick={() => {
 					// If we actually loaded all possible transactions, then we can load more
 					if (actualTotalLoaded === totalLoaded) {

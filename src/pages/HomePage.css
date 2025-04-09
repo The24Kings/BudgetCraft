@@ -7,7 +7,7 @@ ion-header.home-header {
 }
 
 ion-toolbar.home-toolbar {
-	--background: #3a0842;
+	--background: var(--app-color-purple);
 	--color: #ffffff;
 	padding: 1rem;
 }
@@ -54,20 +54,20 @@ ion-content.home-content {
 
 .month-button {
 	min-width: 80px;
-	--color: #4eca7b;
-	--border-color: #4eca7b;
-	border: 1px solid #4eca7b;
+	--color: var(--app-color-green);
+	--border-color: var(--app-color-green);
+	border: 1px solid var(--app-color-green);
 	border-radius: 8px;
 	text-transform: none;
 	font-weight: normal;
 	background-color: transparent;
-	color: #4eca7b;
+	color: var(--app-color-green);
 }
 
 .month-button.selected {
-	--background: #4eca7b;
+	--background: var(--app-color-green);
 	color: #1c1c1c;
-	background-color: #4eca7b;
+	background-color: var(--app-color-green);
 	font-weight: bold;
 	transform: scale(1.05);
 	border: none;
@@ -185,14 +185,12 @@ ion-textarea.custom {
 	margin: 0;
 }
 
-/* Inner container to control layout and overlay */
 .search-bar-container {
 	position: relative;
 	width: 100%;
 	max-width: 100%;
 }
 
-/* Full-width searchbar */
 ion-searchbar.search-input {
 	width: 100%;
 	--background: #f4f4f4;
@@ -263,6 +261,20 @@ ion-searchbar::part(container) {
 ion-datetime-button::part(native) {
 	color: #000;
 	fill: #000;
+}
+
+/* Load More Button */
+.action-button {
+	--background: var(--app-color-green);
+	--color: #1c1c1c;
+	border-radius: 8px;
+	font-weight: 500;
+}
+
+/* Add transaction button */
+ion-fab-button.add-transaction-button {
+	--background: var(--app-color-green);
+	--color: #1c1c1c;
 }
 
 /* Hide all scrollbars in the entire app */
