@@ -1,5 +1,5 @@
 import React from "react";
-import { IonContent, IonPage } from "@ionic/react";
+import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
 import { Category } from "../utilities/Categories";
 import Goal from "../utilities/Goals/Goal";
 import "../components/HomeContainer.css";
@@ -15,6 +15,11 @@ interface GoalsPageProps {
 const GoalsPage: React.FC<GoalsPageProps> = ({ user, goalData, categoryData }) => {
 	return (
 		<IonPage id="main-content">
+            <IonHeader>
+                <IonToolbar>
+                    <IonTitle>Goals</IonTitle>
+                </IonToolbar>
+            </IonHeader>
 			<IonContent>
 				<div className="container">
 					<DisplayGoals
