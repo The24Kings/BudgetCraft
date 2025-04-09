@@ -1,11 +1,26 @@
 import React, { useRef } from "react";
 import { collection, deleteDoc, doc } from "firebase/firestore";
-import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
+import {
+	IonButton,
+	IonCol,
+	IonContent,
+	IonFooter,
+	IonGrid,
+	IonHeader,
+	IonIcon,
+	IonItem,
+	IonItemDivider,
+	IonItemGroup,
+	IonLabel,
+	IonModal,
+	IonRow,
+	IonTitle,
+	IonToolbar
+} from "@ionic/react";
 import { Category } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import Transaction from "../Transactions/Transaction";
 import Goal from "./Goal";
-
 
 interface DisplayGoalsProps {
 	user: any;
@@ -28,14 +43,18 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 		const createdAtMonth = goal.createdAt
 			.toDate()
 			.toLocaleString("default", { month: "short" });
-		return (!onlyGoals && createdAtMonth === selectedMonth) || (onlyGoals && !goal.budgetItem);
+		return ( //FIXME: This is not working as intended
+			((!onlyGoals && createdAtMonth === selectedMonth) && (goal.budgetItem || goal.recurring)) ||
+			(onlyGoals && !goal.budgetItem)
+		);
 	});
 
 	/**
 	 * Confirm delete custom subcategory
 	 */
 	const removeGoal = async (goalID: string) => {
-		const isConfirmed = window.confirm( //FIXME: This doesn't work on mobile
+		const isConfirmed = window.confirm(
+			//FIXME: This doesn't work on mobile
 			`Are you sure you want to delete the custom subcategory "${goalID}"?`
 		);
 
