@@ -7,7 +7,6 @@ import Goal from "../utilities/Goals/Goal";
 import "../components/HomeContainer.css";
 import AddGoal from "../utilities/Goals/Add";
 import DisplayGoals from "../utilities/Goals/Display";
-import MonthPicker from "../utilities/MonthPicker";
 import Transaction from "../utilities/Transactions/Transaction";
 
 
@@ -15,8 +14,6 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 	const [jsonData, setJSONData] = React.useState<any>(null);
 	const [categoryData, setCategoryData] = React.useState<any[]>([]);
 	const [goalData, setGoalData] = React.useState<any[]>([]);
-	const [totalLoaded, setTotalLoaded] = React.useState(10);
-	const [actualTotalLoaded, setActualTotalLoaded] = React.useState(10);
 
     const months = [
 		"Jan",
@@ -73,15 +70,12 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 				querySnapshot = await getDocs(
 					query(
 						collection(firestore, `users/${user.uid}/budget`),
-						orderBy("createdAt", "desc"),
-						limit(totalLoaded)
+						orderBy("createdAt", "desc")
 					)
 				);
 			} catch (error) {
 				console.error("Failed to fetch transactions...");
 			} finally {
-				setActualTotalLoaded(querySnapshot.docs.length);
-
 				// Parse the documents into Transaction objects
 				const goals = querySnapshot.docs.map((doc) => {
 					const data = doc.data();
@@ -115,7 +109,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
         });
 
         return () => unsubscribe();
-	}, [totalLoaded, actualTotalLoaded]);
+	});
 
 	// Get each transaction associated with the Goal
 	useEffect(() => {
@@ -163,6 +157,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 			<IonContent>
 				<div className="container">
 					<DisplayGoals
+                        user={user}
 						goals={goalData}
 						categories={categoryData}
                         onlyGoals
