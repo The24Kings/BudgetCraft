@@ -1,26 +1,11 @@
 import React, { useRef } from "react";
 import { collection, deleteDoc, doc } from "firebase/firestore";
-import {
-	IonButton,
-	IonCol,
-	IonContent,
-	IonFooter,
-	IonGrid,
-	IonHeader,
-	IonIcon,
-	IonItem,
-	IonItemDivider,
-	IonItemGroup,
-	IonLabel,
-	IonModal,
-	IonRow,
-	IonTitle,
-	IonToolbar
-} from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import { Category } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import Transaction from "../Transactions/Transaction";
 import Goal from "./Goal";
+
 
 interface DisplayGoalsProps {
 	user: any;
@@ -43,9 +28,9 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 		const createdAtMonth = goal.createdAt
 			.toDate()
 			.toLocaleString("default", { month: "short" });
-		return ( //FIXME: This is not working as intended
-			((!onlyGoals && createdAtMonth === selectedMonth) && (goal.budgetItem || goal.recurring)) ||
-			(onlyGoals && !goal.budgetItem)
+		return (
+			((!onlyGoals && selectedMonth === createdAtMonth && goal.budgetItem) ||
+            (!onlyGoals && goal.recurring)) || (onlyGoals && !goal.budgetItem)
 		);
 	});
 
@@ -89,6 +74,11 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 
 	const calculateSaved = (transactions: Transaction[]): number =>
 		transactions.reduce((total, transaction) => total + transaction.amount, 0);
+
+    const onDismiss = () => {
+        modalRef.current?.attributes.removeNamedItem("goalId");
+        modalRef.current?.dismiss(null, "cancel");
+    }
 
 	return (
 		<React.Fragment>
@@ -141,8 +131,9 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 				</IonItemGroup>
 			</div>
 
-			<IonModal ref={modalRef}>
+			<IonModal ref={modalRef} onDidDismiss={onDismiss}>
 				{filteredGoals.map((goal) => (
+					(modalRef.current?.getAttribute("goalId") === goal.id) && (
 					<React.Fragment key={goal.id}>
 						<IonHeader>
 							<IonToolbar>
@@ -154,7 +145,6 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 						<IonContent className="ion-padding">
 							<div
 								key={goal.id}
-								hidden={modalRef.current?.getAttribute("goalId") !== goal.id}
 							>
 								<IonItemGroup className="ion-margin-bottom">
 									<IonItem>
@@ -166,7 +156,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 									<IonItem>
 										<IonLabel>
 											<strong>Remaining:</strong> $
-											{goal.goal - calculateSaved(goal.transactions)}
+											{(goal.goal - calculateSaved(goal.transactions) < 0 ? 0 : goal.goal - calculateSaved(goal.transactions))}
 										</IonLabel>
 									</IonItem>
 									<IonItem>
@@ -225,7 +215,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 								Delete Goal
 							</IonButton>
 						</IonFooter>
-					</React.Fragment>
+					</React.Fragment>)
 				))}
 			</IonModal>
 		</React.Fragment>
