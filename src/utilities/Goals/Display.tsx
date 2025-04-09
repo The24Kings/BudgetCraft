@@ -1,15 +1,29 @@
 import React, { useRef } from "react";
 import { collection, deleteDoc, doc } from "firebase/firestore";
-import { close } from "ionicons/icons";
-import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
+import {
+	IonButton,
+	IonCol,
+	IonContent,
+	IonFooter,
+	IonGrid,
+	IonHeader,
+	IonIcon,
+	IonItem,
+	IonItemDivider,
+	IonItemGroup,
+	IonLabel,
+	IonModal,
+	IonRow,
+	IonTitle,
+	IonToolbar
+} from "@ionic/react";
 import { Category } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import Transaction from "../Transactions/Transaction";
 import Goal from "./Goal";
 
-
 interface DisplayGoalsProps {
-    user: any;
+	user: any;
 	goals: Goal[];
 	categories: Category[];
 	selectedMonth?: string;
@@ -17,13 +31,13 @@ interface DisplayGoalsProps {
 }
 
 const DisplayGoals: React.FC<DisplayGoalsProps> = ({
-    user,
+	user,
 	goals,
 	categories,
 	selectedMonth = "",
 	onlyGoals = false
 }) => {
-    const modalRef = useRef<HTMLIonModalElement>(null);
+	const modalRef = useRef<HTMLIonModalElement>(null);
 	// Filter goals by month and recurring
 	const filteredGoals = goals.filter((goal) => {
 		const createdAtMonth = goal.createdAt
@@ -32,28 +46,27 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 		return (!onlyGoals && createdAtMonth === selectedMonth) || (onlyGoals && !goal.budgetItem);
 	});
 
-    /**
-     * Confirm delete custom subcategory
-     */
+	/**
+	 * Confirm delete custom subcategory
+	 */
 	const removeGoal = async (goalID: string) => {
-        const isConfirmed = window.confirm(
-            `Are you sure you want to delete the custom subcategory "${goalID}"?`
-        );
+		const isConfirmed = window.confirm( //FIXME: This doesn't work on mobile
+			`Are you sure you want to delete the custom subcategory "${goalID}"?`
+		);
 
-        if (!isConfirmed) return;
+		if (!isConfirmed) return;
 
-        try {
-            // Update the Firebase database for user categories
-            const goalRef = collection(firestore, `users/${user.uid}/budget`);
-            const goalDoc = doc(goalRef, goalID);
+		try {
+			// Update the Firebase database for user categories
+			const goalRef = collection(firestore, `users/${user.uid}/budget`);
+			const goalDoc = doc(goalRef, goalID);
 
-            await deleteDoc(goalDoc);
-            console.log("Goal deleted successfully");
-        } catch (error) {
-            console.error("Error deleting goal:", error);
-        }
-    }; 
-
+			await deleteDoc(goalDoc);
+			console.log("Goal deleted successfully");
+		} catch (error) {
+			console.error("Error deleting goal:", error);
+		}
+	};
 
 	/*
 	 * Get the subcategory of a goal from the name of the category and the index of the subcategory
@@ -164,45 +177,43 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 										</IonCol>
 									</IonRow>
 								</IonGrid>
-                                    <IonLabel>
-                                        Attached Transactions
-                                    </IonLabel>
-                                    <div
-                                        style={{
-                                            overflowY: "auto",
-                                            maxHeight: "90%",
-                                            padding: "10px",
-                                            marginTop: "10px"
-                                        }}
-                                    >
-                                        {goal.transactions.length > 0 ? (
-                                            goal.transactions.map((transaction, index) => (
-                                                <IonItem key={index}>
-                                                    <IonLabel>
-                                                        <p>
-                                                            <strong>Date:</strong>{" "}
-                                                            {transaction.date
-                                                                .toDate()
-                                                                .toLocaleDateString()}
-                                                        </p>
-                                                        <p>
-                                                            <strong>Amount:</strong> $
-                                                            {transaction.amount}
-                                                        </p>
-                                                        <p>
-                                                            <strong>Description:</strong>{" "}
-                                                            {transaction.description ||
-                                                                "No description"}
-                                                        </p>
-                                                    </IonLabel>
-                                                </IonItem>
-                                            ))
-                                        ) : (
-                                            <IonLabel>
-                                                <p>No transactions attached to this goal.</p>
-                                            </IonLabel>
-                                        )}
-                                    </div>
+								<IonLabel>Attached Transactions</IonLabel>
+								<div
+									style={{
+										overflowY: "auto",
+										maxHeight: "90%",
+										padding: "10px",
+										marginTop: "10px"
+									}}
+								>
+									{goal.transactions.length > 0 ? (
+										goal.transactions.map((transaction, index) => (
+											<IonItem key={index}>
+												<IonLabel>
+													<p>
+														<strong>Date:</strong>{" "}
+														{transaction.date
+															.toDate()
+															.toLocaleDateString()}
+													</p>
+													<p>
+														<strong>Amount:</strong> $
+														{transaction.amount}
+													</p>
+													<p>
+														<strong>Description:</strong>{" "}
+														{transaction.description ||
+															"No description"}
+													</p>
+												</IonLabel>
+											</IonItem>
+										))
+									) : (
+										<IonLabel>
+											<p>No transactions attached to this goal.</p>
+										</IonLabel>
+									)}
+								</div>
 							</div>
 						</IonContent>
 						<IonFooter>

@@ -1,5 +1,16 @@
 import React, { useEffect } from "react";
-import { collection, doc, DocumentData, getDoc, getDocs, limit, onSnapshot, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
+import {
+	collection,
+	doc,
+	DocumentData,
+	getDoc,
+	getDocs,
+	onSnapshot,
+	orderBy,
+	query,
+	QuerySnapshot,
+	where
+} from "firebase/firestore";
 import { IonContent, IonHeader, IonPage, IonToolbar } from "@ionic/react";
 import { Category, parseJSON } from "../utilities/Categories";
 import { firestore } from "../utilities/FirebaseConfig";
@@ -9,13 +20,12 @@ import AddGoal from "../utilities/Goals/Add";
 import DisplayGoals from "../utilities/Goals/Display";
 import Transaction from "../utilities/Transactions/Transaction";
 
-
 const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 	const [jsonData, setJSONData] = React.useState<any>(null);
 	const [categoryData, setCategoryData] = React.useState<any[]>([]);
 	const [goalData, setGoalData] = React.useState<any[]>([]);
 
-    const months = [
+	const months = [
 		"Jan",
 		"Feb",
 		"Mar",
@@ -86,7 +96,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 						data.category,
 						data.subCategoryID,
 						data.goal,
-                        data.budgetItem,
+						data.budgetItem,
 						data.recurring,
 						data.reminder,
 						data.createdAt,
@@ -103,11 +113,11 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 		};
 
 		const unsubscribe = onSnapshot(collection(firestore, `users/${user.uid}/budget`), () => {
-            console.log("Fetching goals...");
-            fetchGoals();
-        });
+			console.log("Fetching goals...");
+			fetchGoals();
+		});
 
-        return () => unsubscribe();
+		return () => unsubscribe();
 	}, [user]);
 
 	// Get each transaction associated with the Goal
@@ -117,7 +127,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 
 			for (const goal of goalData) {
 				if (goal.transactionIDs.length == 0) {
-                    console.log(`No transactions for this goal ${goal.id}`);
+					console.log(`No transactions for this goal ${goal.id}`);
 					continue;
 				}
 
@@ -149,7 +159,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 			}
 		};
 
-        fetchTransactions();
+		fetchTransactions();
 	}, [goalData]);
 
 	return (
@@ -157,10 +167,10 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 			<IonContent>
 				<div className="container">
 					<DisplayGoals
-                        user={user}
+						user={user}
 						goals={goalData}
 						categories={categoryData}
-                        onlyGoals
+						onlyGoals
 					/>
 					<AddGoal categories={categoryData} userID={user.uid} onlyGoals />
 				</div>

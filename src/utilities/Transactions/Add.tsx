@@ -119,44 +119,43 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		} finally {
 			console.log("Transaction added successfully with ID:", transactionID);
 
-            // Check the goals and update them if they match the category and subcategory of the transaction
-            const goalsRef = collection(firestore, `users/${userID}/budget`);
-            
-            // Query the goals collection to find matching goals
-            const goalsSnapshot = await getDocs(goalsRef);
+			// Check the goals and update them if they match the category and subcategory of the transaction
+			const goalsRef = collection(firestore, `users/${userID}/budget`);
+
+			// Query the goals collection to find matching goals
+			const goalsSnapshot = await getDocs(goalsRef);
 
 			const goals = goalsSnapshot.docs.map((doc) => {
-				const data = doc.data() as { 
-                    id: string;
-                    category: string; 
-                    subCategoryID: string; 
-                    createdAt: Timestamp;
-				    targetDate: Timestamp;
-				    reminderDate: Timestamp | null;
-                    type: string;
-                    budgetItem: boolean;
-                    recurring: boolean;
-                    reminder: boolean;
-                    goal: number;
-                    description: string;
-                    transactionIDs: string[] 
-                };
+				const data = doc.data() as {
+					id: string;
+					category: string;
+					subCategoryID: string;
+					createdAt: Timestamp;
+					targetDate: Timestamp;
+					reminderDate: Timestamp | null;
+					type: string;
+					budgetItem: boolean;
+					recurring: boolean;
+					reminder: boolean;
+					goal: number;
+					description: string;
+					transactionIDs: string[];
+				};
 				return {
 					id: doc.id,
 					...data
 				};
 			});
 
-            // Update the transactionIDs of the goals that match the category and subcategory of the transaction
-            goals.forEach(async (goal) => {
-                if (goal.category === category && goal.subCategoryID === subCategoryID) {
-                    await updateDoc(doc(goalsRef, goal.id), {
-                        transactionIDs: [...goal.transactionIDs, transactionID]
-                    });
-                    console.log("Goal updated successfully with ID:", goal.id);
-                }
-            });
-
+			// Update the transactionIDs of the goals that match the category and subcategory of the transaction
+			goals.forEach(async (goal) => {
+				if (goal.category === category && goal.subCategoryID === subCategoryID) {
+					await updateDoc(doc(goalsRef, goal.id), {
+						transactionIDs: [...goal.transactionIDs, transactionID]
+					});
+					console.log("Goal updated successfully with ID:", goal.id);
+				}
+			});
 		}
 
 		openForm();
@@ -178,13 +177,19 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	return (
 		<div className="container">
 			<IonFab vertical="bottom" horizontal="end" slot="fixed">
-				<IonFabButton id="add-transaction" onClick={() => { openForm(); modalStartRef.current?.present(); }}>
+				<IonFabButton
+					id="add-transaction"
+					onClick={() => {
+						openForm();
+						modalStartRef.current?.present();
+					}}
+				>
 					<IonIcon icon={add} />
 				</IonFabButton>
 			</IonFab>
 
 			{/* Add Transaction Popup */}
-            <IonModal id="add-transact-modal" ref={modalStartRef}>
+			<IonModal id="add-transact-modal" ref={modalStartRef}>
 				<IonHeader>
 					<IonToolbar>
 						<IonTitle className="ion-text-center">New Transaction</IonTitle>
@@ -221,7 +226,11 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 
 							categories.forEach((cat) => {
 								if (cat.name === category) {
-									setSubCategoryID(cat.Subcategories.find((subCat) => subCat.name === subCategory).id);
+									setSubCategoryID(
+										cat.Subcategories.find(
+											(subCat) => subCat.name === subCategory
+										).id
+									);
 								}
 							});
 
@@ -235,7 +244,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 				</IonContent>
 			</IonModal>
 
-            <IonModal id="add-transact-modal" ref={modalSubmitRef}>
+			<IonModal id="add-transact-modal" ref={modalSubmitRef}>
 				<IonHeader>
 					<IonToolbar>
 						<IonButton
@@ -272,12 +281,12 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 								maxlength={20} // Prevents additional characters in UI
 							/>
 						</IonItem>
-                        <div style={{ display: "flex", justifyContent: "center" }}>
-                            <IonDatetimeButton
-                                className="ion-margin ion-justify-content-start"
-                                datetime="datetime"
-                            />
-                        </div>
+						<div style={{ display: "flex", justifyContent: "center" }}>
+							<IonDatetimeButton
+								className="ion-margin ion-justify-content-start"
+								datetime="datetime"
+							/>
+						</div>
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="datetime"
