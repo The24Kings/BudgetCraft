@@ -1,26 +1,11 @@
 import React, { useRef } from "react";
 import { collection, deleteDoc, doc } from "firebase/firestore";
-import {
-	IonButton,
-	IonCol,
-	IonContent,
-	IonFooter,
-	IonGrid,
-	IonHeader,
-	IonIcon,
-	IonItem,
-	IonItemDivider,
-	IonItemGroup,
-	IonLabel,
-	IonModal,
-	IonRow,
-	IonTitle,
-	IonToolbar
-} from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import { Category } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import Transaction from "../Transactions/Transaction";
 import Goal from "./Goal";
+
 
 interface DisplayGoalsProps {
 	user: any;
@@ -142,78 +127,70 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 					<React.Fragment key={goal.id}>
 						<IonHeader>
 							<IonToolbar>
-								<IonTitle className="ion-text-center">{goal.category}</IonTitle>
+								<IonTitle className="ion-text-center">
+									{subCategory(goal.category, goal.subCategoryID)}
+								</IonTitle>
 							</IonToolbar>
 						</IonHeader>
-						<IonContent>
+						<IonContent className="ion-padding">
 							<div
 								key={goal.id}
 								hidden={modalRef.current?.getAttribute("goalId") !== goal.id}
 							>
-								<IonGrid>
-									<IonRow>
-										<IonCol>
-											<IonLabel>
-												<h2>Goal Details</h2>
-												<p>
-													<strong>Description:</strong>{" "}
-													{subCategory(goal.category, goal.subCategoryID)}
-												</p>
-												<p>
-													<strong>Target Date:</strong>{" "}
-													{goal.targetDate.toDate().toLocaleDateString()}
-												</p>
-												<p>
-													<strong>Goal Amount:</strong> ${goal.goal}
-												</p>
-												<p>
-													<strong>Saved Amount:</strong> $
-													{calculateSaved(goal.transactions)}
-												</p>
-												<p>
-													<strong>Category:</strong> {goal.category}
-												</p>
-											</IonLabel>
-										</IonCol>
-									</IonRow>
-								</IonGrid>
-								<IonLabel>Attached Transactions</IonLabel>
-								<div
-									style={{
-										overflowY: "auto",
-										maxHeight: "90%",
-										padding: "10px",
-										marginTop: "10px"
-									}}
-								>
-									{goal.transactions.length > 0 ? (
-										goal.transactions.map((transaction, index) => (
-											<IonItem key={index}>
-												<IonLabel>
-													<p>
-														<strong>Date:</strong>{" "}
-														{transaction.date
-															.toDate()
-															.toLocaleDateString()}
-													</p>
-													<p>
-														<strong>Amount:</strong> $
-														{transaction.amount}
-													</p>
-													<p>
-														<strong>Description:</strong>{" "}
-														{transaction.description ||
-															"No description"}
-													</p>
-												</IonLabel>
-											</IonItem>
-										))
-									) : (
+								<IonItemGroup className="ion-margin-bottom">
+									<IonItem>
 										<IonLabel>
-											<p>No transactions attached to this goal.</p>
+											<strong>Saved:</strong> $
+											{calculateSaved(goal.transactions)} / ${goal.goal}
 										</IonLabel>
-									)}
-								</div>
+									</IonItem>
+									<IonItem>
+										<IonLabel>
+											<strong>Remaining:</strong> $
+											{goal.goal - calculateSaved(goal.transactions)}
+										</IonLabel>
+									</IonItem>
+									<IonItem>
+										<IonLabel>
+											<strong>Description:</strong>{" "}
+											{goal.description || "No description"}
+										</IonLabel>
+									</IonItem>
+								</IonItemGroup>
+								<IonItemGroup>
+									<div style={{ maxHeight: "200px", overflowY: "auto" }}>
+										{goal.transactions.length > 0 ? (
+											goal.transactions.map((transaction, index) => (
+												<IonItem key={index}>
+													<IonLabel>
+														<p>
+															<strong>Date:</strong>{" "}
+															{transaction.date
+																.toDate()
+																.toLocaleDateString()}
+														</p>
+														<p>
+															<strong>Amount:</strong> $
+															{transaction.amount}
+														</p>
+														<p
+															style={{
+																fontSize: "0.75em",
+																textAlign: "center"
+															}}
+														>
+															{transaction.id}
+														</p>
+													</IonLabel>
+												</IonItem>
+											))
+										) : (
+											<IonLabel>
+												<p>No transactions attached to this goal.</p>
+											</IonLabel>
+										)}
+									</div>
+								</IonItemGroup>
 							</div>
 						</IonContent>
 						<IonFooter>

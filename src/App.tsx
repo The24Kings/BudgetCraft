@@ -63,6 +63,7 @@ const App: React.FC = () => {
 			<IonReactRouter>
 				<IonTabs>
 					<IonRouterOutlet>
+                        <Redirect exact path="/" to="/home" />
 						<Route
 							path="/home"
 							render={() => {
