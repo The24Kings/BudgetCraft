@@ -19,9 +19,10 @@ import Transaction from "./Transaction";
 interface DisplayTransactionsProps {
 	transactions: Transaction[];
 	categories: Category[];
+    selectedMonth?: string;
 }
 
-const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories }) => {
+const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories, selectedMonth="" }) => {
 	//TODO: Allow the user to select which month they want to view
 	// Group the transactions by month
 	const groups = transactions
@@ -29,7 +30,7 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 		.reduce(
 			(groups, transaction) => {
 				const month = transaction.date.toDate().toLocaleString("default", {
-					month: "long",
+					month: "short",
 					year: "numeric"
 				});
 
