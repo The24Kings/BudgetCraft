@@ -292,3 +292,16 @@ ion-fab-button.add-transaction-button {
 *::-webkit-scrollbar-thumb {
 	background: transparent !important;
 }
+
+/* Remove scrollbars inside ion-content's internal scroll region */
+ion-content::part(scroll) {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	overflow-y: auto;
+}
+
+ion-content::part(scroll)::-webkit-scrollbar {
+	width: 0 !important;
+	height: 0 !important;
+	background: transparent !important;
+}
