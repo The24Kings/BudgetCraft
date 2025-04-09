@@ -137,25 +137,72 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 								key={goal.id}
 								hidden={modalRef.current?.getAttribute("goalId") !== goal.id}
 							>
-								<h2>Goal Details</h2>
-								<p>
-									<strong>Description:</strong>{" "}
-									{subCategory(goal.category, goal.subCategoryID)}
-								</p>
-								<p>
-									<strong>Target Date:</strong>{" "}
-									{goal.targetDate.toDate().toLocaleDateString()}
-								</p>
-								<p>
-									<strong>Goal Amount:</strong> ${goal.goal}
-								</p>
-								<p>
-									<strong>Saved Amount:</strong> $
-									{calculateSaved(goal.transactions)}
-								</p>
-								<p>
-									<strong>Category:</strong> {goal.category}
-								</p>
+								<IonGrid>
+									<IonRow>
+										<IonCol>
+											<IonLabel>
+												<h2>Goal Details</h2>
+												<p>
+													<strong>Description:</strong>{" "}
+													{subCategory(goal.category, goal.subCategoryID)}
+												</p>
+												<p>
+													<strong>Target Date:</strong>{" "}
+													{goal.targetDate.toDate().toLocaleDateString()}
+												</p>
+												<p>
+													<strong>Goal Amount:</strong> ${goal.goal}
+												</p>
+												<p>
+													<strong>Saved Amount:</strong> $
+													{calculateSaved(goal.transactions)}
+												</p>
+												<p>
+													<strong>Category:</strong> {goal.category}
+												</p>
+											</IonLabel>
+										</IonCol>
+									</IonRow>
+								</IonGrid>
+                                    <IonLabel>
+                                        Attached Transactions
+                                    </IonLabel>
+                                    <div
+                                        style={{
+                                            overflowY: "auto",
+                                            maxHeight: "90%",
+                                            padding: "10px",
+                                            marginTop: "10px"
+                                        }}
+                                    >
+                                        {goal.transactions.length > 0 ? (
+                                            goal.transactions.map((transaction, index) => (
+                                                <IonItem key={index}>
+                                                    <IonLabel>
+                                                        <p>
+                                                            <strong>Date:</strong>{" "}
+                                                            {transaction.date
+                                                                .toDate()
+                                                                .toLocaleDateString()}
+                                                        </p>
+                                                        <p>
+                                                            <strong>Amount:</strong> $
+                                                            {transaction.amount}
+                                                        </p>
+                                                        <p>
+                                                            <strong>Description:</strong>{" "}
+                                                            {transaction.description ||
+                                                                "No description"}
+                                                        </p>
+                                                    </IonLabel>
+                                                </IonItem>
+                                            ))
+                                        ) : (
+                                            <IonLabel>
+                                                <p>No transactions attached to this goal.</p>
+                                            </IonLabel>
+                                        )}
+                                    </div>
 							</div>
 						</IonContent>
 						<IonFooter>
@@ -164,9 +211,9 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 								expand="full"
 								color="danger"
 								onClick={() => {
-                                    removeGoal(goal.id)
-                                    modalRef.current?.dismiss();
-                                }}
+									removeGoal(goal.id);
+									modalRef.current?.dismiss();
+								}}
 							>
 								Delete Goal
 							</IonButton>
