@@ -10,14 +10,13 @@ import {
 	query,
 	QuerySnapshot
 } from "firebase/firestore";
+import { IonButton, IonLabel } from "@ionic/react";
 import { Category, parseJSON } from "../utilities/Categories";
+import FilterButton from "../utilities/FilterButton";
 import { firestore } from "../utilities/FirebaseConfig";
+import AddTransactions from "../utilities/Transactions/Add";
 import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
-import "./Container.css";
-import { IonButton, IonLabel } from "@ionic/react";
-import FilterButton from "../utilities/FilterButton";
-import AddTransactions from "../utilities/Transactions/Add";
 
 interface ContainerProps {
 	userID: string;

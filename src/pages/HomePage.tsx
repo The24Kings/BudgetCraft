@@ -14,17 +14,18 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
-import Container from "../components/Container";
+import Container from "../components/HomeContainer";
 import { exportUserDataJSON } from "../utilities/DataExport";
 import { auth, firestore } from "../utilities/FirebaseConfig";
 import MonthPicker from "../utilities/MonthPicker";
+import "./HomePage.css";
+import "../theme/variables.css";
 
 const HomePage: React.FC<{ user: any }> = ({ user }) => {
 	const [userData, setUserData] = useState<any>(null);
 	const [month, setMonth] = useState(new Date().getMonth());
 	const [year, setYear] = useState(new Date().getFullYear());
 
-	// Fetch extra Firestore user data on mount
 	useEffect(() => {
 		const fetchUserData = async () => {
 			if (!user) return;
@@ -62,7 +63,7 @@ const HomePage: React.FC<{ user: any }> = ({ user }) => {
 					</IonToolbar>
 				</IonHeader>
 				<IonContent className="ion-padding">
-					<IonAvatar className="menu-avatar" style={{ justifySelf: "center" }}>
+					<IonAvatar className="menu-avatar">
 						<img
 							src={
 								user?.photoURL ??
@@ -82,17 +83,17 @@ const HomePage: React.FC<{ user: any }> = ({ user }) => {
 			</IonMenu>
 
 			<IonPage id="main-content">
-				<IonHeader>
-					<IonToolbar>
+				<IonHeader className="home-header">
+					<IonToolbar className="home-toolbar">
 						<MonthPicker
 							month={month}
 							year={year}
 							setMonth={setMonth}
 							setYear={setYear}
 						/>
-						<IonButtons slot="start">
+						<IonButtons slot="end">
 							<IonMenuToggle>
-								<IonAvatar className="user-avatar" style={{ cursor: "pointer" }}>
+								<IonAvatar className="user-avatar clickable-avatar">
 									<img
 										src={
 											user?.photoURL ??
@@ -105,7 +106,8 @@ const HomePage: React.FC<{ user: any }> = ({ user }) => {
 						</IonButtons>
 					</IonToolbar>
 				</IonHeader>
-				<IonContent>
+
+				<IonContent className="home-content">
 					{user ? (
 						<Container userID={user.uid} />
 					) : (

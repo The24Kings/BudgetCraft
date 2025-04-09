@@ -1,30 +1,282 @@
-.login-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 80vh; /* Adjust as needed */
-    text-align: center;
-  }
-  
-  .login-text {
-    margin-bottom: 20px; /* Space between text and button */
-  }
+/* HomePage styles */
+ion-header.home-header {
+	--background: transparent;
+	--color: #ffffff;
+	box-shadow: none;
+	border-bottom: 1px solid #e0e0e0;
+}
 
-  .menu-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    object-fit: cover;
-    cursor: pointer;
-  }
-  
-  .user-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin: 10px auto;
-    display: block;
-  }
-  
-    
+ion-toolbar.home-toolbar {
+	--background: #3a0842;
+	--color: #ffffff;
+	padding: 1rem;
+}
+
+.home-toolbar ion-button,
+.home-toolbar ion-label,
+.home-toolbar ion-title {
+	color: #ffffff;
+}
+
+.user-avatar.clickable-avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	object-fit: cover;
+	cursor: pointer;
+	border: 2px solid #d1d1d1;
+}
+
+ion-content.home-content {
+	--background: var(--ion-background-color);
+}
+
+.home-content {
+	padding: 1rem;
+}
+
+/* Month Picker wrapper and layout */
+.month-picker-wrapper {
+	padding: 20px 16px 12px;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.month-picker {
+	display: flex;
+	gap: 10px;
+	justify-content: center;
+	width: 100%;
+	max-width: 100%;
+	flex-wrap: wrap;
+}
+
+.month-button {
+	min-width: 80px;
+	--color: #4eca7b;
+	--border-color: #4eca7b;
+	border: 1px solid #4eca7b;
+	border-radius: 8px;
+	text-transform: none;
+	font-weight: normal;
+	background-color: transparent;
+	color: #4eca7b;
+}
+
+.month-button.selected {
+	--background: #4eca7b;
+	color: #1c1c1c;
+	background-color: #4eca7b;
+	font-weight: bold;
+	transform: scale(1.05);
+	border: none;
+}
+
+/* Container styles */
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	height: calc(100vh - 125px);
+	width: 100%;
+	padding: 10px;
+	overflow-y: auto;
+}
+
+.container strong {
+	font-size: 20px;
+	line-height: 26px;
+}
+
+.container p {
+	font-size: 16px;
+	line-height: 22px;
+	color: #8c8c8c;
+	margin: 0;
+}
+
+.container a {
+	text-decoration: none;
+}
+
+/* Modal styles */
+ion-modal#add-transact-modal {
+	padding: 20px;
+	--max-height: 80%;
+	--border-radius: 16px;
+	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal#add-transact-modal::part(backdrop) {
+	background: rgba(209, 213, 219);
+	opacity: 1;
+}
+
+ion-modal#add-transact-modal ion-toolbar {
+	--background: rgb(14 116 144);
+	--color: white;
+}
+
+ion-modal#add-transact-modal .categories {
+	height: 80%;
+	overflow-y: auto;
+}
+
+.add-tansaction {
+	padding-bottom: 100px;
+	padding-right: 40px;
+}
+
+/* Transaction styles */
+.transactions {
+	width: 100%;
+	padding: 0 16px;
+	box-sizing: border-box;
+}
+
+ion-item[color="light"] {
+	--background: #ffffff;
+	--color: #1c1c1c;
+	border-radius: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+	margin-bottom: 12px;
+}
+
+ion-accordion::part(header) {
+	background: #ffffff;
+	color: #1c1c1c;
+	border-radius: 10px;
+	margin-bottom: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+	padding: 10px;
+}
+
+/* Textarea styling */
+ion-textarea.custom {
+	--background: #ffffff;
+	--color: #000000;
+	--padding-end: 10px;
+	--padding-start: 10px;
+	--padding-top: 10px;
+	--padding-bottom: 10px;
+	--placeholder-color: #888;
+	--placeholder-opacity: 1;
+	--border-radius: 10px;
+	--cursor-style: default;
+}
+
+.custom .textarea-wrapper.sc-ion-textarea-md textarea.sc-ion-textarea-md {
+	cursor: default;
+}
+
+.user-avatar img {
+	padding: 15%;
+}
+
+/* Search bar wrapper and layout */
+.search-bar-wrapper {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+/* Inner container to control layout and overlay */
+.search-bar-container {
+	position: relative;
+	width: 100%;
+	max-width: 100%;
+}
+
+/* Full-width searchbar */
+ion-searchbar.search-input {
+	width: 100%;
+	--background: #f4f4f4;
+	--color: #000;
+	--box-shadow: none;
+	--border-radius: 0;
+	--padding-start: 16px;
+	--padding-end: 48px;
+	--placeholder-color: #888;
+	--icon-color: #888;
+	--cancel-button-color: #888;
+}
+
+ion-searchbar::part(container) {
+	background: #f4f4f4 !important;
+	box-shadow: none !important;
+	border: 1px solid black !important;
+	border-radius: 0 !important;
+}
+
+/* Filter icon inside searchbar on the far right */
+.filter-icon-button {
+	position: absolute;
+	top: 8px;
+	right: 12px;
+	z-index: 2;
+	color: #000;
+}
+
+/* Filter modal styles */
+.filter-modal {
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	color: #000;
+}
+
+.filter-modal-custom {
+	--width: 90%;
+	--max-width: 400px;
+	--height: auto;
+	--max-height: 80%;
+	--border-radius: 14px;
+	--background: #fff;
+}
+
+.filter-modal ion-input,
+.filter-modal ion-select {
+	--color: #000;
+	--placeholder-color: #888;
+}
+
+.filter-modal input[type="date"]::-webkit-calendar-picker-indicator {
+	filter: brightness(0);
+	opacity: 1;
+	display: block;
+}
+
+.filter-modal input[type="number"] {
+	background-color: #ffffff;
+	color: #000000;
+	border: 1px solid #ccc;
+	border-radius: 6px;
+	padding: 8px;
+}
+
+ion-datetime-button::part(native) {
+	color: #000;
+	fill: #000;
+}
+
+/* Hide all scrollbars in the entire app */
+* {
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar {
+	width: 0 !important;
+	height: 0 !important;
+	background: transparent !important;
+}
+
+*::-webkit-scrollbar-thumb {
+	background: transparent !important;
+}

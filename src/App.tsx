@@ -39,7 +39,6 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
-import "@ionic/react/css/palettes/dark.system.css";
 import "./theme/variables.css";
 
 setupIonicReact();
@@ -49,6 +48,9 @@ const App: React.FC = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 
 	useEffect(() => {
+		// Force light mode by removing Ionic's dark class from <body>
+		document.body.classList.remove("dark");
+
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			setUser(user);
 			setLoading(false);
