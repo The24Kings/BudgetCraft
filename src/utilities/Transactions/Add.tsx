@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { collection, doc, setDoc, Timestamp } from "firebase/firestore";
+import { collection, doc, getDocs, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { add } from "ionicons/icons";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -101,8 +101,6 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	const handleAddTransaction = async () => {
 		const transactionID = uuidv4();
 
-        //TODO: When one is added, check the budget items and update them if they match the category and subcategory of the transaction: add this to the budget item
-
 		try {
 			const docRef = collection(firestore, `users/${userID}/transactions/`);
 			const transactionRef = doc(docRef, transactionID);
@@ -120,6 +118,45 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 			console.error("Failed to add transaction...", error);
 		} finally {
 			console.log("Transaction added successfully with ID:", transactionID);
+
+            // Check the goals and update them if they match the category and subcategory of the transaction
+            const goalsRef = collection(firestore, `users/${userID}/budget`);
+            
+            // Query the goals collection to find matching goals
+            const goalsSnapshot = await getDocs(goalsRef);
+
+			const goals = goalsSnapshot.docs.map((doc) => {
+				const data = doc.data() as { 
+                    id: string;
+                    category: string; 
+                    subCategoryID: string; 
+                    createdAt: Timestamp;
+				    targetDate: Timestamp;
+				    reminderDate: Timestamp | null;
+                    type: string;
+                    budgetItem: boolean;
+                    recurring: boolean;
+                    reminder: boolean;
+                    goal: number;
+                    description: string;
+                    transactionIDs: string[] 
+                };
+				return {
+					id: doc.id,
+					...data
+				};
+			});
+
+            // Update the transactionIDs of the goals that match the category and subcategory of the transaction
+            goals.forEach(async (goal) => {
+                if (goal.category === category && goal.subCategoryID === subCategoryID) {
+                    await updateDoc(doc(goalsRef, goal.id), {
+                        transactionIDs: [...goal.transactionIDs, transactionID]
+                    });
+                    console.log("Goal updated successfully with ID:", goal.id);
+                }
+            });
+
 		}
 
 		openForm();
