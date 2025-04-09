@@ -1,21 +1,12 @@
-import React from "react";
-import {
-    IonButton,
-	IonCol,
-	IonGrid,
-	IonIcon,
-	IonItem,
-	IonItemDivider,
-	IonItemGroup,
-	IonLabel,
-	IonRow
-} from "@ionic/react";
+import React, { useRef } from "react";
+import { collection, deleteDoc, doc } from "firebase/firestore";
+import { close } from "ionicons/icons";
+import { IonButton, IonCol, IonContent, IonFooter, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import { Category } from "../Categories";
+import { firestore } from "../FirebaseConfig";
 import Transaction from "../Transactions/Transaction";
 import Goal from "./Goal";
-import { close } from "ionicons/icons";
-import { collection, deleteDoc, doc } from "firebase/firestore";
-import { firestore } from "../FirebaseConfig";
+
 
 interface DisplayGoalsProps {
     user: any;
@@ -32,6 +23,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 	selectedMonth = "",
 	onlyGoals = false
 }) => {
+    const modalRef = useRef<HTMLIonModalElement>(null);
 	// Filter goals by month and recurring
 	const filteredGoals = goals.filter((goal) => {
 		const createdAtMonth = goal.createdAt
@@ -105,7 +97,14 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 
 					{/* Display the transactions */}
 					{filteredGoals.map((goal) => (
-						<IonItem key={goal.id} button>
+						<IonItem
+							key={goal.id}
+							button
+							onClick={() => {
+								modalRef.current?.present();
+								modalRef.current?.setAttribute("goalId", goal.id);
+							}}
+						>
 							<IonLabel>
 								<IonGrid>
 									<IonRow>
@@ -117,11 +116,6 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 										</IonCol>
 										<IonCol>${goal.goal}</IonCol>
 										<IonCol>${calculateSaved(goal.transactions)}</IonCol>
-                                        <IonCol size="auto">
-                                            <IonButton fill="clear" color="danger" onClick={() => removeGoal(goal.id)}>
-                                                <IonIcon icon={close} />
-                                            </IonButton>
-                                        </IonCol>
 									</IonRow>
 								</IonGrid>
 							</IonLabel>
@@ -129,6 +123,57 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 					))}
 				</IonItemGroup>
 			</div>
+
+			<IonModal ref={modalRef}>
+				{filteredGoals.map((goal) => (
+					<React.Fragment key={goal.id}>
+						<IonHeader>
+							<IonToolbar>
+								<IonTitle className="ion-text-center">{goal.category}</IonTitle>
+							</IonToolbar>
+						</IonHeader>
+						<IonContent>
+							<div
+								key={goal.id}
+								hidden={modalRef.current?.getAttribute("goalId") !== goal.id}
+							>
+								<h2>Goal Details</h2>
+								<p>
+									<strong>Description:</strong>{" "}
+									{subCategory(goal.category, goal.subCategoryID)}
+								</p>
+								<p>
+									<strong>Target Date:</strong>{" "}
+									{goal.targetDate.toDate().toLocaleDateString()}
+								</p>
+								<p>
+									<strong>Goal Amount:</strong> ${goal.goal}
+								</p>
+								<p>
+									<strong>Saved Amount:</strong> $
+									{calculateSaved(goal.transactions)}
+								</p>
+								<p>
+									<strong>Category:</strong> {goal.category}
+								</p>
+							</div>
+						</IonContent>
+						<IonFooter>
+							<IonButton
+								shape="round"
+								expand="full"
+								color="danger"
+								onClick={() => {
+                                    removeGoal(goal.id)
+                                    modalRef.current?.dismiss();
+                                }}
+							>
+								Delete Goal
+							</IonButton>
+						</IonFooter>
+					</React.Fragment>
+				))}
+			</IonModal>
 		</React.Fragment>
 	);
 };
