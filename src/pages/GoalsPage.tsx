@@ -102,14 +102,13 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 			}
 		};
 
-        fetchGoals();
-
 		const unsubscribe = onSnapshot(collection(firestore, `users/${user.uid}/budget`), () => {
+            console.log("Fetching goals...");
             fetchGoals();
         });
 
         return () => unsubscribe();
-	});
+	}, [user]);
 
 	// Get each transaction associated with the Goal
 	useEffect(() => {
@@ -118,6 +117,7 @@ const GoalsPage: React.FC<{ user: any }> = ({ user }) => {
 
 			for (const goal of goalData) {
 				if (goal.transactionIDs.length == 0) {
+                    console.log(`No transactions for this goal ${goal.id}`);
 					continue;
 				}
 
