@@ -1,13 +1,43 @@
 import React from "react";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
-import DebugContainer from "../components/DebugContainer";
 import "./BudgetPage.css";
+import { Category } from "../utilities/Categories";
+import AddGoal from "../utilities/Goals/Add";
+import DisplayGoals from "../utilities/Goals/Display";
+import Goal from "../utilities/Goals/Goal";
+import MonthPicker from "../utilities/MonthPicker";
 
-const DebugPage: React.FC = () => {
+interface BudgetPageProps {
+	user: any;
+	goalData: Goal[];
+	categoryData: Category[];
+}
+
+const BudgetPage: React.FC<BudgetPageProps> = ({ user, goalData, categoryData }) => {
+	const [month, setMonth] = React.useState<number>(new Date().getMonth() + 1);
+	const [year, setYear] = React.useState<number>(new Date().getFullYear());
+
+	const monthNames = [
+		"Jan",
+		"Feb",
+		"Mar",
+		"Apr",
+		"May",
+		"Jun",
+		"Jul",
+		"Aug",
+		"Sep",
+		"Oct",
+		"Nov",
+		"Dec"
+	];
+
 	return (
-		<IonPage>
+		<IonPage id="main-content">
 			<IonHeader>
-				<IonToolbar></IonToolbar>
+				<IonToolbar>
+					<MonthPicker month={month} year={year} setMonth={setMonth} setYear={setYear} />
+				</IonToolbar>
 			</IonHeader>
 			<IonContent>
 				<IonHeader collapse="condense">
@@ -15,10 +45,20 @@ const DebugPage: React.FC = () => {
 						<IonTitle size="large">DEBUG</IonTitle>
 					</IonToolbar>
 				</IonHeader>
-				<DebugContainer userID="test-user" />
+				<IonContent>
+					<div className="container">
+						<DisplayGoals
+							user={user}
+							goals={goalData}
+							categories={categoryData}
+							selectedMonth={monthNames[month]}
+						/>
+						<AddGoal categories={categoryData} userID={user.uid} />
+					</div>
+				</IonContent>
 			</IonContent>
 		</IonPage>
 	);
 };
 
-export default DebugPage;
+export default BudgetPage;

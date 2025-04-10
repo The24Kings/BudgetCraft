@@ -14,7 +14,7 @@ import { Category, parseJSON } from "../utilities/Categories";
 import { firestore } from "../utilities/FirebaseConfig";
 import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
-import "./Container.css";
+import "./HomeContainer.css";
 import { IonButton, IonLabel } from "@ionic/react";
 import FilterButton from "../utilities/FilterButton";
 import AddTransactions from "../utilities/Transactions/Add";
@@ -23,7 +23,7 @@ interface ContainerProps {
 	userID: string;
 }
 
-const Container: React.FC<ContainerProps> = ({ userID }) => {
+const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
 	const intialLoad = 10;
 
 	const [jsonData, setJSONData] = useState<any>(null);
@@ -172,4 +172,4 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 	);
 };
 
-export default Container;
+export default HomeContainer;
