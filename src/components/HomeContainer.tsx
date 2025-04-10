@@ -22,7 +22,7 @@ interface ContainerProps {
 	userID: string;
 }
 
-const Container: React.FC<ContainerProps> = ({ userID }) => {
+const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
 	const intialLoad = 10;
 
 	const [jsonData, setJSONData] = useState<any>(null);
@@ -174,4 +174,4 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 	);
 };
 
-export default Container;
+export default HomeContainer;

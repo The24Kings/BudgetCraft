@@ -14,7 +14,7 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
-import Container from "../components/HomeContainer";
+import HomeContainer from "../components/HomeContainer";
 import { exportUserDataJSON } from "../utilities/DataExport";
 import { auth, firestore } from "../utilities/FirebaseConfig";
 import MonthPicker from "../utilities/MonthPicker";
@@ -96,7 +96,7 @@ const HomePage: React.FC<{ user: any }> = ({ user }) => {
 
 				<IonContent className="home-content">
 					{user ? (
-						<Container userID={user.uid} />
+						<HomeContainer userID={user.uid} />
 					) : (
 						<IonText className="ion-padding">Loading user data...</IonText>
 					)}
