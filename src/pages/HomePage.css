@@ -9,7 +9,6 @@ ion-header.home-header {
 ion-toolbar.home-toolbar {
 	--background: var(--app-color-purple);
 	--color: #ffffff;
-	padding: 1rem;
 }
 
 .home-toolbar ion-button,
@@ -37,29 +36,23 @@ ion-content.home-content {
 
 /* Month Picker wrapper and layout */
 .month-picker-wrapper {
-	padding: 20px 16px 12px;
 	width: 100%;
-	display: flex;
-	justify-content: center;
+    padding: 10px 16px;
 }
 
 .month-picker {
 	display: flex;
-	gap: 10px;
+	gap: 5px;
 	justify-content: center;
-	width: 100%;
-	max-width: 100%;
-	flex-wrap: wrap;
 }
 
 .month-button {
-	min-width: 80px;
+	min-width: 40px;
 	--color: var(--app-color-green);
 	--border-color: var(--app-color-green);
 	border: 1px solid var(--app-color-green);
 	border-radius: 8px;
 	text-transform: none;
-	font-weight: normal;
 	background-color: transparent;
 	color: var(--app-color-green);
 }
