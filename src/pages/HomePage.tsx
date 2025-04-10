@@ -91,19 +91,6 @@ const HomePage: React.FC<{ user: any }> = ({ user }) => {
 							setMonth={setMonth}
 							setYear={setYear}
 						/>
-						<IonButtons slot="end">
-							<IonMenuToggle>
-								<IonAvatar className="user-avatar clickable-avatar">
-									<img
-										src={
-											user?.photoURL ??
-											"https://ionicframework.com/docs/img/demos/avatar.svg"
-										}
-										alt="User Avatar"
-									/>
-								</IonAvatar>
-							</IonMenuToggle>
-						</IonButtons>
 					</IonToolbar>
 				</IonHeader>
 
