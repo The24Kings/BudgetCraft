@@ -1,0 +1,42 @@
+.pie-chart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .totals-display {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .pie-chart-container .total-income h3 {
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .pie-chart-container .total-income p {
+    color: #4CAF50 !important; /* Green for total balance*/
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .pie-chart-container .remaining-balance h3 {
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .pie-chart-container .remaining-balance p {
+    color: #F44336 !important; /* Red for remaining balance */
+    font-size: 1.2em;
+    font-weight: bold;
+  }
+  
+  .no-expenses-message {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+  }
+  
