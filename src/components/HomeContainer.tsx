@@ -133,22 +133,24 @@ const Container: React.FC<ContainerProps> = ({ userID }) => {
 	return (
 		<div className="container">
 			{/* Search Bar + Filter */}
-			<FilterButton
-				searchTerm={searchTerm}
-				setSearchTerm={setSearchTerm}
-				filterType={filterType}
-				setFilterType={setFilterType}
-				minAmount={minAmount}
-				setMinAmount={setMinAmount}
-				maxAmount={maxAmount}
-				setMaxAmount={setMaxAmount}
-				startDate={startDate}
-				setStartDate={setStartDate}
-				endDate={endDate}
-				setEndDate={setEndDate}
-				filterDate={filterDate}
-				setFilterDate={setFilterDate}
-			/>
+			<div className="sticky-search">
+				<FilterButton
+					searchTerm={searchTerm}
+					setSearchTerm={setSearchTerm}
+					filterType={filterType}
+					setFilterType={setFilterType}
+					minAmount={minAmount}
+					setMinAmount={setMinAmount}
+					maxAmount={maxAmount}
+					setMaxAmount={setMaxAmount}
+					startDate={startDate}
+					setStartDate={setStartDate}
+					endDate={endDate}
+					setEndDate={setEndDate}
+					filterDate={filterDate}
+					setFilterDate={setFilterDate}
+				/>
+			</div>
 
 			{/* Display the transactions */}
 			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} />
