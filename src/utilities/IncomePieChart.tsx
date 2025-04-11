@@ -51,32 +51,51 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 			</div>
 
 			{expenseData.length > 0 ? (
-				<ResponsiveContainer width="100%" height={500}>
-					<PieChart>
-						<Pie
-							data={expenseData}
-							cx="50%"
-							cy="50%"
-							labelLine={false}
-							outerRadius={180}
-							fill="#8884d8"
-							dataKey="value"
-							label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-						>
-							{expenseData.map((entry, index) => (
-								<Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-							))}
-						</Pie>
-						<Tooltip
-							formatter={(value) => [`$${(value as number).toFixed(2)}`]}
-							contentStyle={{
-								padding: "8px",
-								background: "#fff",
-								border: "1px solid #ccc"
-							}}
-						/>
-					</PieChart>
-				</ResponsiveContainer>
+				<>
+					<ResponsiveContainer width="100%" height={400}>
+						<PieChart>
+							<Pie
+								data={expenseData}
+								cx="50%"
+								cy="50%"
+								labelLine={false}
+								outerRadius={120}
+								fill="#8884d8"
+								dataKey="value"
+								label={false}
+							>
+								{expenseData.map((entry, index) => (
+									<Cell
+										key={`cell-${index}`}
+										fill={COLORS[index % COLORS.length]}
+									/>
+								))}
+							</Pie>
+							<Tooltip
+								formatter={(value) => [`$${(value as number).toFixed(2)}`]}
+								contentStyle={{
+									padding: "8px",
+									background: "#fff",
+									border: "1px solid #ccc"
+								}}
+							/>
+						</PieChart>
+					</ResponsiveContainer>
+					<div className="category-legend">
+						{expenseData.map((entry, index) => (
+							<div key={`legend-${index}`} className="category-item">
+								<div
+									className="category-color"
+									style={{ backgroundColor: COLORS[index % COLORS.length] }}
+								/>
+								<span className="category-label">
+									{entry.name}: {((entry.value / totalExpenses) * 100).toFixed(0)}
+									%
+								</span>
+							</div>
+						))}
+					</div>
+				</>
 			) : (
 				<div className="no-expenses-message">
 					<p>
