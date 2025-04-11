@@ -1,22 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { signOut } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import {
-	IonAvatar,
-	IonButton,
-	IonButtons,
 	IonContent,
 	IonHeader,
-	IonMenu,
-	IonMenuToggle,
 	IonPage,
 	IonText,
-	IonTitle,
 	IonToolbar
 } from "@ionic/react";
 import HomeContainer from "../components/HomeContainer";
-import { exportUserDataJSON } from "../utilities/DataExport";
-import { auth, firestore } from "../utilities/FirebaseConfig";
+import { firestore } from "../utilities/FirebaseConfig";
 import MonthPicker from "../utilities/MonthPicker";
 import "./HomePage.css";
 import "../theme/variables.css";
