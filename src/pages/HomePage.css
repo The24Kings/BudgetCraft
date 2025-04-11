@@ -109,14 +109,12 @@ ion-modal#add-transact-modal .categories {
 	overflow-y: auto;
 }
 
-/* ✳️ Style category selections inside modal like transactions */
 ion-modal#add-transact-modal .category ion-item {
 	--background: #ffffff;
 	--color: #1c1c1c;
 	font-weight: 500;
 }
 
-/* ✳️ Style subcategory buttons with app green */
 ion-modal#add-transact-modal .subCategory ion-button {
 	color: var(--app-color-green);
 	font-weight: 500;
@@ -144,6 +142,12 @@ ion-accordion::part(header) {
 	padding: 10px;
 }
 
+.date-picker-inline {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
 /* Textarea styling */
 ion-textarea.custom {
 	--background: #ffffff;
@@ -160,10 +164,6 @@ ion-textarea.custom {
 
 .custom .textarea-wrapper.sc-ion-textarea-md textarea.sc-ion-textarea-md {
 	cursor: default;
-}
-
-.user-avatar img {
-	padding: 15%;
 }
 
 /* Search bar wrapper and layout */
@@ -262,7 +262,7 @@ ion-fab-button.add-transaction-button ion-icon {
 	fill: white !important;
 }
 
-/* Tab bar icons & labels (if using tab navigation) */
+/* Tab bar icons & labels*/
 ion-tab-button {
 	--color: #888;
 	--color-selected: var(--app-color-green);
