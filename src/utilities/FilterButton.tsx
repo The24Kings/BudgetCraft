@@ -1,16 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { filter } from "ionicons/icons";
-import {
-	IonButton,
-	IonDatetime,
-	IonDatetimeButton,
-	IonIcon,
-	IonModal,
-	IonSearchbar,
-	IonSelect,
-	IonSelectOption
-} from "@ionic/react";
+import { IonButton, IonDatetime, IonDatetimeButton, IonIcon, IonModal, IonSearchbar, IonSelect, IonSelectOption } from "@ionic/react";
+
 
 // Props to control filter and search state from parent (Container)
 interface FilterButtonProps {
@@ -83,14 +75,15 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						inputRef.current = e.detail.value ?? "";
 						setSearchTerm(inputRef.current);
 					}}
-				/>
-				<IonButton
-					className="filter-icon-button"
-					fill="clear"
-					onClick={() => setIsFilterOpen(true)}
 				>
-					<IonIcon icon={filter} />
-				</IonButton>
+					<IonButton
+						className="filter-icon-button"
+						fill="clear"
+						onClick={() => setIsFilterOpen(true)}
+					>
+						<IonIcon icon={filter} />
+					</IonButton>
+				</IonSearchbar>
 			</div>
 			{/* Filter modal popup */}
 			<IonModal

@@ -175,7 +175,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	};
 
 	return (
-		<div className="container">
+		<div className="fab-container">
 			<IonFab vertical="bottom" horizontal="end" slot="fixed">
 				<IonFabButton
 					id="add-transaction"

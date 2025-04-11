@@ -1,22 +1,18 @@
 /* HomePage styles */
 ion-header.home-header {
-	--background: transparent;
-	--color: #ffffff;
 	box-shadow: none;
-	border-bottom: 1px solid #e0e0e0;
 	height: auto;
 }
 
 ion-toolbar.home-toolbar {
 	--background: var(--app-color-purple);
-	--color: #ffffff;
 }
 
 .home-toolbar ion-button,
 .home-toolbar ion-label,
 .home-toolbar ion-title {
-	color: #ffffff;
 	font-size: 1rem;
+    --background-hover-opacity: 0;
 }
 
 .user-avatar.clickable-avatar {
@@ -30,10 +26,6 @@ ion-toolbar.home-toolbar {
 
 ion-content.home-content {
 	--background: var(--ion-background-color);
-}
-
-.home-content {
-	padding: 1rem;
 }
 
 /* Month Picker wrapper and layout */
@@ -51,8 +43,7 @@ ion-content.home-content {
 .month-button {
 	min-width: 40px;
 	--color: var(--app-color-green);
-	--border-color: var(--app-color-green);
-	border: 1px solid var(--app-color-green);
+	border: 2px solid var(--app-color-green);
 	border-radius: 8px;
 	text-transform: none;
 	background-color: transparent;
@@ -61,10 +52,9 @@ ion-content.home-content {
 
 .month-button.selected {
 	--background: var(--app-color-green);
-	color: #1c1c1c;
-	background-color: var(--app-color-green);
 	font-weight: bold;
 	transform: scale(1.05);
+    min-width: 80px;
 	border: none;
 }
 
@@ -74,9 +64,9 @@ ion-content.home-content {
 	flex-direction: column;
 	align-items: center;
 	justify-content: flex-start;
-	height: calc(100vh - 125px);
+	height: calc(100vh - 137px);
 	width: 100%;
-	padding: 10px;
+	padding: 0px 10px 10px 10px;
 	overflow-y: auto;
 }
 
@@ -119,16 +109,9 @@ ion-modal#add-transact-modal .categories {
 	overflow-y: auto;
 }
 
-.add-tansaction {
-	padding-bottom: 100px;
-	padding-right: 40px;
-}
-
 /* Transaction styles */
 .transactions {
 	width: 100%;
-	padding: 0 16px;
-	box-sizing: border-box;
 }
 
 ion-item[color="light"] {
@@ -171,51 +154,26 @@ ion-textarea.custom {
 }
 
 /* Search bar wrapper and layout */
-.search-bar-wrapper {
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	box-sizing: border-box;
-	padding: 0;
-	margin: 0;
-	overflow-x: hidden;
-}
-
-.search-bar-container {
-	position: relative;
-	width: 100%;
-	box-sizing: border-box;
-	padding: 0 8px;
-	margin: 0;
-	overflow-x: hidden;
-}
-
 ion-searchbar.search-input {
-	width: 100%;
 	--background: #f4f4f4;
 	--color: #000;
 	--box-shadow: none;
-	--border-radius: 0;
-	--padding-start: 16px;
-	--padding-end: 48px;
 	--placeholder-color: #888;
 	--icon-color: #888;
 	--cancel-button-color: #888;
 }
 
-ion-searchbar::part(container) {
-	background: #f4f4f4 !important;
-	box-shadow: none !important;
-	border: 1px solid black !important;
-	border-radius: 0 !important;
+.search-input {
+    flex-direction: row-reverse;
+}
+
+.search-input ion-button {
+    position: absolute;
+    z-index: 2;
 }
 
 /* Filter icon inside searchbar on the far right */
 .filter-icon-button {
-	position: absolute;
-	top: 8px;
-	right: 12px;
-	z-index: 2;
 	color: #000;
 }
 
@@ -226,9 +184,6 @@ ion-searchbar::part(container) {
 	z-index: 100;
 	background-color: var(--ion-background-color);
 	width: 100%;
-	padding: 0;
-	margin: 0;
-	box-sizing: border-box;
 }
 
 /* Filter modal styles */
