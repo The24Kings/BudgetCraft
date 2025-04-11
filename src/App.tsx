@@ -222,7 +222,7 @@ const App: React.FC = () => {
 						<Route
 							path="/settings"
 							render={() => {
-								return user ? <SettingsPage /> : <Redirect to="/login" />;
+								return user ? <SettingsPage user={user} /> : <Redirect to="/login" />;
 							}}
 							exact
 						/>
