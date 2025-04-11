@@ -22,7 +22,6 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
-import "@ionic/react/css/palettes/dark.system.css";
 import "./theme/variables.css";
 import { Category, parseJSON } from "./utilities/Categories";
 import Goal from "./utilities/Goals/Goal";
@@ -39,6 +38,9 @@ const App: React.FC = () => {
     const [goalData, setGoalData] = useState<Goal[]>([]);
 
 	useEffect(() => {
+		// Force light mode by removing Ionic's dark class from <body>
+		document.body.classList.remove("dark");
+
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
 			setUser(user);
 			setLoading(false);

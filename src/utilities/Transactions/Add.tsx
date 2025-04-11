@@ -175,10 +175,11 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 	};
 
 	return (
-		<div className="container">
+		<div className="fab-container">
 			<IonFab vertical="bottom" horizontal="end" slot="fixed">
 				<IonFabButton
 					id="add-transaction"
+					className="add-transaction-button"
 					onClick={() => {
 						openForm();
 						modalStartRef.current?.present();
@@ -281,12 +282,12 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 								maxlength={20} // Prevents additional characters in UI
 							/>
 						</IonItem>
-						<div style={{ display: "flex", justifyContent: "center" }}>
-							<IonDatetimeButton
-								className="ion-margin ion-justify-content-start"
-								datetime="datetime"
-							/>
-						</div>
+						<IonItem lines="none" className="date-picker-item">
+							<div className="date-picker-inline">
+								<IonLabel>Date:</IonLabel>
+								<IonDatetimeButton datetime="datetime" />
+							</div>
+						</IonItem>
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="datetime"
@@ -294,7 +295,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 									const selectedDate = new Date(e.detail.value as string);
 									selectedDate.setMinutes(
 										selectedDate.getMinutes() + selectedDate.getTimezoneOffset()
-									); // Adjust for timezone offset
+									);
 									setDate(Timestamp.fromDate(selectedDate));
 								}}
 								presentation="date"

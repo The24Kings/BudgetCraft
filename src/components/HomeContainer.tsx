@@ -10,14 +10,13 @@ import {
 	query,
 	QuerySnapshot
 } from "firebase/firestore";
+import { IonButton, IonLabel } from "@ionic/react";
 import { Category, parseJSON } from "../utilities/Categories";
+import FilterButton from "../utilities/FilterButton";
 import { firestore } from "../utilities/FirebaseConfig";
+import AddTransactions from "../utilities/Transactions/Add";
 import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
-import "./HomeContainer.css";
-import { IonButton, IonLabel } from "@ionic/react";
-import FilterButton from "../utilities/FilterButton";
-import AddTransactions from "../utilities/Transactions/Add";
 
 interface ContainerProps {
 	userID: string;
@@ -134,22 +133,24 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
 	return (
 		<div className="container">
 			{/* Search Bar + Filter */}
-			<FilterButton
-				searchTerm={searchTerm}
-				setSearchTerm={setSearchTerm}
-				filterType={filterType}
-				setFilterType={setFilterType}
-				minAmount={minAmount}
-				setMinAmount={setMinAmount}
-				maxAmount={maxAmount}
-				setMaxAmount={setMaxAmount}
-				startDate={startDate}
-				setStartDate={setStartDate}
-				endDate={endDate}
-				setEndDate={setEndDate}
-				filterDate={filterDate}
-				setFilterDate={setFilterDate}
-			/>
+			<div className="sticky-search">
+				<FilterButton
+					searchTerm={searchTerm}
+					setSearchTerm={setSearchTerm}
+					filterType={filterType}
+					setFilterType={setFilterType}
+					minAmount={minAmount}
+					setMinAmount={setMinAmount}
+					maxAmount={maxAmount}
+					setMaxAmount={setMaxAmount}
+					startDate={startDate}
+					setStartDate={setStartDate}
+					endDate={endDate}
+					setEndDate={setEndDate}
+					filterDate={filterDate}
+					setFilterDate={setFilterDate}
+				/>
+			</div>
 
 			{/* Display the transactions */}
 			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} />
@@ -159,6 +160,7 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
 
 			{/* Load More */}
 			<IonButton
+				className="action-button"
 				onClick={() => {
 					// If we actually loaded all possible transactions, then we can load more
 					if (actualTotalLoaded === totalLoaded) {

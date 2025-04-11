@@ -1,16 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { filter } from "ionicons/icons";
-import {
-	IonButton,
-	IonDatetime,
-	IonDatetimeButton,
-	IonIcon,
-	IonModal,
-	IonSearchbar,
-	IonSelect,
-	IonSelectOption
-} from "@ionic/react";
+import { IonButton, IonDatetime, IonDatetimeButton, IonIcon, IonModal, IonSearchbar, IonSelect, IonSelectOption } from "@ionic/react";
+
 
 // Props to control filter and search state from parent (Container)
 interface FilterButtonProps {
@@ -48,7 +40,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 }) => {
 	const [date, setDate] = useState(Timestamp.now());
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
-	const [tempSearch, setTempSearch] = useState(searchTerm);
 	const inputRef = useRef<string>(searchTerm);
 
 	// Debounce effect: updates actual searchTerm after user stops typing
@@ -72,24 +63,28 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 	};
 
 	return (
-		<div className="search-bar">
+		<div className="search-bar-wrapper">
 			{/* Search input for transaction title */}
-			<IonSearchbar
-				className="search-input"
-				placeholder="Search"
-				value={inputRef.current}
-                showClearButton="never"
-				onIonInput={(e) => {
-					inputRef.current = e.detail.value ?? "";
-					setSearchTerm(inputRef.current);
-				}}
-            >
-                {/* Filter icon button to open modal */}
-                <IonButton fill="clear" onClick={() => setIsFilterOpen(true)}>
-                    <IonIcon icon={filter} />
-                </IonButton>
-            </IonSearchbar>
-
+			<div className="search-bar-container">
+				<IonSearchbar
+					className="search-input"
+					placeholder="Search"
+					value={inputRef.current}
+					showClearButton="never"
+					onIonInput={(e) => {
+						inputRef.current = e.detail.value ?? "";
+						setSearchTerm(inputRef.current);
+					}}
+				>
+					<IonButton
+						className="filter-icon-button"
+						fill="clear"
+						onClick={() => setIsFilterOpen(true)}
+					>
+						<IonIcon icon={filter} />
+					</IonButton>
+				</IonSearchbar>
+			</div>
 			{/* Filter modal popup */}
 			<IonModal
 				isOpen={isFilterOpen}
@@ -131,12 +126,19 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 					/>
 
 					{/* Date picker for filtering by date */}
-                    <h4>Date Range</h4>
+					<h4>Date Range</h4>
+					<div
+						style={{
+							display: "flex",
+							flexDirection: "row",
+							gap: "10px",
+							justifyContent: "center"
+						}}
+					>
+						<IonDatetimeButton datetime="start-date" />
+						<IonDatetimeButton datetime="end-date" />
+					</div>
 
-                    <div style={{ display: "flex", flexDirection: "row", gap: "10px", justifyContent: "center" }}>
-                        <IonDatetimeButton datetime="start-date" />
-                        <IonDatetimeButton datetime="end-date" />
-                    </div>
 					<IonModal keepContentsMounted={true}>
 						<IonDatetime
 							id="start-date"
@@ -159,12 +161,10 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						/>
 					</IonModal>
 
-					{/* Clears all filters */}
 					<IonButton expand="full" onClick={clearFilters}>
 						Clear Filters
 					</IonButton>
 
-					{/* Closes the modal */}
 					<IonButton
 						expand="full"
 						color="secondary"
