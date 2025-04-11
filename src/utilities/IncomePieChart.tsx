@@ -52,7 +52,7 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 
 			{expenseData.length > 0 ? (
 				<>
-					<ResponsiveContainer width="100%" height={400}>
+					<ResponsiveContainer width="100%" height={250}>
 						<PieChart>
 							<Pie
 								data={expenseData}
