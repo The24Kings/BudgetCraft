@@ -12,7 +12,7 @@ ion-toolbar.home-toolbar {
 .home-toolbar ion-label,
 .home-toolbar ion-title {
 	font-size: 1rem;
-    --background-hover-opacity: 0;
+	--background-hover-opacity: 0;
 }
 
 .user-avatar.clickable-avatar {
@@ -54,7 +54,7 @@ ion-content.home-content {
 	--background: var(--app-color-green);
 	font-weight: bold;
 	transform: scale(1.05);
-    min-width: 80px;
+	min-width: 80px;
 	border: none;
 }
 
@@ -100,13 +100,26 @@ ion-modal#add-transact-modal::part(backdrop) {
 }
 
 ion-modal#add-transact-modal ion-toolbar {
-	--background: rgb(14 116 144);
+	--background: var(--app-color-purple);
 	--color: white;
 }
 
 ion-modal#add-transact-modal .categories {
 	height: 80%;
 	overflow-y: auto;
+}
+
+/* ✳️ Style category selections inside modal like transactions */
+ion-modal#add-transact-modal .category ion-item {
+	--background: #ffffff;
+	--color: #1c1c1c;
+	font-weight: 500;
+}
+
+/* ✳️ Style subcategory buttons with app green */
+ion-modal#add-transact-modal .subCategory ion-button {
+	color: var(--app-color-green);
+	font-weight: 500;
 }
 
 /* Transaction styles */
@@ -164,12 +177,12 @@ ion-searchbar.search-input {
 }
 
 .search-input {
-    flex-direction: row-reverse;
+	flex-direction: row-reverse;
 }
 
 .search-input ion-button {
-    position: absolute;
-    z-index: 2;
+	position: absolute;
+	z-index: 2;
 }
 
 /* Filter icon inside searchbar on the far right */

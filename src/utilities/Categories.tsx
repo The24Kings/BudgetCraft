@@ -379,7 +379,7 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 									value={category.getCategory()}
 									key={category.getCategory()}
 								>
-									<IonItem slot="header" color="dark">
+									<IonItem slot="header">
 										<IonLabel>{category.getCategory()}</IonLabel>
 									</IonItem>
 
@@ -491,12 +491,4 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 	);
 };
 
-export {
-	EntryCategories,
-	DataValidation,
-	parseJSON,
-	getInfo,
-	exists,
-	Category,
-	SubCategory
-};
+export { EntryCategories, DataValidation, parseJSON, getInfo, exists, Category, SubCategory };
