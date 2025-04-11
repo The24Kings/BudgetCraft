@@ -14,22 +14,22 @@ import { IonButton, IonLabel } from "@ionic/react";
 import { Category, parseJSON } from "../utilities/Categories";
 import FilterButton from "../utilities/FilterButton";
 import { firestore } from "../utilities/FirebaseConfig";
+import IncomePieChart from "../utilities/IncomePieChart";
 import AddTransactions from "../utilities/Transactions/Add";
 import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
 
 interface ContainerProps {
 	userID: string;
+	onTransactionsChange?: (transactions: Transaction[]) => void;
 }
 
-const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
-	const intialLoad = 10;
-
+const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange }) => {
 	const [jsonData, setJSONData] = useState<any>(null);
 	const [categoryData, setCategoryData] = useState<Category[]>([]);
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
-	const [totalLoaded, setTotalLoaded] = useState(intialLoad);
-	const [actualTotalLoaded, setActualTotalLoaded] = useState(intialLoad);
+	const [totalLoaded, setTotalLoaded] = useState(10);
+	const [actualTotalLoaded, setActualTotalLoaded] = useState(10);
 
 	// Filter states for the FilterButton component
 	const [searchTerm, setSearchTerm] = useState<string>("");
@@ -44,25 +44,20 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
 	//TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
 	useEffect(() => {
 		const fetchTransactions = async () => {
-			let querySnapshot: QuerySnapshot<DocumentData>;
-
 			try {
-				querySnapshot = await getDocs(
+				const querySnapshot = await getDocs(
 					query(
 						collection(firestore, `users/${userID}/transactions`),
 						orderBy("date", "desc"),
 						limit(totalLoaded)
 					)
 				);
-			} catch (error) {
-				console.error("Failed to fetch transactions...");
-			} finally {
+
 				setActualTotalLoaded(querySnapshot.docs.length);
 
 				// Parse the documents into Transaction objects
 				const transactionData = querySnapshot.docs.map((doc) => {
 					const data = doc.data();
-
 					return new Transaction(
 						doc.id,
 						data.type,
@@ -76,46 +71,41 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
 				});
 
 				setTransactionData(transactionData);
+				if (onTransactionsChange) {
+					onTransactionsChange(transactionData);
+				}
+			} catch (error) {
+				console.error("Failed to fetch transactions:", error);
 			}
 		};
 
-		const interval = setInterval(() => {
-			fetchTransactions();
-		}, 1000);
-
+		const interval = setInterval(fetchTransactions, 1000);
 		return () => clearInterval(interval);
-	}, [totalLoaded, actualTotalLoaded]);
+	}, [totalLoaded, userID, onTransactionsChange]);
 
-	// Load the JSON data
+	// Load categories
 	useEffect(() => {
 		const fetchJSON = async () => {
-			const settingsRef = collection(firestore, `users/${userID}/settings`);
-			const categoriesRef = doc(settingsRef, "categories");
-			const categoriesSnapshot = await getDoc(categoriesRef);
-
-			// Order the categories by type in descending order
-			const categories = categoriesSnapshot.data().categories;
-			const orderedCategories = parseJSON(categories).sort((a: Category, b: Category) => {
-				if (a.type !== b.type) {
-					if (a.type === "Income") return -1;
-					if (b.type === "Income") return 1;
+			try {
+				const categoriesRef = doc(firestore, `users/${userID}/settings/categories`);
+				const categoriesSnapshot = await getDoc(categoriesRef);
+				if (categoriesSnapshot.exists()) {
+					const categories = parseJSON(categoriesSnapshot.data().categories).sort(
+						(a: Category, b: Category) => {
+							if (a.type !== b.type) return a.type === "Income" ? -1 : 1;
+							return a.name.localeCompare(b.name);
+						}
+					);
+					setCategoryData(categories);
 				}
-
-				if (a.name !== b.name) {
-					return a.name.localeCompare(b.name);
-				}
-			});
-
-			setJSONData(categories);
-			setCategoryData(orderedCategories);
+			} catch (error) {
+				console.error("Failed to fetch categories:", error);
+			}
 		};
 
-		const interval = setInterval(() => {
-			fetchJSON();
-		}, 500);
-
+		const interval = setInterval(fetchJSON, 500);
 		return () => clearInterval(interval);
-	}, []);
+	}, [userID]);
 
 	// Filter transactions before rendering
 	const filteredTransactions = transactionData.filter((tx) => {
@@ -132,6 +122,9 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
 
 	return (
 		<div className="container">
+			{/* Income Pie Chart */}
+			<IncomePieChart transactions={filteredTransactions} />
+
 			{/* Search Bar + Filter */}
 			<div className="sticky-search">
 				<FilterButton
@@ -158,7 +151,7 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID }) => {
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
 
-			{/* Load More */}
+			{/* Load More Button */}
 			<IonButton
 				className="action-button"
 				onClick={() => {
