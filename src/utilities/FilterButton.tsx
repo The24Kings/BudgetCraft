@@ -22,12 +22,11 @@ interface FilterButtonProps {
 	setMinAmount: (value: number | null) => void;
 	maxAmount: number | null;
 	setMaxAmount: (value: number | null) => void;
-	filterDate: string;
-	setFilterDate: (value: string) => void;
 	startDate: string;
 	setStartDate: (value: string) => void;
 	endDate: string;
 	setEndDate: (value: string) => void;
+    clearFilters: () => void;
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
@@ -39,14 +38,12 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 	setMinAmount,
 	maxAmount,
 	setMaxAmount,
-	filterDate,
-	setFilterDate,
 	startDate,
 	setStartDate,
 	endDate,
-	setEndDate
+	setEndDate,
+    clearFilters
 }) => {
-	const [date, setDate] = useState(Timestamp.now());
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const inputRef = useRef<string>(searchTerm);
 
@@ -58,17 +55,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 
 		return () => clearTimeout(delay);
 	}, [searchTerm]); // triggers only when external searchTerm changes
-
-	// Resets all filter fields to their default values
-	const clearFilters = () => {
-		setFilterType("All");
-		setMinAmount(null);
-		setMaxAmount(null);
-		setFilterDate("");
-		setDate(Timestamp.now());
-		setStartDate("");
-		setEndDate("");
-	};
 
 	return (
 		<div className="search-bar-wrapper">
