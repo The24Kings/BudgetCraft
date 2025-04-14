@@ -22,7 +22,6 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange,
 	const [categoryData, setCategoryData] = useState<Category[]>([]);
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
 	const [totalLoaded, setTotalLoaded] = useState(10);
-	const [actualTotalLoaded, setActualTotalLoaded] = useState(10);
 
 	// Filter states for the FilterButton component
 	const [searchTerm, setSearchTerm] = useState<string>("");
@@ -40,12 +39,9 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange,
 				const querySnapshot = await getDocs(
 					query(
 						collection(firestore, `users/${userID}/transactions`),
-						orderBy("date", "desc"),
-						limit(totalLoaded)
+						orderBy("date", "desc")
 					)
 				);
-
-				setActualTotalLoaded(querySnapshot.docs.length);
 
 				// Parse the documents into Transaction objects
 				const transactionData = querySnapshot.docs.map((doc) => {
@@ -158,19 +154,6 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange,
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
-
-			{/* Load More Button */}
-			<IonButton
-				className="action-button"
-				onClick={() => {
-					// If we actually loaded all possible transactions, then we can load more
-					if (actualTotalLoaded === totalLoaded) {
-						setTotalLoaded(totalLoaded + 10);
-					}
-				}}
-			>
-				<IonLabel>Load More</IonLabel>
-			</IonButton>
 		</div>
 	);
 };
