@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
 	collection,
 	doc,
-	DocumentData,
 	getDoc,
 	getDocs,
 	limit,
 	orderBy,
 	query,
-	QuerySnapshot
 } from "firebase/firestore";
 import { IonButton, IonLabel } from "@ionic/react";
 import { Category, parseJSON } from "../utilities/Categories";

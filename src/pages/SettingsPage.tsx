@@ -1,16 +1,26 @@
 import React from "react";
-import {
-	IonAvatar,
-	IonButton,
-	IonContent,
-	IonHeader,
-	IonPage,
-	IonText,
-	IonTitle,
-	IonToolbar
-} from "@ionic/react";
+import { IonAvatar, IonButton, IonContent, IonHeader, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { signOut } from "firebase/auth";
+import { auth } from "../utilities/FirebaseConfig";
+import { exportUserDataJSON } from "../utilities/DataExport";
 
-const SettingsPage: React.FC = () => {
+const SettingsPage: React.FC<{user: any}> = ({ user }) => {
+    const handleLogout = async () => {
+		try {
+			await signOut(auth);
+			console.log("User signed out");
+		} catch (error) {
+			console.error("Logout Error:", error);
+		}
+	};
+
+	const handleExportJSON = () => {
+		if (user) {
+			const categories: any[] = [];
+			exportUserDataJSON(user.uid, categories);
+		}
+	};
+
 	return (
 		<IonPage id="main-content">
 			<IonHeader>
@@ -28,8 +38,9 @@ const SettingsPage: React.FC = () => {
 				<IonText className="center-text">
 					<h2>Welcome!</h2>
 				</IonText>
-				<IonButton>Logout</IonButton>
-				<IonButton expand="full" color="secondary">
+
+				<IonButton onClick={handleLogout}>Logout</IonButton>
+				<IonButton expand="full" color="secondary" onClick={handleExportJSON}>
 					Export JSON
 				</IonButton>
 				<h2>This is the Settings Page</h2>

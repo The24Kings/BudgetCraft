@@ -1,8 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Timestamp } from "firebase/firestore";
 import { filter } from "ionicons/icons";
-import { IonButton, IonDatetime, IonDatetimeButton, IonIcon, IonModal, IonSearchbar, IonSelect, IonSelectOption } from "@ionic/react";
-
+import {
+	IonButton,
+	IonDatetime,
+	IonDatetimeButton,
+	IonIcon,
+	IonModal,
+	IonSearchbar,
+	IonSelect,
+	IonSelectOption
+} from "@ionic/react";
 
 // Props to control filter and search state from parent (Container)
 interface FilterButtonProps {
