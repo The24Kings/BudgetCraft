@@ -14,8 +14,4 @@ http://ionicframework.com/docs/theming/ */
 	--ion-background-color: var(--background-color);
 	--ion-toolbar-background: var(--background-color);
 	--ion-text-color: var(--text-color);
-
-	/* Optional grayscale steps */
-	--color-step-50: #e0e0e0;
-	--color-step-100: #d4d4d4;
 }
