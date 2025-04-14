@@ -154,7 +154,7 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange,
 			</div>
 
 			{/* Display the transactions */}
-			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} />
+			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} hideDivider />
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
