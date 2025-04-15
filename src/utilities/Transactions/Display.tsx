@@ -19,10 +19,10 @@ import Transaction from "./Transaction";
 interface DisplayTransactionsProps {
 	transactions: Transaction[];
 	categories: Category[];
-    selectedMonth?: string;
+    hideDivider?: boolean;
 }
 
-const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories, selectedMonth="" }) => {
+const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories, hideDivider }) => {
 	//TODO: Allow the user to select which month they want to view
 	// Group the transactions by month
 	const groups = transactions
@@ -67,9 +67,9 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 				<IonAccordionGroup>
 					{Object.keys(groups).map((month) => (
 						<IonItemGroup key={month}>
-							<IonItemDivider>
+							{!hideDivider && (<IonItemDivider>
 								<IonLabel>{month}</IonLabel>
-							</IonItemDivider>
+							</IonItemDivider>)}
 
 							{/* Display the transactions */}
 							{groups[month].map((transaction) => (
