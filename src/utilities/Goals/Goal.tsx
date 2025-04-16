@@ -16,7 +16,9 @@ class Goal {
 		public reminderDate: Timestamp = Timestamp.now(),
 		public description: string = "",
 		public transactionIDs: String[] = [],
-		public transactions: Transaction[] = [] // Transactions related to this goal
+        public withdrawalIDs: String[] = [], // IDs of transactions that are withdrawals
+		public transactions: Transaction[] = [], // Transactions related to this goal
+        public withdrawals: Transaction[] = [] // Transactions related to this goal that are withdrawals
 	) {}
 }
 

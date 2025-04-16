@@ -89,7 +89,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
         const goalRef = doc(firestore, `users/${user.uid}/budget/${goalId}`);
 
         await updateDoc(goalRef, {
-            withdrawlIDs: arrayUnion(transaction.id)
+            withdrawalIDs: arrayUnion(transaction.id)
         });
 
         modalAddRef.current?.dismiss(null, "cancel");
