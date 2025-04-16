@@ -6,14 +6,16 @@ import AddGoal from "../utilities/Goals/Add";
 import DisplayGoals from "../utilities/Goals/Display";
 import Goal from "../utilities/Goals/Goal";
 import MonthPicker from "../utilities/MonthPicker";
+import Transaction from "../utilities/Transactions/Transaction";
 
 interface BudgetPageProps {
 	user: any;
 	goalData: Goal[];
 	categoryData: Category[];
+    transactionData: Transaction[]; // Replace with the correct type for transactions
 }
 
-const BudgetPage: React.FC<BudgetPageProps> = ({ user, goalData, categoryData }) => {
+const BudgetPage: React.FC<BudgetPageProps> = ({ user, goalData, categoryData, transactionData }) => {
 	const [month, setMonth] = React.useState<number>(new Date().getMonth());
 	const [year, setYear] = React.useState<number>(new Date().getFullYear());
 
@@ -36,6 +38,7 @@ const BudgetPage: React.FC<BudgetPageProps> = ({ user, goalData, categoryData })
 							user={user}
 							goals={goalData}
 							categories={categoryData}
+                            transactions={transactionData}
 							selectedMonth={month}
 						/>
 						<AddGoal categories={categoryData} userID={user.uid} />

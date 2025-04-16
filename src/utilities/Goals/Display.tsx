@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { collection, deleteDoc, doc } from "firebase/firestore";
+import { arrayUnion, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { add } from "ionicons/icons";
 import { IonButton, IonButtons, IonCol, IonContent, IonFab, IonFabButton, IonFooter, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonModal, IonRow, IonTitle, IonToolbar } from "@ionic/react";
 import { Category } from "../Categories";
@@ -12,6 +12,7 @@ interface DisplayGoalsProps {
 	user: any;
 	goals: Goal[];
 	categories: Category[];
+    transactions: Transaction[];
 	selectedMonth?: number;
 	onlyGoals?: boolean;
 }
@@ -20,6 +21,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 	user,
 	goals,
 	categories,
+    transactions,
 	selectedMonth = 0,
 	onlyGoals = false
 }) => {
@@ -267,7 +269,60 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 					</IonToolbar>
 				</IonHeader>
 				<IonContent className="ion-padding">
-					<p>TODO: Add transaction form</p>
+                    <IonItemGroup>
+                        <IonItemDivider>
+                            <IonLabel>
+                                <strong>Available Transactions</strong>
+                            </IonLabel>
+                        </IonItemDivider>
+                        <div style={{ maxHeight: "200px", overflowY: "auto" }}>
+                            {transactions
+                                .map((transaction, index) => (
+                                    <IonItem
+                                        key={index}
+                                        button
+                                        onClick={async () => {
+                                            try {
+                                                const goalId = modalDetailsRef.current?.getAttribute("goalId");
+                                                if (!goalId) return;
+
+                                                const goalRef = doc(
+                                                    firestore,
+                                                    `users/${user.uid}/budget/${goalId}`
+                                                );
+
+                                                await updateDoc(goalRef, {
+                                                    transactions: arrayUnion(transaction)
+                                                });
+
+                                                console.log("Transaction added successfully");
+                                                modalAddRef.current?.dismiss(null, "confirm");
+                                            } catch (error) {
+                                                console.error("Error adding transaction:", error);
+                                            }
+                                        }}
+                                    >
+                                        <IonLabel>
+                                            <p>
+                                                <strong>Date:</strong>{" "}
+                                                {transaction.date.toDate().toLocaleDateString()}
+                                            </p>
+                                            <p>
+                                                <strong>Amount:</strong> ${transaction.amount}
+                                            </p>
+                                            <p
+                                                style={{
+                                                    fontSize: "0.75em",
+                                                    textAlign: "center"
+                                                }}
+                                            >
+                                                {transaction.id}
+                                            </p>
+                                        </IonLabel>
+                                    </IonItem>
+                                ))}
+                        </div>
+                    </IonItemGroup>
 				</IonContent>
 			</IonModal>
 		</React.Fragment>

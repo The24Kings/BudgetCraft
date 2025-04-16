@@ -12,16 +12,13 @@ import Transaction from "../utilities/Transactions/Transaction";
 
 interface ContainerProps {
 	userID: string;
-	onTransactionsChange?: (transactions: Transaction[]) => void;
+    transactionData: Transaction[];
     month: number;
     year: number;
 }
 
-const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange, month, year }) => {
-	const [jsonData, setJSONData] = useState<any>(null);
+const HomeContainer: React.FC<ContainerProps> = ({ userID, transactionData, month, year }) => {
 	const [categoryData, setCategoryData] = useState<Category[]>([]);
-	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
-	const [totalLoaded, setTotalLoaded] = useState(10);
 
 	// Filter states for the FilterButton component
 	const [searchTerm, setSearchTerm] = useState<string>("");
@@ -30,46 +27,6 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange,
 	const [maxAmount, setMaxAmount] = useState<number | null>(null);
 	const [startDate, setStartDate] = useState<string>(new Date().toISOString().split("T")[0]);
 	const [endDate, setEndDate] = useState<string>(new Date().toISOString().split("T")[0]);
-
-	// Load the transactions from Firebase
-	//TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
-	useEffect(() => {
-		const fetchTransactions = async () => {
-			try {
-				const querySnapshot = await getDocs(
-					query(
-						collection(firestore, `users/${userID}/transactions`),
-						orderBy("date", "desc")
-					)
-				);
-
-				// Parse the documents into Transaction objects
-				const transactionData = querySnapshot.docs.map((doc) => {
-					const data = doc.data();
-					return new Transaction(
-						doc.id,
-						data.type,
-						data.category,
-						data.subCategoryID,
-						data.title,
-						data.date,
-						data.description,
-						data.amount
-					);
-				});
-
-				setTransactionData(transactionData);
-				if (onTransactionsChange) {
-					onTransactionsChange(transactionData);
-				}
-			} catch (error) {
-				console.error("Failed to fetch transactions:", error);
-			}
-		};
-
-		const interval = setInterval(fetchTransactions, 1000);
-		return () => clearInterval(interval);
-	}, [totalLoaded, userID, onTransactionsChange]);
 
 	// Load categories
 	useEffect(() => {
