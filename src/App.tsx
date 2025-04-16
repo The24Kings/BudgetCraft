@@ -135,7 +135,7 @@ const App: React.FC = () => {
 						data.reminderDate,
 						data.description,
 						data.transactionIDs, // Later when displaying the transactions, we will need to fetch them from the database: https://stackoverflow.com/questions/47876754/query-firestore-database-for-document-id
-						[] // Transactions related to this goal
+                        [] // Transactions related to this goal
 					);
 				});
 

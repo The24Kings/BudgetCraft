@@ -84,6 +84,17 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
         modalDetailsRef.current?.dismiss(null, "cancel");
     }
 
+    const addTransaction = async (transaction: Transaction) => {
+        const goalId = modalDetailsRef.current?.getAttribute("goalId") || "";
+        const goalRef = doc(firestore, `users/${user.uid}/budget/${goalId}`);
+
+        await updateDoc(goalRef, {
+            withdrawlIDs: arrayUnion(transaction.id)
+        });
+
+        modalAddRef.current?.dismiss(null, "cancel");
+    }
+
 	return (
 		<React.Fragment>
 			<div className="goals">
@@ -181,7 +192,6 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
                                                     size="small"
                                                     onClick={() => {
                                                         modalAddRef.current?.present();
-                                                        modalDetailsRef.current?.dismiss(null, "cancel");
                                                     }}
                                                 >
                                                     <IonIcon icon={add} />
@@ -269,58 +279,39 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 					</IonToolbar>
 				</IonHeader>
 				<IonContent className="ion-padding">
-                    <IonItemGroup>
+                    <IonItemGroup className="ion-padding">
                         <IonItemDivider>
                             <IonLabel>
                                 <strong>Available Transactions</strong>
                             </IonLabel>
                         </IonItemDivider>
-                        <div style={{ maxHeight: "200px", overflowY: "auto" }}>
-                            {transactions
-                                .map((transaction, index) => (
-                                    <IonItem
-                                        key={index}
-                                        button
-                                        onClick={async () => {
-                                            try {
-                                                const goalId = modalDetailsRef.current?.getAttribute("goalId");
-                                                if (!goalId) return;
-
-                                                const goalRef = doc(
-                                                    firestore,
-                                                    `users/${user.uid}/budget/${goalId}`
-                                                );
-
-                                                await updateDoc(goalRef, {
-                                                    transactions: arrayUnion(transaction)
-                                                });
-
-                                                console.log("Transaction added successfully");
-                                                modalAddRef.current?.dismiss(null, "confirm");
-                                            } catch (error) {
-                                                console.error("Error adding transaction:", error);
-                                            }
-                                        }}
-                                    >
-                                        <IonLabel>
-                                            <p>
-                                                <strong>Date:</strong>{" "}
-                                                {transaction.date.toDate().toLocaleDateString()}
-                                            </p>
-                                            <p>
-                                                <strong>Amount:</strong> ${transaction.amount}
-                                            </p>
-                                            <p
-                                                style={{
-                                                    fontSize: "0.75em",
-                                                    textAlign: "center"
-                                                }}
-                                            >
-                                                {transaction.id}
-                                            </p>
-                                        </IonLabel>
-                                    </IonItem>
-                                ))}
+                        <div style={{ maxHeight: "30em", overflowY: "auto" }}>
+                            {transactions.map((transaction, index) => (
+                                <IonItem key={index} button onClick={() => addTransaction(transaction)}>
+                                    <IonLabel>
+                                        <p>
+                                            <strong>Title:</strong> {transaction.title || "No title"}
+                                        </p>
+                                        <p>
+                                            <strong>Date:</strong>{" "}
+                                            {transaction.date
+                                                .toDate()
+                                                .toLocaleDateString()}
+                                        </p>
+                                        <p>
+                                            <strong>Amount:</strong> ${transaction.amount}
+                                        </p>
+                                        <p
+                                            style={{
+                                                fontSize: "0.75em",
+                                                textAlign: "center"
+                                            }}
+                                        >
+                                            {transaction.id}
+                                        </p>
+                                    </IonLabel>
+                                </IonItem>
+                            ))}
                         </div>
                     </IonItemGroup>
 				</IonContent>
