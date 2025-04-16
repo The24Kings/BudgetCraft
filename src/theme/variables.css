@@ -14,4 +14,5 @@ http://ionicframework.com/docs/theming/ */
 	--ion-background-color: var(--background-color);
 	--ion-toolbar-background: var(--background-color);
 	--ion-text-color: var(--text-color);
+	--selected-month-text-color: #111010;
 }
