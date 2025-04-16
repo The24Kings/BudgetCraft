@@ -46,7 +46,7 @@ const HomePage: React.FC<{ user: any }> = ({ user }) => {
 
 				<IonContent className="home-content">
 					{user ? (
-						<HomeContainer userID={user.uid} />
+						<HomeContainer userID={user.uid} month={month} year={year} />
 					) : (
 						<IonText className="ion-padding">Loading user data...</IonText>
 					)}

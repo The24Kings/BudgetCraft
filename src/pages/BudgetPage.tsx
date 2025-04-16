@@ -14,23 +14,8 @@ interface BudgetPageProps {
 }
 
 const BudgetPage: React.FC<BudgetPageProps> = ({ user, goalData, categoryData }) => {
-	const [month, setMonth] = React.useState<number>(new Date().getMonth() + 1);
+	const [month, setMonth] = React.useState<number>(new Date().getMonth());
 	const [year, setYear] = React.useState<number>(new Date().getFullYear());
-
-	const monthNames = [
-		"Jan",
-		"Feb",
-		"Mar",
-		"Apr",
-		"May",
-		"Jun",
-		"Jul",
-		"Aug",
-		"Sep",
-		"Oct",
-		"Nov",
-		"Dec"
-	];
 
 	return (
 		<IonPage id="main-content">
@@ -51,7 +36,7 @@ const BudgetPage: React.FC<BudgetPageProps> = ({ user, goalData, categoryData })
 							user={user}
 							goals={goalData}
 							categories={categoryData}
-							selectedMonth={monthNames[month]}
+							selectedMonth={month}
 						/>
 						<AddGoal categories={categoryData} userID={user.uid} />
 					</div>

@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-	collection,
-	doc,
-	getDoc,
-	getDocs,
-	limit,
-	orderBy,
-	query,
-} from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { IonButton, IonLabel } from "@ionic/react";
 import { Category, parseJSON } from "../utilities/Categories";
 import FilterButton from "../utilities/FilterButton";
@@ -17,26 +9,27 @@ import AddTransactions from "../utilities/Transactions/Add";
 import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
 
+
 interface ContainerProps {
 	userID: string;
 	onTransactionsChange?: (transactions: Transaction[]) => void;
+    month: number;
+    year: number;
 }
 
-const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange }) => {
+const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange, month, year }) => {
 	const [jsonData, setJSONData] = useState<any>(null);
 	const [categoryData, setCategoryData] = useState<Category[]>([]);
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
 	const [totalLoaded, setTotalLoaded] = useState(10);
-	const [actualTotalLoaded, setActualTotalLoaded] = useState(10);
 
 	// Filter states for the FilterButton component
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const [filterType, setFilterType] = useState<string>("All");
 	const [minAmount, setMinAmount] = useState<number | null>(null);
 	const [maxAmount, setMaxAmount] = useState<number | null>(null);
-	const [filterDate, setFilterDate] = useState<string>("");
-	const [startDate, setStartDate] = useState<string>("");
-	const [endDate, setEndDate] = useState<string>("");
+	const [startDate, setStartDate] = useState<string>(new Date().toISOString().split("T")[0]);
+	const [endDate, setEndDate] = useState<string>(new Date().toISOString().split("T")[0]);
 
 	// Load the transactions from Firebase
 	//TODO: Change to only load more when the button is clicked, fetch a slice of the data from previous point to new point, add to a list of transactions
@@ -46,12 +39,9 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange 
 				const querySnapshot = await getDocs(
 					query(
 						collection(firestore, `users/${userID}/transactions`),
-						orderBy("date", "desc"),
-						limit(totalLoaded)
+						orderBy("date", "desc")
 					)
 				);
-
-				setActualTotalLoaded(querySnapshot.docs.length);
 
 				// Parse the documents into Transaction objects
 				const transactionData = querySnapshot.docs.map((doc) => {
@@ -115,8 +105,25 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange 
 		const matchesDate =
 			(!startDate || txDateStr >= startDate) && (!endDate || txDateStr <= endDate);
 
-		return matchesSearch && matchesType && matchesMin && matchesMax && matchesDate;
+        const matchedMonth = new Date(tx.date.seconds * 1000).getMonth() === month;
+        const matchedYear = new Date(tx.date.seconds * 1000).getFullYear() === year;
+
+		return matchesSearch && matchesType && matchesMin && matchesMax && matchesDate && matchedMonth && matchedYear;
 	});
+
+    // Resets all filter fields to their default values
+    const clearFilters = () => {
+        setFilterType("All");
+        setMinAmount(null);
+        setMaxAmount(null);
+        setStartDate("");
+        setEndDate("");
+    };
+
+    useEffect(() => {
+        clearFilters();
+        console.log("Filters cleared");
+    }, [month]);
 
 	return (
 		<div className="container">
@@ -138,29 +145,15 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, onTransactionsChange 
 					setStartDate={setStartDate}
 					endDate={endDate}
 					setEndDate={setEndDate}
-					filterDate={filterDate}
-					setFilterDate={setFilterDate}
+                    clearFilters={clearFilters}
 				/>
 			</div>
 
 			{/* Display the transactions */}
-			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} />
+			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} hideDivider />
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
-
-			{/* Load More Button */}
-			<IonButton
-				className="action-button"
-				onClick={() => {
-					// If we actually loaded all possible transactions, then we can load more
-					if (actualTotalLoaded === totalLoaded) {
-						setTotalLoaded(totalLoaded + 10);
-					}
-				}}
-			>
-				<IonLabel>Load More</IonLabel>
-			</IonButton>
 		</div>
 	);
 };

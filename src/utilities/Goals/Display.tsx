@@ -26,7 +26,7 @@ interface DisplayGoalsProps {
 	user: any;
 	goals: Goal[];
 	categories: Category[];
-	selectedMonth?: string;
+	selectedMonth?: number;
 	onlyGoals?: boolean;
 }
 
@@ -34,18 +34,16 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 	user,
 	goals,
 	categories,
-	selectedMonth = "",
+	selectedMonth = 0,
 	onlyGoals = false
 }) => {
 	const modalRef = useRef<HTMLIonModalElement>(null);
 
 	// Filter goals by month and recurring
 	const filteredGoals = goals.filter((goal) => {
-		const createdAtMonth = goal.createdAt
-			.toDate()
-			.toLocaleString("default", { month: "short" });
+		const createdAtMonth = goal.createdAt.toDate();
 		return (
-			(!onlyGoals && selectedMonth === createdAtMonth && goal.budgetItem) ||
+			(!onlyGoals && selectedMonth === createdAtMonth.getMonth() && goal.budgetItem) ||
 			(!onlyGoals && goal.recurring) ||
 			(onlyGoals && !goal.budgetItem)
 		);
