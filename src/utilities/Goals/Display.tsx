@@ -1,29 +1,12 @@
 import React, { useRef } from "react";
-import { arrayUnion, collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc } from "firebase/firestore";
 import { add } from "ionicons/icons";
-import {
-	IonButton,
-	IonCol,
-	IonContent,
-	IonFab,
-	IonFabButton,
-	IonFooter,
-	IonGrid,
-	IonHeader,
-	IonIcon,
-	IonItem,
-	IonItemDivider,
-	IonItemGroup,
-	IonLabel,
-	IonModal,
-	IonRow,
-	IonTitle,
-	IonToolbar
-} from "@ionic/react";
+import { IonButton, IonCol, IonContent, IonFab, IonFabButton, IonFooter, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonModal, IonRow, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { Category } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import Transaction from "../Transactions/Transaction";
 import Goal from "./Goal";
+
 
 interface DisplayGoalsProps {
 	user: any;
@@ -99,6 +82,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 			withdrawals.reduce((total, transaction) => total + transaction.amount, 0)
 		);
 	};
+
 	const onDetailsDismiss = () => {
 		modalDetailsRef.current?.attributes.removeNamedItem("goalId");
 		modalDetailsRef.current?.dismiss(null, "cancel");
@@ -107,6 +91,17 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 	const addTransaction = async (transaction: Transaction) => {
 		const goalId = modalDetailsRef.current?.getAttribute("goalId") || "";
 		const goalRef = doc(firestore, `users/${user.uid}/budget/${goalId}`);
+		const goalDocSnapshot = await getDoc(goalRef);
+
+        // Check if the transaction ID is already added
+        if (goalDocSnapshot.exists()) {
+            const goalData = goalDocSnapshot.data();
+
+            if (goalData.withdrawalIDs && goalData.withdrawalIDs.includes(transaction.id)) {
+                alert("This transaction is already added to the goal.");
+                return;
+            }
+        }
 
 		await updateDoc(goalRef, {
 			withdrawalIDs: arrayUnion(transaction.id)
@@ -180,90 +175,137 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 										</IonTitle>
 									</IonToolbar>
 								</IonHeader>
-								<IonContent className="ion-padding">
+								<IonContent className="ion-padding-horizontal">
 									<div key={goal.id}>
-										<IonItemGroup className="ion-margin-bottom">
-											<IonItem>
-												<IonLabel>
-													<strong>Saved:</strong> $
-													{calculateSaved(
-														goal.transactions,
-														goal.withdrawals
-													)}{" "}
-													/ ${goal.goal}
-												</IonLabel>
-											</IonItem>
-											<IonItem>
-												<IonLabel>
-													<strong>Remaining:</strong> $
-													{goal.goal -
-														calculateSaved(
-															goal.transactions,
-															goal.withdrawals
-														) <
-													0
-														? 0
-														: goal.goal -
-															calculateSaved(
-																goal.transactions,
-																goal.withdrawals
-															)}
-												</IonLabel>
-											</IonItem>
-											<IonItem>
-												<IonLabel>
-													<strong>Description:</strong>{" "}
-													{goal.description || "No description"}
-												</IonLabel>
-											</IonItem>
-										</IonItemGroup>
-										<IonItemGroup>
-											<IonFab vertical="bottom" horizontal="end" slot="fixed">
-												<IonFabButton
-													color="secondary"
-													size="small"
-													onClick={() => {
-														modalAddRef.current?.present();
+										<IonFab vertical="bottom" horizontal="end" slot="fixed">
+											<IonFabButton
+												color="secondary"
+												size="small"
+												onClick={() => {
+													modalAddRef.current?.present();
+												}}
+											>
+												<IonIcon icon={add} />
+											</IonFabButton>
+										</IonFab>
+										<IonTextarea
+											className="custom ion-margin-vertical"
+											shape="round"
+											value={goal.description || "No description"}
+											readonly={true}
+										/>
+										<div>
+											<React.Fragment>
+												<IonLabel>Transactions</IonLabel>
+												<IonItemGroup
+													className="ion-margin-vertical"
+													style={{
+														maxHeight: "190px",
+														overflowY: "auto"
 													}}
 												>
-													<IonIcon icon={add} />
-												</IonFabButton>
-											</IonFab>
-											<div style={{ maxHeight: "200px", overflowY: "auto" }}>
-												{goal.transactions.length > 0 ? (
-													goal.transactions.map((transaction, index) => (
-														<IonItem key={index}>
-															<IonLabel>
-																<p>
-																	<strong>Date:</strong>{" "}
-																	{transaction.date
-																		.toDate()
-																		.toLocaleDateString()}
-																</p>
-																<p>
-																	<strong>Amount:</strong> $
-																	{transaction.amount}
-																</p>
-																<p
-																	style={{
-																		fontSize: "0.75em",
-																		textAlign: "center"
-																	}}
+													{goal.transactions.length > 0 ? (
+														goal.transactions.map(
+															(transaction, index) => (
+																<IonItem
+																	key={index}
+																	style={{ minWidth: "75%" }}
+																	color="light"
 																>
-																	{transaction.id}
-																</p>
-															</IonLabel>
-														</IonItem>
-													))
-												) : (
-													<IonLabel>
-														<p>
-															No transactions attached to this goal.
-														</p>
-													</IonLabel>
-												)}
-											</div>
-										</IonItemGroup>
+																	<IonLabel>
+																		<p>
+																			<strong>Title:</strong>{" "}
+																			{transaction.title ||
+																				"No title"}
+																		</p>
+																		<p>
+																			<strong>Date:</strong>{" "}
+																			{transaction.date
+																				.toDate()
+																				.toLocaleDateString()}
+																		</p>
+																		<p>
+																			<strong>Amount:</strong>{" "}
+																			${transaction.amount}
+																		</p>
+																		<p
+																			style={{
+																				fontSize: "0.75em",
+																				textAlign: "center"
+																			}}
+																		>
+																			{transaction.id}
+																		</p>
+																	</IonLabel>
+																</IonItem>
+															)
+														)
+													) : (
+														<IonLabel>
+															<p>
+																No transactions attached to this
+																goal.
+															</p>
+														</IonLabel>
+													)}
+												</IonItemGroup>
+											</React.Fragment>
+											<React.Fragment>
+												<IonLabel>Withdrawals</IonLabel>
+												<IonItemGroup
+													className="ion-margin-top"
+													style={{
+														maxHeight: "190px",
+														overflowY: "auto"
+													}}
+												>
+													{goal.withdrawals.length > 0 ? (
+														goal.withdrawals.map(
+															(withdrawal, index) => (
+																<IonItem
+																	key={index}
+																	color="light"
+																	style={{ minWidth: "75%" }}
+																>
+																	<IonLabel>
+																		<p>
+																			<strong>Title:</strong>{" "}
+																			{withdrawal.title ||
+																				"No title"}
+																		</p>
+																		<p>
+																			<strong>Date:</strong>{" "}
+																			{withdrawal.date
+																				.toDate()
+																				.toLocaleDateString()}
+																		</p>
+																		<p>
+																			<strong>Amount:</strong>{" "}
+																			${withdrawal.amount}
+																		</p>
+																		<p
+																			style={{
+																				fontSize: "0.75em",
+																				textAlign: "center"
+																			}}
+																		>
+																			{withdrawal.id}
+																		</p>
+																	</IonLabel>
+																</IonItem>
+															)
+														)
+													) : (
+														<IonLabel>
+															<p>
+																No withdrawals attached to this
+																goal.
+															</p>
+														</IonLabel>
+													)}
+												</IonItemGroup>
+											</React.Fragment>
+										</div>
 									</div>
 								</IonContent>
 								<IonFooter>
