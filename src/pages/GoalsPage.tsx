@@ -28,7 +28,7 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ user, goalData, categoryData, tra
 						user={user}
 						goals={goalData}
 						categories={categoryData}
-                        transactions={transactionData}
+						transactions={transactionData}
 						onlyGoals
 					/>
 					<AddGoal categories={categoryData} userID={user.uid} onlyGoals />
