@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { IonIcon } from '@ionic/react';
+import { pieChart } from 'ionicons/icons';
 import Transaction from "./Transactions/Transaction";
 import "./IncomePieChart.css";
 
@@ -45,36 +47,44 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 
 	return (
 		<div className="pie-chart-container">
-			<div className="totals-display">
-				<div className="total-income">
-					<h3>Total Income</h3>
-					<p>${totalIncome.toFixed(2)}</p>
+			{!isCollapsed && (
+				<div className="totals-display">
+					<div className="total-income">
+						<h3>Total Income</h3>
+						<p>${totalIncome.toFixed(2)}</p>
+					</div>
+					<div className="remaining-balance">
+						<h3>Remaining</h3>
+						<p>${remaining.toFixed(2)}</p>
+					</div>
 				</div>
-				<div className="remaining-balance">
-					<h3>Remaining</h3>
-					<p>${remaining.toFixed(2)}</p>
-				</div>
-			</div>
-
-			<button className="toggle-button" onClick={toggleCollapse}>
-				{isCollapsed ? "Show Pie Chart" : "Collapse Pie Chart"}
-			</button>
+			)}
 
 			{expenseData.length > 0 ? (
 				<>
 					{isCollapsed ? (
-						<div className="horizontal-bar-container">
-							{expenseData.map((entry, index) => (
-								<div
-									key={`bar-segment-${index}`}
-									className="horizontal-bar-segment"
-									style={{
-										width: `${(entry.value / totalExpenses) * 100}%`,
-										backgroundColor: COLORS[index % COLORS.length]
-									}}
-									title={`${entry.name}: $${entry.value.toFixed(2)}`}
-								/>
-							))}
+						<div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+							<div className="horizontal-bar-container" style={{ flexGrow: 1 }}>
+								{expenseData.map((entry, index) => (
+									<div
+										key={`bar-segment-${index}`}
+										className="horizontal-bar-segment"
+										style={{
+											width: `${(entry.value / totalExpenses) * 100}%`,
+											backgroundColor: COLORS[index % COLORS.length]
+										}}
+										title={`${entry.name}: $${entry.value.toFixed(2)}`}
+									/>
+								))}
+							</div>
+							<button
+								className="icon-button-outside"
+								onClick={toggleCollapse}
+								title="Show Pie Chart"
+								aria-label="Show Pie Chart"
+							>
+								<IonIcon icon={pieChart} style={{ fontSize: '25px', color: 'black' }} />
+							</button>
 						</div>
 					) : (
 						<ResponsiveContainer width="100%" height={250}>
@@ -107,20 +117,27 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 							</PieChart>
 						</ResponsiveContainer>
 					)}
-					<div className="category-legend">
-						{expenseData.map((entry, index) => (
-							<div key={`legend-${index}`} className="category-item">
-								<div
-									className="category-color"
-									style={{ backgroundColor: COLORS[index % COLORS.length] }}
-								/>
-								<span className="category-label">
-									{entry.name}: {((entry.value / totalExpenses) * 100).toFixed(0)}
-									%
-								</span>
-							</div>
-						))}
-					</div>
+					{!isCollapsed && (
+						<div className="category-legend">
+							{expenseData.map((entry, index) => (
+								<div key={`legend-${index}`} className="category-item">
+									<div
+										className="category-color"
+										style={{ backgroundColor: COLORS[index % COLORS.length] }}
+									/>
+									<span className="category-label">
+										{entry.name}: {((entry.value / totalExpenses) * 100).toFixed(0)}
+										%
+									</span>
+								</div>
+							))}
+						</div>
+					)}
+					{!isCollapsed && (
+						<button className="toggle-button" onClick={toggleCollapse}>
+							Collapse Pie Chart
+						</button>
+					)}
 				</>
 			) : (
 				<div className="no-expenses-message">
