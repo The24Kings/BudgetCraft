@@ -63,8 +63,8 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 				<IonSearchbar
 					className="search-input"
 					placeholder="Search"
-					value={inputRef.current}
 					showClearButton="never"
+                    debounce={200}
 					onIonInput={(e) => {
 						inputRef.current = e.detail.value ?? "";
 						setSearchTerm(inputRef.current);
