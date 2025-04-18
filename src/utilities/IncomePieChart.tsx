@@ -113,11 +113,13 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 							dataKey="value"
 							label={false}
 							onClick={onPieSliceClick}
+							activeIndex={-1}  // Disable active slice effect
 						>
 							{expenseData.map((entry, index) => (
 								<Cell
 									key={`cell-${index}`}
 									fill={COLORS[index % COLORS.length]}
+									style={{ outline: 'none' }} // Remove outline style
 								/>
 							))}
 						</Pie>
