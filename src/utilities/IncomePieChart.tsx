@@ -164,9 +164,16 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 						</div>
 					)}
 					{!isCollapsed && (
-						<button className="toggle-button" onClick={toggleCollapse}>
-							Collapse Pie Chart
-						</button>
+						<div style={{ display: "flex", justifyContent: "flex-end", width: "100%", marginTop: "10px" }}>
+<button
+	className="icon-button-outside"
+	onClick={toggleCollapse}
+	title="Collapse Pie Chart"
+	aria-label="Collapse Pie Chart"
+>
+	<IonIcon icon={pieChart} style={{ fontSize: "25px", color: "black" }} />
+</button>
+						</div>
 					)}
 				</>
 			) : (
