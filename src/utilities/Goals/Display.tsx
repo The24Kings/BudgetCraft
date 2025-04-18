@@ -96,46 +96,42 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 					<h1>Loading...</h1>
 				</div>
 
-				<IonItemGroup>
-					<IonItemDivider>
-						<IonLabel>
-							<IonGrid>
-								<IonRow>
-									<IonCol>Description</IonCol>
-									<IonCol>Target</IonCol>
-									<IonCol>Goal</IonCol>
-									<IonCol>Saved</IonCol>
-								</IonRow>
-							</IonGrid>
-						</IonLabel>
-					</IonItemDivider>
+				{/* Single Header Row for Labels */}
+				<IonGrid className="budget-label-row">
+					<IonRow>
+						<IonCol className="budget-col-description budget-label">Description</IonCol>
+						<IonCol className="budget-col-target budget-label">Target</IonCol>
+						<IonCol className="budget-col-saved-goal budget-label">Saved / Goal</IonCol>
+					</IonRow>
+				</IonGrid>
 
-					{/* ✅ Budget Items with matched HomePage style */}
+				{/* Each Budget Item */}
+				<IonItemGroup>
 					{filteredGoals.map((goal) => (
-						<IonItem
-							key={goal.id}
-							className="budget-item"
-							button
-							onClick={() => {
-								modalRef.current?.present();
-								modalRef.current?.setAttribute("goalId", goal.id);
-							}}
-						>
-							<IonLabel>
-								<IonGrid>
-									<IonRow>
-										<IonCol>
+						<div key={goal.id} className="budget-item-wrapper">
+							<IonItem
+								button
+								className="budget-card"
+								onClick={() => {
+									modalRef.current?.present();
+									modalRef.current?.setAttribute("goalId", goal.id);
+								}}
+							>
+								<IonGrid style={{ width: "100%" }}>
+									<IonRow className="budget-row no-ion-cols">
+										<div className="budget-col-description budget-value">
 											{subCategory(goal.category, goal.subCategoryID)}
-										</IonCol>
-										<IonCol>
+										</div>
+										<div className="budget-col-target budget-value">
 											{goal.targetDate.toDate().toLocaleDateString()}
-										</IonCol>
-										<IonCol>${goal.goal}</IonCol>
-										<IonCol>${calculateSaved(goal.transactions)}</IonCol>
+										</div>
+										<div className="budget-col-saved-goal budget-value">
+											${calculateSaved(goal.transactions)} / ${goal.goal}
+										</div>
 									</IonRow>
 								</IonGrid>
-							</IonLabel>
-						</IonItem>
+							</IonItem>
+						</div>
 					))}
 				</IonItemGroup>
 			</div>

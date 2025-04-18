@@ -6,12 +6,89 @@ ion-toolbar {
 
 /* Budget item cards (match Home page transactions) */
 .budget-item {
-	--background: var(--surface-color);
+	background-color: var(--surface-color); /* outer white wrapper */
+	padding: 10px;
+	border-radius: 12px;
+	margin-bottom: 12px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Match Transaction Display Style */
+.budget-item-wrapper {
+	width: 100vw; /* Full viewport width */
+	box-sizing: border-box;
+	padding: 0 10px; /* Keeps 10px spacing on left and right like transactions */
+}
+
+.budget-card {
+	--background: var(--muted-text-color); /* inner gray card */
 	--color: var(--text-color);
 	border-radius: 10px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-	margin: 0 12px 12px 12px; /* Padding around item */
-	padding: 12px; /* Inner spacing to match transaction feel */
+	padding: 12px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.budget-inner-card {
+	--background: var(--muted-text-color); /* inner card is gray */
+	--color: var(--text-color); /* ensure text is black */
+	border-radius: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+	padding: 12px;
+	width: 100%;
+}
+
+.budget-label-row {
+	padding: 0 8px;
+	margin-bottom: 6px;
+}
+
+.budget-label {
+	font-size: 0.7rem;
+	color: var(--muted-text-color);
+	font-weight: 500;
+	text-align: left;
+}
+
+.budget-value {
+	font-size: 0.75rem;
+	color: var(--text-color) !important;
+	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.1rem;
+}
+
+.budget-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+	gap: 12px;
+}
+
+.budget-row ion-col {
+	flex: 0 0 auto;
+}
+
+.budget-col-description {
+	flex: 1;
+	max-width: 40%;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.budget-col-target {
+	width: 25%;
+	text-align: center;
+}
+
+.budget-col-saved-goal {
+	width: 30%;
+	text-align: right;
 }
 
 /* Budget container */
