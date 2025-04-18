@@ -5,14 +5,16 @@ import Goal from "../utilities/Goals/Goal";
 import "./HomePage.css";
 import AddGoal from "../utilities/Goals/Add";
 import DisplayGoals from "../utilities/Goals/Display";
+import Transaction from "../utilities/Transactions/Transaction";
 
 interface GoalsPageProps {
 	user: any;
 	goalData: Goal[];
 	categoryData: Category[];
+    transactionData: Transaction[];
 }
 
-const GoalsPage: React.FC<GoalsPageProps> = ({ user, goalData, categoryData }) => {
+const GoalsPage: React.FC<GoalsPageProps> = ({ user, goalData, categoryData, transactionData }) => {
 	return (
 		<IonPage id="main-content">
 			<IonHeader>
@@ -26,6 +28,7 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ user, goalData, categoryData }) =
 						user={user}
 						goals={goalData}
 						categories={categoryData}
+						transactions={transactionData}
 						onlyGoals
 					/>
 					<AddGoal categories={categoryData} userID={user.uid} onlyGoals />
