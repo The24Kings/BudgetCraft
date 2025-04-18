@@ -162,16 +162,8 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 										<IonCol>${goal.goal}</IonCol>
 										<IonCol>
 											{calculateSaved(
-												goal.transactions.filter(
-													(transaction) =>
-														transaction.date.toDate().getMonth() ===
-														selectedMonth
-												),
-												goal.withdrawals.filter(
-													(withdrawal) =>
-														withdrawal.date.toDate().getMonth() ===
-														selectedMonth
-												)
+												filteredTransactions(goal.transactions),
+                                                filteredWithdrawals(goal.withdrawals)
 											)}
 										</IonCol>
 									</IonRow>
