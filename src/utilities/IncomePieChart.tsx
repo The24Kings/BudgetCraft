@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import Transaction from "./Transactions/Transaction";
 import "./IncomePieChart.css";
@@ -8,6 +8,8 @@ interface IncomePieChartProps {
 }
 
 const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
+	const [isCollapsed, setIsCollapsed] = useState(true);
+
 	// Calculate totals
 	const totalIncome = transactions
 		.filter((tx) => tx.type === "Income")
@@ -37,6 +39,10 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 
 	const COLORS = ["#FF8042", "#FFBB28", "#00C49F", "#0088FE", "#8884D8"];
 
+	const toggleCollapse = () => {
+		setIsCollapsed(!isCollapsed);
+	};
+
 	return (
 		<div className="pie-chart-container">
 			<div className="totals-display">
@@ -50,37 +56,57 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 				</div>
 			</div>
 
+			<button className="toggle-button" onClick={toggleCollapse}>
+				{isCollapsed ? "Show Pie Chart" : "Collapse Pie Chart"}
+			</button>
+
 			{expenseData.length > 0 ? (
 				<>
-					<ResponsiveContainer width="100%" height={250}>
-						<PieChart>
-							<Pie
-								data={expenseData}
-								cx="50%"
-								cy="50%"
-								labelLine={false}
-								outerRadius={120}
-								fill="#8884d8"
-								dataKey="value"
-								label={false}
-							>
-								{expenseData.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={COLORS[index % COLORS.length]}
-									/>
-								))}
-							</Pie>
-							<Tooltip
-								formatter={(value) => [`$${(value as number).toFixed(2)}`]}
-								contentStyle={{
-									padding: "8px",
-									background: "#fff",
-									border: "1px solid #ccc"
-								}}
-							/>
-						</PieChart>
-					</ResponsiveContainer>
+					{isCollapsed ? (
+						<div className="horizontal-bar-container">
+							{expenseData.map((entry, index) => (
+								<div
+									key={`bar-segment-${index}`}
+									className="horizontal-bar-segment"
+									style={{
+										width: `${(entry.value / totalExpenses) * 100}%`,
+										backgroundColor: COLORS[index % COLORS.length]
+									}}
+									title={`${entry.name}: $${entry.value.toFixed(2)}`}
+								/>
+							))}
+						</div>
+					) : (
+						<ResponsiveContainer width="100%" height={250}>
+							<PieChart>
+								<Pie
+									data={expenseData}
+									cx="50%"
+									cy="50%"
+									labelLine={false}
+									outerRadius={120}
+									fill="#8884d8"
+									dataKey="value"
+									label={false}
+								>
+									{expenseData.map((entry, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={COLORS[index % COLORS.length]}
+										/>
+									))}
+								</Pie>
+								<Tooltip
+									formatter={(value) => [`$${(value as number).toFixed(2)}`]}
+									contentStyle={{
+										padding: "8px",
+										background: "#fff",
+										border: "1px solid #ccc"
+									}}
+								/>
+							</PieChart>
+						</ResponsiveContainer>
+					)}
 					<div className="category-legend">
 						{expenseData.map((entry, index) => (
 							<div key={`legend-${index}`} className="category-item">
