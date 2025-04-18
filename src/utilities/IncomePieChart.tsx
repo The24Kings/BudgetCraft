@@ -41,8 +41,22 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 
 	const COLORS = ["#FF8042", "#FFBB28", "#00C49F", "#0088FE", "#8884D8"];
 
+	const [selectedSliceIndex, setSelectedSliceIndex] = useState<number | null>(null);
+
 	const toggleCollapse = () => {
 		setIsCollapsed(!isCollapsed);
+		if (!isCollapsed) {
+			// If collapsing, clear selected slice
+			setSelectedSliceIndex(null);
+		}
+	};
+
+	const onPieSliceClick = (_data: any, index: number) => {
+		if (selectedSliceIndex === index) {
+			setSelectedSliceIndex(null);
+		} else {
+			setSelectedSliceIndex(index);
+		}
 	};
 
 	return (
@@ -89,24 +103,27 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 					) : (
 						<ResponsiveContainer width="100%" height={250}>
 							<PieChart>
-								<Pie
-									data={expenseData}
-									cx="50%"
-									cy="50%"
-									labelLine={false}
-									outerRadius={120}
-									fill="#8884d8"
-									dataKey="value"
-									label={false}
-								>
-									{expenseData.map((entry, index) => (
-										<Cell
-											key={`cell-${index}`}
-											fill={COLORS[index % COLORS.length]}
-										/>
-									))}
-								</Pie>
+						<Pie
+							data={expenseData}
+							cx="50%"
+							cy="50%"
+							labelLine={false}
+							outerRadius={120}
+							fill="#8884d8"
+							dataKey="value"
+							label={false}
+							onClick={onPieSliceClick}
+						>
+							{expenseData.map((entry, index) => (
+								<Cell
+									key={`cell-${index}`}
+									fill={COLORS[index % COLORS.length]}
+								/>
+							))}
+						</Pie>
 								<Tooltip
+									active={selectedSliceIndex !== null}
+									payload={selectedSliceIndex !== null ? [expenseData[selectedSliceIndex]] : []}
 									formatter={(value) => [`$${(value as number).toFixed(2)}`]}
 									contentStyle={{
 										padding: "8px",
@@ -117,20 +134,17 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 							</PieChart>
 						</ResponsiveContainer>
 					)}
-					{!isCollapsed && (
+					{!isCollapsed && selectedSliceIndex !== null && (
 						<div className="category-legend">
-							{expenseData.map((entry, index) => (
-								<div key={`legend-${index}`} className="category-item">
-									<div
-										className="category-color"
-										style={{ backgroundColor: COLORS[index % COLORS.length] }}
-									/>
-									<span className="category-label">
-										{entry.name}: {((entry.value / totalExpenses) * 100).toFixed(0)}
-										%
-									</span>
-								</div>
-							))}
+							<div className="category-item">
+								<div
+									className="category-color"
+									style={{ backgroundColor: COLORS[selectedSliceIndex % COLORS.length] }}
+								/>
+								<span className="category-label">
+									{expenseData[selectedSliceIndex].name}: {((expenseData[selectedSliceIndex].value / totalExpenses) * 100).toFixed(0)}%
+								</span>
+							</div>
 						</div>
 					)}
 					{!isCollapsed && (
