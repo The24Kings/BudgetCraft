@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
+import { pieChart } from "ionicons/icons";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { IonIcon } from "@ionic/react";
 import Transaction from "./Transactions/Transaction";
 import "./IncomePieChart.css";
 
@@ -8,6 +10,8 @@ interface IncomePieChartProps {
 }
 
 const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
+	const [isCollapsed, setIsCollapsed] = useState(true);
+
 	// Calculate totals
 	const totalIncome = transactions
 		.filter((tx) => tx.type === "Income")
@@ -37,64 +41,150 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 
 	const COLORS = ["#FF8042", "#FFBB28", "#00C49F", "#0088FE", "#8884D8"];
 
+	const [selectedSliceIndex, setSelectedSliceIndex] = useState<number | null>(null);
+
+	const toggleCollapse = () => {
+		setIsCollapsed(!isCollapsed);
+		if (!isCollapsed) {
+			// If collapse button clicked, clear slide that is shown
+			setSelectedSliceIndex(null);
+		}
+	};
+
+	const onPieSliceClick = (_data: any, index: number) => {
+		if (selectedSliceIndex === index) {
+			setSelectedSliceIndex(null);
+		} else {
+			setSelectedSliceIndex(index);
+		}
+	};
+
 	return (
 		<div className="pie-chart-container">
-			<div className="totals-display">
-				<div className="total-income">
-					<h3>Total Income</h3>
-					<p>${totalIncome.toFixed(2)}</p>
+			{!isCollapsed && (
+				<div className="totals-display">
+					<div className="total-income">
+						<h3>Total Income</h3>
+						<p>${totalIncome.toFixed(2)}</p>
+					</div>
+					<div className="remaining-balance">
+						<h3>Remaining</h3>
+						<p>${remaining.toFixed(2)}</p>
+					</div>
 				</div>
-				<div className="remaining-balance">
-					<h3>Remaining</h3>
-					<p>${remaining.toFixed(2)}</p>
-				</div>
-			</div>
+			)}
 
 			{expenseData.length > 0 ? (
 				<>
-					<ResponsiveContainer width="100%" height={250}>
-						<PieChart>
-							<Pie
-								data={expenseData}
-								cx="50%"
-								cy="50%"
-								labelLine={false}
-								outerRadius={120}
-								fill="#8884d8"
-								dataKey="value"
-								label={false}
-							>
+					{isCollapsed ? (
+						<div style={{ display: "flex", alignItems: "center", width: "100%" }}>
+							<div className="horizontal-bar-container" style={{ flexGrow: 1 }}>
 								{expenseData.map((entry, index) => (
-									<Cell
-										key={`cell-${index}`}
-										fill={COLORS[index % COLORS.length]}
+									<div
+										key={`bar-segment-${index}`}
+										className="horizontal-bar-segment"
+										style={{
+											width: `${(entry.value / totalExpenses) * 100}%`,
+											backgroundColor: COLORS[index % COLORS.length]
+										}}
+										title={`${entry.name}: $${entry.value.toFixed(2)}`}
 									/>
 								))}
-							</Pie>
-							<Tooltip
-								formatter={(value) => [`$${(value as number).toFixed(2)}`]}
-								contentStyle={{
-									padding: "8px",
-									background: "#fff",
-									border: "1px solid #ccc"
-								}}
-							/>
-						</PieChart>
-					</ResponsiveContainer>
-					<div className="category-legend">
-						{expenseData.map((entry, index) => (
-							<div key={`legend-${index}`} className="category-item">
+							</div>
+							<button
+								className="icon-button-outside"
+								onClick={toggleCollapse}
+								title="Show Pie Chart"
+								aria-label="Show Pie Chart"
+							>
+								<IonIcon
+									icon={pieChart}
+									style={{ fontSize: "25px", color: "black" }}
+								/>
+							</button>
+						</div>
+					) : (
+						<ResponsiveContainer width="100%" height={250}>
+							<PieChart>
+								<Pie
+									data={expenseData}
+									cx="50%"
+									cy="50%"
+									labelLine={false}
+									outerRadius={120}
+									fill="#8884d8"
+									dataKey="value"
+									label={false}
+									onClick={onPieSliceClick}
+									activeIndex={-1}
+								>
+									{expenseData.map((entry, index) => (
+										<Cell
+											key={`cell-${index}`}
+											fill={COLORS[index % COLORS.length]}
+											style={{ outline: "none" }}
+										/>
+									))}
+								</Pie>
+								<Tooltip
+									active={selectedSliceIndex !== null}
+									payload={
+										selectedSliceIndex !== null
+											? [expenseData[selectedSliceIndex]]
+											: []
+									}
+									formatter={(value) => [`$${(value as number).toFixed(2)}`]}
+									contentStyle={{
+										padding: "8px",
+										background: "#fff",
+										border: "1px solid #ccc"
+									}}
+								/>
+							</PieChart>
+						</ResponsiveContainer>
+					)}
+					{!isCollapsed && selectedSliceIndex !== null && (
+						<div className="category-legend">
+							<div className="category-item">
 								<div
 									className="category-color"
-									style={{ backgroundColor: COLORS[index % COLORS.length] }}
+									style={{
+										backgroundColor: COLORS[selectedSliceIndex % COLORS.length]
+									}}
 								/>
 								<span className="category-label">
-									{entry.name}: {((entry.value / totalExpenses) * 100).toFixed(0)}
+									{expenseData[selectedSliceIndex].name}:{" "}
+									{(
+										(expenseData[selectedSliceIndex].value / totalExpenses) *
+										100
+									).toFixed(0)}
 									%
 								</span>
 							</div>
-						))}
-					</div>
+						</div>
+					)}
+					{!isCollapsed && (
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "flex-end",
+								width: "100%",
+								marginTop: "10px"
+							}}
+						>
+							<button
+								className="icon-button-outside"
+								onClick={toggleCollapse}
+								title="Collapse Pie Chart"
+								aria-label="Collapse Pie Chart"
+							>
+								<IonIcon
+									icon={pieChart}
+									style={{ fontSize: "25px", color: "black" }}
+								/>
+							</button>
+						</div>
+					)}
 				</>
 			) : (
 				<div className="no-expenses-message">
