@@ -33,9 +33,10 @@ setupIonicReact();
 const App: React.FC = () => {
 	const [user, setUser] = useState<any>(null);
 	const [loading, setLoading] = useState<boolean>(true);
-    const [jsonData, setJSONData] = useState<any>(null);
-    const [categoryData, setCategoryData] = useState<Category[]>([]);
-    const [goalData, setGoalData] = useState<Goal[]>([]);
+	const [jsonData, setJSONData] = useState<any>(null);
+	const [categoryData, setCategoryData] = useState<Category[]>([]);
+	const [goalData, setGoalData] = useState<Goal[]>([]);
+	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
 
 	useEffect(() => {
 		// Force light mode by removing Ionic's dark class from <body>
@@ -82,7 +83,7 @@ const App: React.FC = () => {
 	}, [user]);
 
 	useEffect(() => {
-        if (!user) return;
+		if (!user) return;
 
 		const fetchGoals = async () => {
 			let querySnapshot: QuerySnapshot<DocumentData>;
@@ -115,6 +116,7 @@ const App: React.FC = () => {
 						data.reminderDate,
 						data.description,
 						data.transactionIDs, // Later when displaying the transactions, we will need to fetch them from the database: https://stackoverflow.com/questions/47876754/query-firestore-database-for-document-id
+						data.withdrawalIDs,
 						[] // Transactions related to this goal
 					);
 				});
@@ -133,7 +135,7 @@ const App: React.FC = () => {
 
 	// Get each transaction associated with the Goal
 	useEffect(() => {
-        if (!user) return;
+		if (!user) return;
 
 		const fetchTransactions = async () => {
 			const transactionsRef = collection(firestore, `users/${user.uid}/transactions`);
@@ -169,11 +171,78 @@ const App: React.FC = () => {
 				});
 
 				goal.transactions = transactions;
+
+                if (goal.withdrawalIDs.length == 0) {
+                    console.log(`No withdrawals for this goal ${goal.id}`);
+                    continue;
+                }
+
+                const withdrawalsSnapshot = await getDocs(
+					query(
+						transactionsRef,
+						orderBy("date", "desc"),
+						where("__name__", "in", goal.withdrawalIDs)
+					)
+				);
+
+                // Parse the documents into Transaction objects
+                const withdrawals = withdrawalsSnapshot.docs.map((doc) => {
+                    const data = doc.data();
+
+                    return new Transaction(
+                        doc.id,
+                        data.type,
+                        data.category,
+                        data.subCategoryID,
+                        data.title,
+                        data.date,
+                        data.description,
+                        data.amount
+                    );
+                });
+
+                goal.withdrawals = withdrawals;
 			}
 		};
 
 		fetchTransactions();
 	}, [user, goalData]);
+
+	// Load the transactions from Firebase
+	useEffect(() => {
+		const fetchTransactions = async () => {
+			try {
+				const querySnapshot = await getDocs(
+					query(
+						collection(firestore, `users/${user.uid}/transactions`),
+						orderBy("date", "desc")
+					)
+				);
+
+				// Parse the documents into Transaction objects
+				const transactionData = querySnapshot.docs.map((doc) => {
+					const data = doc.data();
+					return new Transaction(
+						doc.id,
+						data.type,
+						data.category,
+						data.subCategoryID,
+						data.title,
+						data.date,
+						data.description,
+						data.amount
+					);
+				});
+
+				setTransactionData(transactionData);
+			} catch (error) {
+				console.error("Failed to fetch transactions:", error);
+			}
+		};
+
+		const interval = setInterval(fetchTransactions, 1000);
+		return () => clearInterval(interval);
+	}, [user]);
 
 	if (loading) return <div>Loading...</div>;
 
@@ -186,14 +255,27 @@ const App: React.FC = () => {
 						<Route
 							path="/home"
 							render={() => {
-								return user ? <HomePage user={user} /> : <Redirect to="/login" />;
+								return user ? (
+									<HomePage user={user} transactionData={transactionData} />
+								) : (
+									<Redirect to="/login" />
+								);
 							}}
 							exact
 						/>
 						<Route
 							path="/budget"
 							render={() => {
-								return user ? <BudgetPage user={user} goalData={goalData} categoryData={categoryData} /> : <Redirect to="/login" />;
+								return user ? (
+									<BudgetPage
+										user={user}
+										goalData={goalData}
+										categoryData={categoryData}
+										transactionData={transactionData}
+									/>
+								) : (
+									<Redirect to="/login" />
+								);
 							}}
 							exact
 						/>
@@ -205,6 +287,7 @@ const App: React.FC = () => {
 										user={user}
 										goalData={goalData}
 										categoryData={categoryData}
+										transactionData={transactionData}
 									/>
 								) : (
 									<Redirect to="/login" />
@@ -222,7 +305,11 @@ const App: React.FC = () => {
 						<Route
 							path="/settings"
 							render={() => {
-								return user ? <SettingsPage user={user} /> : <Redirect to="/login" />;
+								return user ? (
+									<SettingsPage user={user} />
+								) : (
+									<Redirect to="/login" />
+								);
 							}}
 							exact
 						/>

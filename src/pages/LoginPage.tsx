@@ -1,19 +1,12 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import {
-	collection,
-	doc,
-	getDoc,
-	serverTimestamp,
-	setDoc,
-	Timestamp,
-	updateDoc
-} from "firebase/firestore";
+import { collection, doc, getDoc, serverTimestamp, setDoc, Timestamp, updateDoc } from "firebase/firestore";
 import { eye, eyeOff } from "ionicons/icons";
 import { IonButton, IonIcon, IonInput, IonItem, IonLabel, IonToast } from "@ionic/react";
 import categoriesData from "../categories.json";
 import { auth, firestore } from "../utilities/FirebaseConfig";
+
 
 const LoginPage: React.FC<{
 	setUser: (user: any) => void;
@@ -29,6 +22,11 @@ const LoginPage: React.FC<{
 	const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 	const [toastMessage, setToastMessage] = useState<string>("");
 	const [showToast, setShowToast] = useState<boolean>(false);
+    const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
+    const [isTouched, setIsTouched] = useState<boolean>(false);
+
+    const input = useRef<HTMLIonInputElement>(null);
+    
 	const history = useHistory();
 
 	const showErrorToast = (message: string) => {
@@ -52,6 +50,11 @@ const LoginPage: React.FC<{
 			showErrorToast("Passwords do not match!");
 			return;
 		}
+
+        if (isValid === false) {
+            showErrorToast("Invalid email.");
+            return;
+        }
 
 		try {
 			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -106,6 +109,11 @@ const LoginPage: React.FC<{
 			return;
 		}
 
+        if (isValid === false) {
+            showErrorToast("Invalid email.");
+            return;
+        }
+
 		try {
 			const userCredential = await signInWithEmailAndPassword(auth, email, password);
 			const user = userCredential.user;
@@ -150,6 +158,34 @@ const LoginPage: React.FC<{
 		}
 	};
 
+    const validateEmail = (email: string) => {
+		return email.match(
+			/^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
+		);
+	};
+
+    const validate = (event: Event) => {
+		const value = (event.target as HTMLInputElement).value;
+
+		setIsValid(undefined);
+
+		const isValidEmail = validateEmail(value);
+
+        handleInputChange();
+
+        if (isValidEmail) {
+            setIsValid(true);
+            setEmail(value);
+        } else {
+            setIsValid(false);
+            setEmail(value);
+        } 
+	};
+
+	const markTouched = () => {
+		setIsTouched(true);
+	};
+
 	return (
 		<div className="login-container">
 			<h2>{isRegistering ? "Register" : "Sign In"}</h2>
@@ -188,10 +224,12 @@ const LoginPage: React.FC<{
 			<IonItem>
 				<IonLabel position="floating">Email</IonLabel>
 				<IonInput
+					className={`${isValid && "ion-valid"} ${isValid === false && "ion-invalid"} ${isTouched && "ion-touched"}`}
 					type="email"
+					errorText="Invalid email format"
+					onIonBlur={() => markTouched()}
 					value={email}
-					onIonChange={(e) => setEmail(e.detail.value!)}
-					onIonInput={handleInputChange}
+					onIonInput={(e) => validate(e)}
 					required
 				/>
 			</IonItem>

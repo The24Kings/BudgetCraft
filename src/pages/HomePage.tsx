@@ -12,8 +12,9 @@ import { firestore } from "../utilities/FirebaseConfig";
 import MonthPicker from "../utilities/MonthPicker";
 import "./HomePage.css";
 import "../theme/variables.css";
+import Transaction from "../utilities/Transactions/Transaction";
 
-const HomePage: React.FC<{ user: any }> = ({ user }) => {
+const HomePage: React.FC<{ user: any, transactionData: Transaction[] }> = ({ user, transactionData }) => {
 	const [userData, setUserData] = useState<any>(null);
 	const [month, setMonth] = useState(new Date().getMonth());
 	const [year, setYear] = useState(new Date().getFullYear());
@@ -46,7 +47,7 @@ const HomePage: React.FC<{ user: any }> = ({ user }) => {
 
 				<IonContent className="home-content">
 					{user ? (
-						<HomeContainer userID={user.uid} month={month} year={year} />
+						<HomeContainer userID={user.uid} month={month} year={year} transactionData={transactionData}/>
 					) : (
 						<IonText className="ion-padding">Loading user data...</IonText>
 					)}
