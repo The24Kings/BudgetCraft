@@ -1,10 +1,21 @@
 import React, { useRef } from "react";
-import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, query, updateDoc } from "firebase/firestore";
+import {
+	arrayUnion,
+	collection,
+	deleteDoc,
+	doc,
+	getDoc,
+	getDocs,
+	query,
+	updateDoc
+} from "firebase/firestore";
 import { add } from "ionicons/icons";
 import {
 	IonButton,
 	IonCol,
-	IonContent, IonFab, IonFabButton,
+	IonContent,
+	IonFab,
+	IonFabButton,
 	IonFooter,
 	IonGrid,
 	IonHeader,
@@ -14,7 +25,8 @@ import {
 	IonItemGroup,
 	IonLabel,
 	IonModal,
-	IonRow, IonTextarea,
+	IonRow,
+	IonTextarea,
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
@@ -46,11 +58,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 	// Filter goals by month and recurring
 	const filteredGoals = goals.filter((goal) => {
 		const createdAtMonth = goal.createdAt.toDate();
-		const createdAtMonth = goal.createdAt.toDate();
 		return (
-			(!onlyGoals && selectedMonth === createdAtMonth.getMonth() && goal.budgetItem) ||
-			(!onlyGoals && goal.recurring) ||
-			(onlyGoals && !goal.budgetItem)
 			(!onlyGoals && selectedMonth === createdAtMonth.getMonth() && goal.budgetItem) ||
 			(!onlyGoals && goal.recurring) ||
 			(onlyGoals && !goal.budgetItem)
@@ -106,15 +114,15 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 		const goalRef = doc(firestore, `users/${user.uid}/budget/${goalId}`);
 		const goalDocSnapshot = await getDoc(goalRef);
 
-        // Check if the transaction ID is already added
-        if (goalDocSnapshot.exists()) {
-            const goalData = goalDocSnapshot.data();
+		// Check if the transaction ID is already added
+		if (goalDocSnapshot.exists()) {
+			const goalData = goalDocSnapshot.data();
 
-            if (goalData.withdrawalIDs && goalData.withdrawalIDs.includes(transaction.id)) {
-                alert("This transaction is already added to the goal.");
-                return;
-            }
-        }
+			if (goalData.withdrawalIDs && goalData.withdrawalIDs.includes(transaction.id)) {
+				alert("This transaction is already added to the goal.");
+				return;
+			}
+		}
 
 		await updateDoc(goalRef, {
 			withdrawalIDs: arrayUnion(transaction.id)
@@ -147,21 +155,32 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 								button
 								className="budget-card"
 								onClick={() => {
-									modalRef.current?.present();
-									modalRef.current?.setAttribute("goalId", goal.id);
+									modalDetailsRef.current?.present();
+									modalDetailsRef.current?.setAttribute("goalId", goal.id);
 								}}
 							>
 								<IonGrid style={{ width: "100%" }}>
-									<IonRow className="budget-row no-ion-cols">
-										<div className="budget-col-description budget-value">
-											{subCategory(goal.category, goal.subCategoryID)}
-										</div>
-										<div className="budget-col-target budget-value">
-											{goal.targetDate.toDate().toLocaleDateString()}
+									<IonRow className="budget-row">
+										<IonCol className="budget-col-description">
+											<IonLabel className="budget-value">
+												{subCategory(goal.category, goal.subCategoryID) ||
+													"Uncategorized"}
+											</IonLabel>
 										</IonCol>
-										<IonCol>${goal.goal}</IonCol>
-										<IonCol>
-											${calculateSaved(goal.transactions, goal.withdrawals)}
+										<IonCol className="budget-col-target">
+											<p className="budget-value">
+												{goal.targetDate.toDate().toLocaleDateString()}
+											</p>
+										</IonCol>
+										<IonCol className="budget-col-saved-goal">
+											<p className="budget-value">
+												$
+												{calculateSaved(
+													goal.transactions,
+													goal.withdrawals
+												)}{" "}
+												/ ${goal.goal}
+											</p>
 										</IonCol>
 									</IonRow>
 								</IonGrid>

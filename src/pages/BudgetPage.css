@@ -59,36 +59,40 @@ ion-toolbar {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	line-height: 1.1rem;
+	display: inline-block; /* or block */
+	width: 100%; /* Ensure it fills the column */
 }
 
 .budget-row {
 	display: flex;
-	justify-content: space-between;
+	flex-direction: row;
 	align-items: center;
 	width: 100%;
-	gap: 12px;
+	gap: 0;
 }
 
 .budget-row ion-col {
-	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
 }
 
 .budget-col-description {
-	flex: 1;
-	max-width: 40%;
+	flex: 1 1 40%;
 	overflow: hidden;
-	white-space: nowrap;
 	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .budget-col-target {
-	width: 25%;
+	flex: 0 0 25%;
 	text-align: center;
+	white-space: nowrap;
 }
 
 .budget-col-saved-goal {
-	width: 30%;
+	flex: 0 0 30%;
 	text-align: right;
+	white-space: nowrap;
 }
 
 /* Budget container */
