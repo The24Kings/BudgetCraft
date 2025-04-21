@@ -306,7 +306,11 @@ const App: React.FC = () => {
 							path="/settings"
 							render={() => {
 								return user ? (
-									<SettingsPage user={user} />
+									<SettingsPage 
+                                        user={user} 
+                                        jsonData={jsonData}
+                                        categoryData={categoryData}
+                                    />
 								) : (
 									<Redirect to="/login" />
 								);
