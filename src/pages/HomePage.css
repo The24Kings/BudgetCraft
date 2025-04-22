@@ -33,7 +33,8 @@ ion-toolbar.home-toolbar {
    Page Background
 ---------------------------------------- */
 ion-content.home-content {
-	--background: var(--ion-color-navy-blue-tint);
+	background-color: var(--ion-color-navy-blue-tint);
+	--background: var(--ion-color-navy-blue-tint) !important;
 }
 
 /* ----------------------------------------
@@ -74,7 +75,7 @@ ion-content.home-content {
 	justify-content: flex-start;
 	height: calc(100vh - 137px);
 	width: 100%;
-	padding: 0 10px 10px 10px;
+	padding: 0 10px 10px;
 	overflow-y: auto;
 }
 
@@ -88,10 +89,6 @@ ion-content.home-content {
 	line-height: 22px;
 	color: var(--muted-text-color);
 	margin: 0;
-}
-
-.container a {
-	text-decoration: none;
 }
 
 /* ----------------------------------------
@@ -119,14 +116,10 @@ ion-modal#add-transact-modal .categories {
 	overflow-y: auto;
 }
 
-ion-modal#add-transact-modal .category ion-item {
+ion-modal#add-transact-modal .category ion-item,
+ion-modal#add-transact-modal .subCategory ion-button {
 	--background: var(--surface-color);
 	--color: var(--text-color);
-	font-weight: 500;
-}
-
-ion-modal#add-transact-modal .subCategory ion-button {
-	color: var(--ion-color-tab-bar-shade);
 	font-weight: 500;
 }
 
@@ -176,7 +169,7 @@ ion-accordion::part(header) {
 }
 
 /* ----------------------------------------
-   Date Picker
+   Date Picker & Textarea
 ---------------------------------------- */
 .date-picker-inline {
 	display: flex;
@@ -184,9 +177,6 @@ ion-accordion::part(header) {
 	gap: 10px;
 }
 
-/* ----------------------------------------
-   Custom Textarea
----------------------------------------- */
 ion-textarea.custom {
 	--background: var(--surface-color);
 	--color: #000;
@@ -285,7 +275,7 @@ ion-datetime-button::part(native) {
 }
 
 /* ----------------------------------------
-   Buttons
+   Buttons & FAB
 ---------------------------------------- */
 .action-button {
 	--background: var(--ion-color-mint);

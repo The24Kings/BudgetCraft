@@ -260,9 +260,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 				<IonContent className="ion-padding">
 					<IonItem className="ion-margin-bottom">
 						<IonSelect
-							interface="alert"
 							placeholder="Select Type"
-							aria-label="transaction-type"
 							value={type}
 							onIonChange={(e) => {
 								setType(e.detail.value);
