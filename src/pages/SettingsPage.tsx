@@ -1,10 +1,12 @@
-import React from "react";
-import { IonAvatar, IonButton, IonContent, IonHeader, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import React, { useRef } from "react";
 import { signOut } from "firebase/auth";
-import { auth } from "../utilities/FirebaseConfig";
+import { IonAvatar, IonButton, IonContent, IonFooter, IonHeader, IonItemDivider, IonItemGroup, IonModal, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
+import { Category, EntryCategories } from "../utilities/Categories";
 import { exportUserDataJSON } from "../utilities/DataExport";
+import { auth } from "../utilities/FirebaseConfig";
 
-const SettingsPage: React.FC<{user: any}> = ({ user }) => {
+
+const SettingsPage: React.FC<{user: any, jsonData: any, categoryData: Category[]}> = ({ user, jsonData, categoryData }) => {
     const handleLogout = async () => {
 		try {
 			await signOut(auth);
@@ -21,6 +23,16 @@ const SettingsPage: React.FC<{user: any}> = ({ user }) => {
 		}
 	};
 
+    const userName = user?.displayName || (user?.email?.split("@")[0]) || "User";
+
+    const modalCategoryRef = useRef<HTMLIonModalElement>(null);
+
+    const showCategoryModal = () => {
+        if (modalCategoryRef.current) {
+            modalCategoryRef.current.present();
+        } 
+    }
+
 	return (
 		<IonPage id="main-content">
 			<IonHeader>
@@ -29,23 +41,65 @@ const SettingsPage: React.FC<{user: any}> = ({ user }) => {
 				</IonToolbar>
 			</IonHeader>
 			<IonContent className="ion-padding">
-				<IonAvatar className="menu-avatar">
-					<img
-						src={"https://ionicframework.com/docs/img/demos/avatar.svg"}
-						alt="User Avatar"
-					/>
-				</IonAvatar>
-				<IonText className="center-text">
-					<h2>Welcome!</h2>
-				</IonText>
+				<IonItemGroup
+					style={{ display: "flex", alignItems: "center", justifyContent: "left" }}
+				>
+					<IonAvatar
+						className="menu-avatar"
+						style={{
+							marginRight: "20px",
+							width: "60px",
+							height: "60px"
+						}}
+					>
+						<img
+							src={"https://ionicframework.com/docs/img/demos/avatar.svg"}
+							alt="User Avatar"
+						/>
+					</IonAvatar>
+					<div style={{ display: "flex", flexDirection: "column" }}>
+						<IonText>
+							<h2>Welcome, {userName}!</h2>
+						</IonText>
+						<IonButton color="danger" onClick={handleLogout}>Logout</IonButton>
+					</div>
+				</IonItemGroup>
 
-				<IonButton onClick={handleLogout}>Logout</IonButton>
-				<IonButton expand="full" color="secondary" onClick={handleExportJSON}>
-					Export JSON
-				</IonButton>
-				<h2>This is the Settings Page</h2>
-				<p>You’ll manage your account, export data, and set preferences here.</p>
+				<IonItemDivider />
+
+				<IonItemGroup>
+					<IonButton expand="full" color="primary" onClick={showCategoryModal}>
+						<IonText>Edit Categories</IonText>
+					</IonButton>
+				</IonItemGroup>
 			</IonContent>
+			<IonFooter>
+				<IonButton expand="full" color="primary" onClick={handleExportJSON}>
+					Export Data
+				</IonButton>
+			</IonFooter>
+
+			<IonModal
+				ref={modalCategoryRef}
+				isOpen={false}
+				onDidDismiss={() => modalCategoryRef.current?.dismiss()}
+			>
+				<IonHeader>
+					<IonToolbar>
+						<IonTitle>Edit Categories</IonTitle>
+						<IonButton
+							fill="clear"
+							slot="end"
+							onClick={() => modalCategoryRef.current?.dismiss()}
+						>
+							Close
+						</IonButton>
+					</IonToolbar>
+				</IonHeader>
+				<IonContent className="ion-padding">
+					<EntryCategories userID={user.uid} json={jsonData} categories={categoryData} />
+				</IonContent>
+			</IonModal>
 		</IonPage>
 	);
 };

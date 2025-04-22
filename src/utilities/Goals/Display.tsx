@@ -131,6 +131,18 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 		modalAddRef.current?.dismiss(null, "cancel");
 	};
 
+	const filteredTransactions = (transactions: Transaction[]) => {
+		return transactions.filter(
+			(transaction) => transaction.date.toDate().getMonth() === selectedMonth
+		);
+	};
+
+	const filteredWithdrawals = (withdrawals: Transaction[]) => {
+		return withdrawals.filter(
+			(withdrawal) => withdrawal.date.toDate().getMonth() === selectedMonth
+		);
+	};
+
 	return (
 		<React.Fragment>
 			<div className="goals">
@@ -235,8 +247,9 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 														overflowY: "auto"
 													}}
 												>
-													{goal.transactions.length > 0 ? (
-														goal.transactions.map(
+													{filteredTransactions(goal.transactions)
+														.length > 0 ? (
+														filteredTransactions(goal.transactions).map(
 															(transaction, index) => (
 																<IonItem
 																	key={index}
@@ -290,8 +303,9 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 														overflowY: "auto"
 													}}
 												>
-													{goal.withdrawals.length > 0 ? (
-														goal.withdrawals.map(
+													{filteredWithdrawals(goal.withdrawals).length >
+													0 ? (
+														filteredWithdrawals(goal.withdrawals).map(
 															(withdrawal, index) => (
 																<IonItem
 																	key={index}

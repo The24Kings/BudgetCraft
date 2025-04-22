@@ -46,7 +46,8 @@ const MonthPicker: React.FC<MonthPickerProps> = ({ month, year, setMonth, setYea
 						<IonButton
 							key={offset}
 							className={`month-button ${offset === 0 ? "selected" : ""}`}
-							fill={offset === 0 ? "solid" : "clear"}
+							fill={offset === 0 ? "solid" : "outline"}
+							color="month-button"
 							onClick={() => handleMonthChange(offset_month, offset_year)}
 						>
 							{months[offset_month]}

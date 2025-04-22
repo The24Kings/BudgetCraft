@@ -95,6 +95,50 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		}
 	};
 
+	const checkDuplicate = async (
+		title: string,
+		date: Timestamp,
+		subCatID: string,
+		amount: number
+	) => {
+		const transactionsRef = collection(firestore, `users/${userID}/transactions`);
+		const transactionsSnapshot = await getDocs(transactionsRef);
+		const transactions = transactionsSnapshot.docs.map((doc) => {
+			const data = doc.data() as {
+				id: string;
+				type: string;
+				category: string;
+				subCategoryID: string;
+				title: string;
+				date: Timestamp;
+				description: string;
+				amount: number;
+			};
+			return {
+				id: doc.id,
+				...data
+			};
+		});
+
+		const isDuplicate = transactions.some((transaction) => {
+			return (
+				transaction.title.toLocaleLowerCase() === title.toLocaleLowerCase() &&
+				transaction.date.toDate().getDay() === date.toDate().getDay() &&
+				transaction.date.toDate().getMonth() === date.toDate().getMonth() &&
+				transaction.date.toDate().getFullYear() === date.toDate().getFullYear() &&
+				transaction.subCategoryID === subCatID &&
+				transaction.amount === amount
+			);
+		});
+
+		if (isDuplicate) {
+			console.log("Duplicate transaction found.");
+			return true; // Duplicate found
+		}
+
+		return false; // No duplicate found
+	};
+
 	/*
 	 * Adds the transaction to the Firestore database.
 	 */
@@ -102,6 +146,21 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 		const transactionID = uuidv4();
 
 		try {
+			const isDuplicate = await checkDuplicate(title, date, subCategoryID, amount);
+
+			if (isDuplicate) {
+				console.log("Duplicate transaction found. Transaction not added.");
+
+				const isConfirmed = window.confirm(
+					"A transaction with the same title, date, subcategory, and amount already exists. Do you want to add it anyway?"
+				);
+
+				if (!isConfirmed) {
+					console.log("Transaction not added.");
+					return;
+				}
+			}
+
 			const docRef = collection(firestore, `users/${userID}/transactions/`);
 			const transactionRef = doc(docRef, transactionID);
 
@@ -180,6 +239,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 				<IonFabButton
 					id="add-transaction"
 					className="add-transaction-button"
+					color="fab"
 					onClick={() => {
 						openForm();
 						modalStartRef.current?.present();

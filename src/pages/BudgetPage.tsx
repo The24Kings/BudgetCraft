@@ -36,23 +36,16 @@ const BudgetPage: React.FC<BudgetPageProps> = ({ user, goalData, categoryData, t
 				</IonToolbar>
 			</IonHeader>
 			<IonContent>
-				<IonHeader collapse="condense">
-					<IonToolbar>
-						<IonTitle size="large">DEBUG</IonTitle>
-					</IonToolbar>
-				</IonHeader>
-				<IonContent>
-					<div className="container">
-						<DisplayGoals
-							user={user}
-							goals={goalData}
-							categories={categoryData}
-							transactions={filteredTransactions}
-							selectedMonth={month}
-						/>
-						<AddGoal categories={categoryData} userID={user.uid} />
-					</div>
-				</IonContent>
+                <div className="container">
+                    <DisplayGoals
+                        user={user}
+                        goals={goalData}
+                        categories={categoryData}
+                        transactions={filteredTransactions}
+                        selectedMonth={month}
+                    />
+                    <AddGoal categories={categoryData} userID={user.uid} />
+                </div>
 			</IonContent>
 		</IonPage>
 	);

@@ -306,7 +306,11 @@ const App: React.FC = () => {
 							path="/settings"
 							render={() => {
 								return user ? (
-									<SettingsPage user={user} />
+									<SettingsPage 
+                                        user={user} 
+                                        jsonData={jsonData}
+                                        categoryData={categoryData}
+                                    />
 								) : (
 									<Redirect to="/login" />
 								);
@@ -329,8 +333,8 @@ const App: React.FC = () => {
 
 					{user && (
 						<IonTabBar slot="bottom">
-							<IonTabButton tab="home" href="/home">
-								<IonIcon icon={home} />
+							<IonTabButton tab="home" href="/home" >
+								<IonIcon icon={home}/>
 								<IonLabel>Home</IonLabel>
 							</IonTabButton>
 							<IonTabButton tab="budget" href="/budget">

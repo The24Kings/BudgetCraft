@@ -7,14 +7,14 @@ ion-header.home-header {
 }
 
 ion-toolbar.home-toolbar {
-	--background: var(--primary-color);
+	--background: var(--ion-color-navy-blue);
 }
 
 .home-toolbar ion-button,
 .home-toolbar ion-label,
 .home-toolbar ion-title {
 	font-size: 1rem;
-	--background-hover-opacity: 0;
+	--background-hover-opacity: 0.3;
 }
 
 /* ----------------------------------------
@@ -33,7 +33,7 @@ ion-toolbar.home-toolbar {
    Page Background
 ---------------------------------------- */
 ion-content.home-content {
-	--background: var(--background-color);
+	--background: var(--ion-color-navy-blue-tint);
 }
 
 /* ----------------------------------------
@@ -52,15 +52,12 @@ ion-content.home-content {
 
 .month-button {
 	min-width: 40px;
-	border: 2px solid var(--secondary-color);
 	border-radius: 8px;
 	background-color: transparent;
-	color: var(--secondary-color);
-	text-transform: none;
+	color: var(--app-color-green);
 }
 
 .month-button.selected {
-	--background: var(--secondary-color);
 	font-weight: bold;
 	transform: scale(1.05);
 	min-width: 80px;
@@ -113,7 +110,7 @@ ion-modal#add-transact-modal::part(backdrop) {
 }
 
 ion-modal#add-transact-modal ion-toolbar {
-	--background: var(--primary-color);
+	--background: var(--ion-color-navy-blue);
 	--color: white;
 }
 
@@ -129,7 +126,7 @@ ion-modal#add-transact-modal .category ion-item {
 }
 
 ion-modal#add-transact-modal .subCategory ion-button {
-	color: var(--secondary-color);
+	color: var(--ion-color-tab-bar-shade);
 	font-weight: 500;
 }
 
@@ -159,19 +156,19 @@ ion-select-popover::part(content) {
 }
 
 ion-item {
-	--background: var(--surface-color);
-	--color: var(--text-color);
+	--background: #ffffff;
+	--color: #1c1c1c;
 	border-radius: 10px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-	margin-bottom: 12px;
+	margin-bottom: 3px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* ----------------------------------------
    Accordion
 ---------------------------------------- */
 ion-accordion::part(header) {
-	background: var(--surface-color);
-	color: var(--text-color);
+	background: #cef9f2;
+	color: #1c1c1c;
 	border-radius: 10px;
 	margin-bottom: 10px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
@@ -235,7 +232,7 @@ ion-searchbar.search-input {
 	position: sticky;
 	top: 0;
 	z-index: 100;
-	background-color: var(--background-color);
+	background-color: var(--ion-color-navy-blue-tint);
 	width: 100%;
 }
 
@@ -291,8 +288,8 @@ ion-datetime-button::part(native) {
    Buttons
 ---------------------------------------- */
 .action-button {
-	--background: var(--secondary-color);
-	--color: var(--text-color);
+	--background: var(--ion-color-mint);
+	--color: #1c1c1c;
 	border-radius: 8px;
 	font-weight: 500;
 }
@@ -311,13 +308,14 @@ ion-fab-button.add-transaction-button ion-icon {
    Tab Bar
 ---------------------------------------- */
 ion-tab-button {
-	--color: var(--muted-text-color);
-	--color-selected: var(--secondary-color);
+	--background: var(--ion-color-navy-blue);
+	--color-selected: var(--ion-color-tab-bar);
+	--color: #aab8c2;
 }
 
 ion-tab-button:hover,
 ion-tab-button:focus {
-	--color: var(--secondary-color);
+	--color: var(--ion-color-tab-bar);
 }
 
 /* ----------------------------------------

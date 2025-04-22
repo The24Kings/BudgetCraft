@@ -6,60 +6,118 @@ http://ionicframework.com/docs/theming/ */
    =============================== */
 
 :root {
-	/* ---------- App Color Palette ---------- */
-	--primary-color: #3a0842;
-	--secondary-color: #4eca7b;
-	--background-color: #ba4242;
-	--surface-color: #ffffff;
-	--text-color: #1c1c1c;
-	--muted-text-color: #888;
+	--ion-background-color: #233f57;
+	--ion-toolbar-background: #ebebeb;
+	--ion-color-primary: #0077cc;
+	--ion-text-color: #d5dbe0;
+	--ion-color-step-50: #e0e0e0;
+	--ion-color-step-100: #d4d4d4;
 
-	/* ---------- Ionic Semantic Overrides ---------- */
-	--ion-background-color: var(--background-color);
-	--ion-toolbar-background: var(--background-color);
-	--ion-text-color: var(--text-color);
-
-	/* ---------- Miscellaneous ---------- */
-	--selected-month-text-color: #111010;
+	/* Custom app colors */
+	--app-color-purple: #1a2e40;
+	--app-color-green: #cef9f2;
 }
 
-/* ===============================
-	 Global Styling Overrides
-   =============================== */
-
-/* Force light background for popovers */
-ion-popover::part(content),
-ion-select-popover::part(content),
-ion-select-popover#transaction-type-select-popover::part(content),
-ion-select[aria-label="Select Type"] ~ ion-select-popover::part(content),
-ion-select[aria-label="transaction-type"] + ion-select-popover::part(content) {
-	--background: #f4f4f4 !important;
-	--ion-background-color: #f4f4f4 !important;
-	background: #f4f4f4 !important;
-	color: #000 !important;
+/* Custom colors for the app */
+/* main dark background color */
+:root {
+	--ion-color-navy-blue: #1a2e40;
+	--ion-color-navy-blue-rgb: 26, 46, 64;
+	--ion-color-navy-blue-contrast: #ffffff;
+	--ion-color-navy-blue-contrast-rgb: 255, 255, 255;
+	--ion-color-navy-blue-shade: #172838;
+	--ion-color-navy-blue-tint: #233f57;
 }
 
-/* Input text color for transaction type */
-ion-select[aria-label="transaction-type"]::part(text) {
-	color: var(--text-color);
+.ion-color-navy-blue {
+	--ion-color-base: var(--ion-color-navy-blue);
+	--ion-color-base-rgb: var(--ion-color-navy-blue-rgb);
+	--ion-color-contrast: var(--ion-color-navy-blue-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-navy-blue-contrast-rgb);
+	--ion-color-shade: var(--ion-color-navy-blue-shade);
+	--ion-color-tint: var(--ion-color-navy-blue-tint);
+}
+/*Main light accent color*/
+:root {
+	--ion-color-mint: #cef9f2;
+	--ion-color-mint-rgb: 206, 249, 242;
+	--ion-color-mint-contrast: #000000;
+	--ion-color-mint-contrast-rgb: 0, 0, 0;
+	--ion-color-mint-shade: #b5dbd5;
+	--ion-color-mint-tint: #d3faf3;
 }
 
-/* Style alert dialogs (used by IonSelect's "alert" interface) */
-.alert-wrapper,
-.alert-radio-group,
-.alert-button-group {
-	background-color: #f4f4f4 !important;
-	color: #000 !important;
-	border-radius: 12px !important;
+.ion-color-mint {
+	--ion-color-base: var(--ion-color-mint);
+	--ion-color-base-rgb: var(--ion-color-mint-rgb);
+	--ion-color-contrast: var(--ion-color-mint-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-mint-contrast-rgb);
+	--ion-color-shade: var(--ion-color-mint-shade);
+	--ion-color-tint: var(--ion-color-mint-tint);
 }
 
-.alert-radio-label,
-ion-action-sheet::part(button) {
-	color: #000 !important;
+/* FAB Button */
+:root {
+	--ion-color-fab: #cef9f2;
+	--ion-color-fab-rgb: 206, 249, 242;
+	--ion-color-fab-contrast: #000000;
+	--ion-color-fab-contrast-rgb: 0, 0, 0;
+	--ion-color-fab-shade: #b5dbd5;
+	--ion-color-fab-tint: #d3faf3;
 }
 
-ion-action-sheet::part(content) {
-	--ion-background-color: #f4f4f4 !important;
-	background: #f4f4f4 !important;
-	color: #000 !important;
+.ion-color-fab {
+	--ion-color-base: var(--ion-color-fab);
+	--ion-color-base-rgb: var(--ion-color-fab-rgb);
+	--ion-color-contrast: var(--ion-color-fab-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-fab-contrast-rgb);
+	--ion-color-shade: var(--ion-color-fab-shade);
+	--ion-color-tint: var(--ion-color-fab-tint);
+}
+
+/* Month Picker */
+:root {
+	--ion-color-month-button: #cef9f2;
+	--ion-color-month-button-rgb: 206, 249, 242;
+	--ion-color-month-button-contrast: #000000;
+	--ion-color-month-button-contrast-rgb: 0, 0, 0;
+	--ion-color-month-button-shade: #b5dbd5;
+	--ion-color-month-button-tint: #d3faf3;
+}
+
+.ion-color-month-button {
+	--ion-color-base: var(--ion-color-month-button);
+	--ion-color-base-rgb: var(--ion-color-month-button-rgb);
+	--ion-color-contrast: var(--ion-color-month-button-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-month-button-contrast-rgb);
+	--ion-color-shade: var(--ion-color-month-button-shade);
+	--ion-color-tint: var(--ion-color-month-button-tint);
+}
+
+/* Tab Bar */
+:root {
+	--ion-color-tab-bar: #f4c95d;
+	--ion-color-tab-bar-rgb: 244, 201, 93;
+	--ion-color-tab-bar-contrast: #000000;
+	--ion-color-tab-bar-contrast-rgb: 0, 0, 0;
+	--ion-color-tab-bar-shade: #d7b152;
+	--ion-color-tab-bar-tint: #f5ce6d;
+}
+
+.ion-color-tab-bar {
+	--ion-color-base: var(--ion-color-tab-bar);
+	--ion-color-base-rgb: var(--ion-color-tab-bar-rgb);
+	--ion-color-contrast: var(--ion-color-tab-bar-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-tab-bar-contrast-rgb);
+	--ion-color-shade: var(--ion-color-tab-bar-shade);
+	--ion-color-tint: var(--ion-color-tab-bar-tint);
+}
+
+.ion-color-tab-bar {
+	--ion-color-base: var(--ion-color-tab-bar);
+	--ion-color-base-rgb: var(--ion-color-tab-bar-rgb);
+	--ion-color-contrast: var(--ion-color-tab-bar-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-tab-bar-contrast-rgb);
+	--ion-color-shade: var(--ion-color-tab-bar-shade);
+	--ion-color-tint: var(--ion-color-tab-bar-tint);
 }
