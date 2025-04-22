@@ -59,24 +59,6 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 		}
 	};
 
-	const [selectedSliceIndex, setSelectedSliceIndex] = useState<number | null>(null);
-
-	const toggleCollapse = () => {
-		setIsCollapsed(!isCollapsed);
-		if (!isCollapsed) {
-			// If collapse button clicked, clear slide that is shown
-			setSelectedSliceIndex(null);
-		}
-	};
-
-	const onPieSliceClick = (_data: any, index: number) => {
-		if (selectedSliceIndex === index) {
-			setSelectedSliceIndex(null);
-		} else {
-			setSelectedSliceIndex(index);
-		}
-	};
-
 	return (
 		<div className="pie-chart-container">
 			{!isCollapsed && (
