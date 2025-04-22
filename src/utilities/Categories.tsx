@@ -286,6 +286,26 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 		const type = categories.find((cat) => cat.getCategory() === _category.name)?.getType();
 		const id = cyrb53(_category.getCategory() + subcategory);
 
+        // Check to see if the type is undefined
+        if (type === undefined) {
+            console.error("Type is undefined. Cannot add subcategory.");
+            return;
+        }
+
+        // Check to see if the new subcategory already exists in the JSON file
+        if (json[type][_category.name][id]) {
+            alert("Subcategory already exists.");
+
+            return;
+        }
+
+        // Check to see if the name provided is already in use as a default subcategory
+        if (categories.some((cat) => cat.getCategory() === subcategory)) {
+            alert("Subcategory name already in use.");
+
+            return;
+        }
+
 		// Add the subcategory to the JSON file
 		json[type][_category.name][id] = {
 			name: subcategory,
