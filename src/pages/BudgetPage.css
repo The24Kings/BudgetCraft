@@ -1,19 +1,28 @@
-/* Header */
+/* ----------------------------------------
+   Header & Toolbar
+---------------------------------------- */
 ion-toolbar {
-	--background: var(--primary-color);
+	--background: var(--ion-color-navy-blue);
 	--color: white;
 }
 
-/* Budget item cards (match Home page transactions) */
-.budget-item {
-	background-color: var(--surface-color);
-	padding: 10px;
-	border-radius: 12px;
-	margin-bottom: 12px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+/* ----------------------------------------
+   Page Background & Container
+---------------------------------------- */
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 0 10px 10px;
+	width: 100%;
+	overflow-y: auto;
+	background-color: var(--ion-color-navy-blue-tint);
 }
 
-/* Match Transaction Display Style */
+/* ----------------------------------------
+   Budget Items
+---------------------------------------- */
 .budget-item-wrapper {
 	width: 100vw;
 	box-sizing: border-box;
@@ -21,39 +30,40 @@ ion-toolbar {
 }
 
 .budget-card {
-	--background: var(--muted-text-color);
-	--color: var(--text-color);
+	background-color: var(--ion-color-mint);
 	border-radius: 10px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+	padding: 10px;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.budget-inner-card {
+	background-color: #ffffff;
+	color: var(--text-color);
+	border-radius: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 	padding: 12px;
 	width: 100%;
 	box-sizing: border-box;
 }
 
-.budget-inner-card {
-	--background: var(--surface-color);
-	--color: var(--text-color);
-	border-radius: 10px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-	padding: 12px;
-	width: 100%;
-}
-
-/* Budget label row adjustments */
+/* ----------------------------------------
+   Label Row
+---------------------------------------- */
 .budget-label-row {
 	padding: 0 10px;
 	margin-bottom: 6px;
-	background-color: var(--background-color);
+	background-color: var(--ion-color-navy-blue-tint);
 }
 
 .budget-label {
-	font-size: 0.75rem;
+	font-size: 0.9rem;
 	color: var(--text-color);
 	font-weight: 500;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	display: inline-block;
 	width: 100%;
 	padding: 0 2px;
 }
@@ -69,28 +79,18 @@ ion-toolbar {
 }
 
 .budget-col-saved-goal .budget-label {
-	padding-right: 25px;
+	padding-right: 20px;
 	text-align: right;
 }
 
-.budget-value {
-	font-size: 0.75rem;
-	color: var(--text-color) !important;
-	font-weight: 500;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	line-height: 1.1rem;
-	display: inline-block;
-	width: 100%;
-}
-
+/* ----------------------------------------
+   Budget Row Layout
+---------------------------------------- */
 .budget-row {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	width: 100%;
-	gap: 0;
 }
 
 .budget-row ion-col {
@@ -108,107 +108,34 @@ ion-toolbar {
 .budget-col-target {
 	flex: 0 0 25%;
 	text-align: center;
-	white-space: nowrap;
 }
 
 .budget-col-saved-goal {
 	flex: 0 0 30%;
 	text-align: right;
+}
+
+.budget-value {
+	font-size: 0.75rem;
+	color: var(--text-color) !important;
+	font-weight: 500;
 	white-space: nowrap;
-}
-
-/* Budget container */
-.container {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: flex-start;
-	padding: 0 10px 10px 10px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.1rem;
 	width: 100%;
-	overflow-y: auto;
 }
 
-/* FAB button */
+/* ----------------------------------------
+   FAB Button
+---------------------------------------- */
 ion-fab-button {
 	--background: var(--secondary-color);
-	--color: var(--text-color);
-}
-
-/* Modal wrapper */
-ion-modal#add-goal-modal {
-	padding: 20px;
-	--max-height: 80%;
-	--border-radius: 16px;
-	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-ion-modal#add-goal-modal::part(backdrop) {
-	background: rgba(209, 213, 219);
-	opacity: 1;
-}
-
-ion-modal#add-goal-modal ion-toolbar {
-	--background: var(--primary-color);
 	--color: white;
 }
 
-/* Make modal action buttons (Back / Confirm) appear as clickable white text */
-ion-modal#add-goal-modal ion-toolbar ion-button,
-ion-modal#goal-details-modal ion-toolbar ion-button {
-	--background: transparent;
-	--color: white;
-	font-weight: 500;
-	text-transform: none;
-	padding: 0 12px;
-	font-size: 1rem;
-}
-
-/* Inputs styling */
-ion-input,
-ion-textarea,
-ion-select,
-ion-toggle {
-	--color: var(--text-color);
-	--placeholder-color: var(--muted-text-color);
-	--background: var(--surface-color);
-	border-radius: 10px;
-}
-
-/* Make subcategory selection buttons use secondary color */
-ion-modal#add-goal-modal .category ion-button {
-	color: var(--secondary-color);
-	font-weight: 500;
-}
-
-/* Budget item details modal */
-ion-modal#goal-details-modal {
-	padding: 20px;
-	--max-height: 80%;
-	--border-radius: 16px;
-	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-ion-modal#goal-details-modal::part(backdrop) {
-	background: rgba(209, 213, 219);
-	opacity: 1;
-}
-
-ion-modal#goal-details-modal ion-toolbar {
-	--background: var(--primary-color);
-	--color: white;
-}
-
-/* Add transaction modal */
-ion-modal#goal-details-modal::part(content),
-ion-modal#add-goal-modal::part(content) {
-	max-width: 600px;
-	width: 90%;
-	margin: auto;
-}
-
-/* Add transaction button */
 .fab-add-transaction {
-	--background: var(--secondary-color);
+	--background: var(--ion-color-mint);
 	--color: black;
 }
 
@@ -219,7 +146,145 @@ ion-modal#goal-details-modal ion-fab-button.fab-add-transaction {
 	z-index: 10;
 }
 
-/* Toolbar Title */
+/* ----------------------------------------
+   Modal Styling
+---------------------------------------- */
+ion-modal#add-goal-modal,
+ion-modal#goal-details-modal {
+	padding: 20px;
+	--max-height: 80%;
+	--border-radius: 16px;
+	--box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+ion-modal#add-goal-modal::part(backdrop),
+ion-modal#goal-details-modal::part(backdrop) {
+	background: rgba(209, 213, 219);
+	opacity: 1;
+}
+
+ion-modal#add-goal-modal ion-toolbar,
+ion-modal#goal-details-modal ion-toolbar {
+	--background: var(--ion-color-navy-blue);
+	--color: white;
+	padding-inline: 8px;
+}
+
+ion-modal#goal-details-modal::part(content),
+ion-modal#add-goal-modal::part(content) {
+	max-width: 600px;
+	width: 90%;
+	margin: auto;
+	background: #ffffff !important;
+}
+
+#goal-details-modal ion-content,
+#add-goal-modal ion-content {
+	--background: #ffffff !important;
+	background: #ffffff !important;
+}
+
+/* ----------------------------------------
+   Modal Labels
+---------------------------------------- */
+#goal-details-modal ion-label {
+	color: #000000;
+	font-weight: 100;
+}
+
+#goal-details-modal ion-label p {
+	color: #999999;
+	font-weight: normal;
+	font-style: italic;
+}
+
+/* ----------------------------------------
+   Add Goal Form Styling
+---------------------------------------- */
+#add-goal-modal ion-item {
+	background: var(--ion-color-mint);
+	border-radius: 12px;
+	padding: 10px;
+	margin-bottom: 10px;
+}
+
+#add-goal-modal ion-item ion-label {
+	background: white;
+	border-radius: 8px;
+	padding: 10px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* Remove spacing above item group */
+#add-goal-modal ion-item-group {
+	margin-top: 0 !important;
+	padding-top: 0 !important;
+}
+
+/* Divider Style */
+#add-goal-modal ion-item-divider {
+	background: #ffffff !important;
+	--background: #ffffff !important;
+	border: none !important;
+	box-shadow: none !important;
+	text-align: center;
+	justify-content: center;
+	margin-top: 0 !important;
+	padding: 4px 0 !important;
+}
+
+#add-goal-modal ion-item-divider::part(native) {
+	border: none !important;
+	box-shadow: none !important;
+}
+
+#add-goal-modal ion-item-divider ion-label {
+	color: var(--ion-color-navy-blue) !important;
+	text-align: center;
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	font-weight: 600;
+	font-size: 1rem;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+
+/* ----------------------------------------
+   Inputs & Controls
+---------------------------------------- */
+ion-input,
+ion-textarea,
+ion-select,
+ion-toggle {
+	--color: var(--text-color);
+	--placeholder-color: var(--muted-text-color);
+	--background: var(--surface-color);
+	border-radius: 10px;
+}
+
+ion-modal#add-goal-modal .category ion-button {
+	color: var(--secondary-color);
+	font-weight: 500;
+}
+
+/* ----------------------------------------
+   Modal Toolbar Buttons
+---------------------------------------- */
+ion-modal#add-goal-modal ion-toolbar ion-button,
+ion-modal#goal-details-modal ion-toolbar ion-button {
+	--background: transparent;
+	--color: white;
+	font-weight: 500;
+	text-transform: none;
+	padding: 0 12px;
+	font-size: 1rem;
+}
+
+/* ----------------------------------------
+   Modal Title
+---------------------------------------- */
 .add-modal-title {
 	font-size: 0.5rem;
 	font-weight: 600;
@@ -230,7 +295,9 @@ ion-modal#goal-details-modal ion-fab-button.fab-add-transaction {
 	text-overflow: ellipsis;
 }
 
-/* Cancel and Save buttons */
+/* ----------------------------------------
+   Cancel / Save Buttons
+---------------------------------------- */
 .add-modal-cancel,
 .add-modal-save {
 	font-size: 0.95rem;
@@ -240,12 +307,9 @@ ion-modal#goal-details-modal ion-fab-button.fab-add-transaction {
 	background: transparent;
 }
 
-/* General toolbar padding fix */
-ion-modal#add-goal-modal ion-toolbar {
-	padding-inline: 8px;
-}
-
-/* === Final Mobile Toolbar Squeeze (with !important) === */
+/* ----------------------------------------
+   Mobile Toolbar Fixes
+---------------------------------------- */
 @media (max-width: 600px) {
 	ion-modal#add-goal-modal ion-toolbar {
 		display: flex !important;

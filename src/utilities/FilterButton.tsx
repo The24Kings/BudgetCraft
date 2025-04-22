@@ -3,13 +3,16 @@ import { Timestamp } from "firebase/firestore";
 import { filter } from "ionicons/icons";
 import {
 	IonButton,
+	IonButtons,
 	IonDatetime,
 	IonDatetimeButton,
 	IonIcon,
 	IonModal,
 	IonSearchbar,
 	IonSelect,
-	IonSelectOption
+	IonSelectOption,
+	IonTitle,
+	IonToolbar
 } from "@ionic/react";
 
 // Props to control filter and search state from parent (Container)
@@ -26,7 +29,7 @@ interface FilterButtonProps {
 	setStartDate: (value: string) => void;
 	endDate: string;
 	setEndDate: (value: string) => void;
-    clearFilters: () => void;
+	clearFilters: () => void;
 }
 
 const FilterButton: React.FC<FilterButtonProps> = ({
@@ -42,7 +45,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 	setStartDate,
 	endDate,
 	setEndDate,
-    clearFilters
+	clearFilters
 }) => {
 	const [isFilterOpen, setIsFilterOpen] = useState(false);
 	const inputRef = useRef<string>(searchTerm);
@@ -64,7 +67,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 					className="search-input"
 					placeholder="Search"
 					showClearButton="never"
-                    debounce={200}
+					debounce={200}
 					onIonInput={(e) => {
 						inputRef.current = e.detail.value ?? "";
 						setSearchTerm(inputRef.current);
@@ -85,10 +88,26 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 				onDidDismiss={() => setIsFilterOpen(false)}
 				className="filter-modal-custom"
 			>
-				<div className="filter-modal">
-					<h2>Filters</h2>
+				<IonToolbar>
+					<IonButtons slot="start">
+						<IonButton
+							className="filter-cancel-button"
+							onClick={() => setIsFilterOpen(false)}
+						>
+							Cancel
+						</IonButton>
+					</IonButtons>
 
-					{/* Dropdown to filter by transaction type */}
+					<IonTitle className="filter-title">Filters</IonTitle>
+
+					<IonButtons slot="end">
+						<IonButton className="filter-clear-button" onClick={clearFilters}>
+							Clear Filters
+						</IonButton>
+					</IonButtons>
+				</IonToolbar>
+
+				<div className="filter-modal">
 					<IonSelect
 						value={filterType}
 						placeholder="Type"
@@ -99,7 +118,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						<IonSelectOption value="Expenses">Expenses</IonSelectOption>
 					</IonSelect>
 
-					{/* Input for minimum amount */}
 					<input
 						type="number"
 						placeholder="Min Amount"
@@ -109,7 +127,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						}
 					/>
 
-					{/* Input for maximum amount */}
 					<input
 						type="number"
 						placeholder="Max Amount"
@@ -119,16 +136,8 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						}
 					/>
 
-					{/* Date picker for filtering by date */}
 					<h4>Date Range</h4>
-					<div
-						style={{
-							display: "flex",
-							flexDirection: "row",
-							gap: "10px",
-							justifyContent: "center"
-						}}
-					>
+					<div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
 						<IonDatetimeButton datetime="start-date" />
 						<IonDatetimeButton datetime="end-date" />
 					</div>
@@ -154,18 +163,6 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 							}}
 						/>
 					</IonModal>
-
-					<IonButton expand="full" onClick={clearFilters}>
-						Clear Filters
-					</IonButton>
-
-					<IonButton
-						expand="full"
-						color="secondary"
-						onClick={() => setIsFilterOpen(false)}
-					>
-						Close
-					</IonButton>
 				</div>
 			</IonModal>
 		</div>
