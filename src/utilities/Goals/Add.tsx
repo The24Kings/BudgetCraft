@@ -110,6 +110,7 @@ const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID, onlyGoals 
 			<IonFab vertical="bottom" horizontal="end" slot="fixed">
 				<IonFabButton
 					id="add-goal"
+					color="fab"
 					onClick={() => {
 						openForm();
 						modalStartRef.current?.present();

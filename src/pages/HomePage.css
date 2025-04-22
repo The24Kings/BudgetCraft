@@ -5,14 +5,14 @@ ion-header.home-header {
 }
 
 ion-toolbar.home-toolbar {
-	--background: var(--app-color-purple);
+	--background: var(--ion-color-navy-blue);
 }
 
 .home-toolbar ion-button,
 .home-toolbar ion-label,
 .home-toolbar ion-title {
 	font-size: 1rem;
-	--background-hover-opacity: 0;
+	--background-hover-opacity: .3;
 }
 
 .user-avatar.clickable-avatar {
@@ -25,7 +25,7 @@ ion-toolbar.home-toolbar {
 }
 
 ion-content.home-content {
-	--background: var(--ion-background-color);
+	--background: var(--ion-color-navy-blue-tint);
 }
 
 /* Month Picker wrapper and layout */
@@ -42,16 +42,12 @@ ion-content.home-content {
 
 .month-button {
 	min-width: 40px;
-	--color: var(--app-color-green);
-	border: 2px solid var(--app-color-green);
 	border-radius: 8px;
 	text-transform: none;
 	background-color: transparent;
-	color: var(--app-color-green);
 }
 
 .month-button.selected {
-	--background: var(--app-color-green);
 	font-weight: bold;
 	transform: scale(1.05);
 	min-width: 80px;
@@ -100,7 +96,7 @@ ion-modal#add-transact-modal::part(backdrop) {
 }
 
 ion-modal#add-transact-modal ion-toolbar {
-	--background: var(--app-color-purple);
+	--background: var(--ion-color-navy-blue);
 	--color: white;
 }
 
@@ -116,7 +112,7 @@ ion-modal#add-transact-modal .category ion-item {
 }
 
 ion-modal#add-transact-modal .subCategory ion-button {
-	color: var(--app-color-green);
+	color: var(--ion-color-tab-bar-shade);
 	font-weight: 500;
 }
 
@@ -125,16 +121,16 @@ ion-modal#add-transact-modal .subCategory ion-button {
 	width: 100%;
 }
 
-ion-item[color="light"] {
+ion-item {
 	--background: #ffffff;
 	--color: #1c1c1c;
 	border-radius: 10px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-	margin-bottom: 12px;
+	margin-bottom: 3px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 ion-accordion::part(header) {
-	background: #ffffff;
+	background: #CEF9F2;
 	color: #1c1c1c;
 	border-radius: 10px;
 	margin-bottom: 10px;
@@ -195,7 +191,7 @@ ion-searchbar.search-input {
 	position: sticky;
 	top: 0;
 	z-index: 100;
-	background-color: var(--ion-background-color);
+	background-color: var(--ion-color-navy-blue-tint);
 	width: 100%;
 }
 
@@ -244,33 +240,22 @@ ion-datetime-button::part(native) {
 
 /* Load More Button */
 .action-button {
-	--background: var(--app-color-green);
+	--background: var(--ion-color-mint);
 	--color: #1c1c1c;
 	border-radius: 8px;
 	font-weight: 500;
 }
 
-/* Add transaction button */
-ion-fab-button.add-transaction-button {
-	--background: var(--app-color-green);
-	--color: #1c1c1c;
-}
-
-/* White plus icon inside FAB */
-ion-fab-button.add-transaction-button ion-icon {
-	color: white !important;
-	fill: white !important;
-}
-
 /* Tab bar icons & labels*/
 ion-tab-button {
-	--color: #888;
-	--color-selected: var(--app-color-green);
+	--background: var(--ion-color-navy-blue);
+	--color-selected: var(--ion-color-tab-bar);
+	--color: #AAB8C2
 }
 
 ion-tab-button:hover,
 ion-tab-button:focus {
-	--color: var(--app-color-green);
+	--color: var(--ion-color-tab-bar);
 }
 
 /* Hide all scrollbars in the entire app */

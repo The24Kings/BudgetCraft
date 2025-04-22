@@ -39,7 +39,25 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 			[] as { name: string; value: number }[]
 		);
 
-	const COLORS = ["#FF8042", "#FFBB28", "#00C49F", "#0088FE", "#8884D8"];
+	const COLORS = ["#59D3A0", "#FF6B6B", "#F4C95D", "#CEF9F2", "#AAB8C2"];
+
+	const [selectedSliceIndex, setSelectedSliceIndex] = useState<number | null>(null);
+
+	const toggleCollapse = () => {
+		setIsCollapsed(!isCollapsed);
+		if (!isCollapsed) {
+			// If collapse button clicked, clear slide that is shown
+			setSelectedSliceIndex(null);
+		}
+	};
+
+	const onPieSliceClick = (_data: any, index: number) => {
+		if (selectedSliceIndex === index) {
+			setSelectedSliceIndex(null);
+		} else {
+			setSelectedSliceIndex(index);
+		}
+	};
 
 	const [selectedSliceIndex, setSelectedSliceIndex] = useState<number | null>(null);
 

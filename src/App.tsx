@@ -333,8 +333,8 @@ const App: React.FC = () => {
 
 					{user && (
 						<IonTabBar slot="bottom">
-							<IonTabButton tab="home" href="/home">
-								<IonIcon icon={home} />
+							<IonTabButton tab="home" href="/home" >
+								<IonIcon icon={home}/>
 								<IonLabel>Home</IonLabel>
 							</IonTabButton>
 							<IonTabButton tab="budget" href="/budget">

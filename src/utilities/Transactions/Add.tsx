@@ -239,6 +239,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 				<IonFabButton
 					id="add-transaction"
 					className="add-transaction-button"
+					color="fab"
 					onClick={() => {
 						openForm();
 						modalStartRef.current?.present();
