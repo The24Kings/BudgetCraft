@@ -1,18 +1,65 @@
 /* For information on how to create your own theme, please see:
 http://ionicframework.com/docs/theming/ */
 
+/* ===============================
+   Ionic Custom Theme Variables
+   =============================== */
+
 :root {
-	/* App Colors */
+	/* ---------- App Color Palette ---------- */
 	--primary-color: #3a0842;
 	--secondary-color: #4eca7b;
-	--background-color: #ebebeb;
+	--background-color: #ba4242;
 	--surface-color: #ffffff;
 	--text-color: #1c1c1c;
 	--muted-text-color: #888;
 
-	/* Ionic Overrides using semantic variables */
+	/* ---------- Ionic Semantic Overrides ---------- */
 	--ion-background-color: var(--background-color);
 	--ion-toolbar-background: var(--background-color);
 	--ion-text-color: var(--text-color);
+
+	/* ---------- Miscellaneous ---------- */
 	--selected-month-text-color: #111010;
+}
+
+/* ===============================
+	 Global Styling Overrides
+   =============================== */
+
+/* Force light background for popovers */
+ion-popover::part(content),
+ion-select-popover::part(content),
+ion-select-popover#transaction-type-select-popover::part(content),
+ion-select[aria-label="Select Type"] ~ ion-select-popover::part(content),
+ion-select[aria-label="transaction-type"] + ion-select-popover::part(content) {
+	--background: #f4f4f4 !important;
+	--ion-background-color: #f4f4f4 !important;
+	background: #f4f4f4 !important;
+	color: #000 !important;
+}
+
+/* Input text color for transaction type */
+ion-select[aria-label="transaction-type"]::part(text) {
+	color: var(--text-color);
+}
+
+/* Style alert dialogs (used by IonSelect's "alert" interface) */
+.alert-wrapper,
+.alert-radio-group,
+.alert-button-group {
+	background-color: #f4f4f4 !important;
+	color: #000 !important;
+	border-radius: 12px !important;
+}
+
+.alert-radio-label,
+ion-action-sheet::part(button) {
+	color: #000 !important;
+}
+
+ion-action-sheet::part(content) {
+	--ion-background-color: #f4f4f4 !important;
+	background: #f4f4f4 !important;
+	color: #000 !important;
 }

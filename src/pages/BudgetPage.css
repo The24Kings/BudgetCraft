@@ -6,7 +6,7 @@ ion-toolbar {
 
 /* Budget item cards (match Home page transactions) */
 .budget-item {
-	background-color: var(--surface-color); /* outer white wrapper */
+	background-color: var(--surface-color);
 	padding: 10px;
 	border-radius: 12px;
 	margin-bottom: 12px;
@@ -15,13 +15,13 @@ ion-toolbar {
 
 /* Match Transaction Display Style */
 .budget-item-wrapper {
-	width: 100vw; /* Full viewport width */
+	width: 100vw;
 	box-sizing: border-box;
-	padding: 0 10px; /* Keeps 10px spacing on left and right like transactions */
+	padding: 0 10px;
 }
 
 .budget-card {
-	--background: var(--muted-text-color); /* inner gray card */
+	--background: var(--muted-text-color);
 	--color: var(--text-color);
 	border-radius: 10px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
@@ -31,24 +31,46 @@ ion-toolbar {
 }
 
 .budget-inner-card {
-	--background: var(--muted-text-color); /* inner card is gray */
-	--color: var(--text-color); /* ensure text is black */
+	--background: var(--surface-color);
+	--color: var(--text-color);
 	border-radius: 10px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 	padding: 12px;
 	width: 100%;
 }
 
+/* Budget label row adjustments */
 .budget-label-row {
-	padding: 0 8px;
+	padding: 0 10px;
 	margin-bottom: 6px;
+	background-color: var(--background-color);
 }
 
 .budget-label {
-	font-size: 0.7rem;
-	color: var(--muted-text-color);
+	font-size: 0.75rem;
+	color: var(--text-color);
 	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: inline-block;
+	width: 100%;
+	padding: 0 2px;
+}
+
+.budget-col-description .budget-label {
+	padding-left: 30px;
 	text-align: left;
+}
+
+.budget-label-target {
+	flex: 0 0 25%;
+	text-align: center;
+}
+
+.budget-col-saved-goal .budget-label {
+	padding-right: 25px;
+	text-align: right;
 }
 
 .budget-value {
@@ -59,8 +81,8 @@ ion-toolbar {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	line-height: 1.1rem;
-	display: inline-block; /* or block */
-	width: 100%; /* Ensure it fills the column */
+	display: inline-block;
+	width: 100%;
 }
 
 .budget-row {
@@ -131,7 +153,8 @@ ion-modal#add-goal-modal ion-toolbar {
 }
 
 /* Make modal action buttons (Back / Confirm) appear as clickable white text */
-ion-modal#add-goal-modal ion-toolbar ion-button {
+ion-modal#add-goal-modal ion-toolbar ion-button,
+ion-modal#goal-details-modal ion-toolbar ion-button {
 	--background: transparent;
 	--color: white;
 	font-weight: 500;
@@ -152,8 +175,104 @@ ion-toggle {
 }
 
 /* Make subcategory selection buttons use secondary color */
-
 ion-modal#add-goal-modal .category ion-button {
 	color: var(--secondary-color);
 	font-weight: 500;
+}
+
+/* Budget item details modal */
+ion-modal#goal-details-modal {
+	padding: 20px;
+	--max-height: 80%;
+	--border-radius: 16px;
+	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal#goal-details-modal::part(backdrop) {
+	background: rgba(209, 213, 219);
+	opacity: 1;
+}
+
+ion-modal#goal-details-modal ion-toolbar {
+	--background: var(--primary-color);
+	--color: white;
+}
+
+/* Add transaction modal */
+ion-modal#goal-details-modal::part(content),
+ion-modal#add-goal-modal::part(content) {
+	max-width: 600px;
+	width: 90%;
+	margin: auto;
+}
+
+/* Add transaction button */
+.fab-add-transaction {
+	--background: var(--secondary-color);
+	--color: black;
+}
+
+ion-modal#goal-details-modal ion-fab-button.fab-add-transaction {
+	position: fixed;
+	bottom: 45px;
+	right: 12px;
+	z-index: 10;
+}
+
+/* Toolbar Title */
+.add-modal-title {
+	font-size: 0.5rem;
+	font-weight: 600;
+	color: white;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Cancel and Save buttons */
+.add-modal-cancel,
+.add-modal-save {
+	font-size: 0.95rem;
+	font-weight: 500;
+	white-space: nowrap;
+	color: white;
+	background: transparent;
+}
+
+/* General toolbar padding fix */
+ion-modal#add-goal-modal ion-toolbar {
+	padding-inline: 8px;
+}
+
+/* === Final Mobile Toolbar Squeeze (with !important) === */
+@media (max-width: 600px) {
+	ion-modal#add-goal-modal ion-toolbar {
+		display: flex !important;
+		align-items: center !important;
+		justify-content: space-between !important;
+		padding: 0 4px !important;
+		min-height: 48px !important;
+		box-sizing: border-box !important;
+	}
+
+	ion-modal#add-goal-modal ion-toolbar ion-button {
+		font-size: 0.9rem !important;
+		--padding-start: 4px !important;
+		--padding-end: 4px !important;
+		min-width: auto !important;
+	}
+
+	ion-modal#add-goal-modal .add-modal-title,
+	ion-modal#add-goal-modal ion-title {
+		flex: 1 1 auto !important;
+		text-align: center !important;
+		font-size: 1rem !important;
+		font-weight: 600 !important;
+		color: white !important;
+		padding: 0 4px !important;
+		white-space: nowrap !important;
+		overflow: hidden !important;
+		text-overflow: ellipsis !important;
+	}
 }

@@ -141,9 +141,15 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 				{/* Single Header Row for Labels */}
 				<IonGrid className="budget-label-row">
 					<IonRow>
-						<IonCol className="budget-col-description budget-label">Description</IonCol>
-						<IonCol className="budget-col-target budget-label">Target</IonCol>
-						<IonCol className="budget-col-saved-goal budget-label">Saved / Goal</IonCol>
+						<IonCol className="budget-col-description">
+							<span className="budget-label">Description</span>
+						</IonCol>
+						<IonCol className="budget-col-target">
+							<span className="budget-label">Target</span>
+						</IonCol>
+						<IonCol className="budget-col-saved-goal">
+							<span className="budget-label">Saved / Goal</span>
+						</IonCol>
 					</IonRow>
 				</IonGrid>
 
@@ -190,7 +196,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 				</IonItemGroup>
 			</div>
 
-			<IonModal ref={modalDetailsRef} onDidDismiss={onDetailsDismiss}>
+			<IonModal id="goal-details-modal" ref={modalDetailsRef} onDidDismiss={onDetailsDismiss}>
 				{filteredGoals.map(
 					(goal) =>
 						modalDetailsRef.current?.getAttribute("goalId") === goal.id && (
@@ -204,17 +210,15 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 								</IonHeader>
 								<IonContent className="ion-padding-horizontal">
 									<div key={goal.id}>
-										<IonFab vertical="bottom" horizontal="end" slot="fixed">
-											<IonFabButton
-												color="secondary"
-												size="small"
-												onClick={() => {
-													modalAddRef.current?.present();
-												}}
-											>
-												<IonIcon icon={add} />
-											</IonFabButton>
-										</IonFab>
+										<IonFabButton
+											className="fab-add-transaction"
+											size="small"
+											onClick={() => {
+												modalAddRef.current?.present();
+											}}
+										>
+											<IonIcon icon={add} />
+										</IonFabButton>
 										<IonTextarea
 											className="custom ion-margin-vertical"
 											shape="round"
@@ -355,6 +359,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 			</IonModal>
 
 			<IonModal
+				id="add-goal-modal"
 				ref={modalAddRef}
 				onDidDismiss={() => modalAddRef.current?.dismiss(null, "cancel")}
 			>
@@ -362,19 +367,19 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 					<IonToolbar>
 						<IonButton
 							slot="start"
-							fill="default"
-							color="secondary"
+							fill="clear"
+							color="light"
 							onClick={() => modalAddRef.current?.dismiss(null, "cancel")}
 						>
 							Cancel
 						</IonButton>
-						<IonTitle className="ion-text-center" slot="start">
-							Add Transaction
-						</IonTitle>
+
+						<IonTitle className="ion-text-center">Add Transaction</IonTitle>
+
 						<IonButton
 							slot="end"
-							fill="default"
-							color="primary"
+							fill="clear"
+							color="light"
 							onClick={() => modalAddRef.current?.dismiss(null, "confirm")}
 						>
 							Save
@@ -388,7 +393,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 								<strong>Available Transactions</strong>
 							</IonLabel>
 						</IonItemDivider>
-						<div style={{ maxHeight: "30em", overflowY: "auto" }}>
+						<div>
 							{transactions.map((transaction, index) => (
 								<IonItem
 									key={index}
