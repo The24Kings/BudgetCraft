@@ -163,7 +163,7 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 						>
 							Cancel
 						</IonButton>
-						<IonTitle className="ion-text-center">Edit Transaction</IonTitle>
+						<IonTitle className="ion-text-center ion-margin-end">Edit</IonTitle>
 						<IonButton
 							fill="clear"
 							color="fab"
@@ -276,6 +276,7 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 					<IonButton
 						expand="full"
 						color="danger"
+                        shape="round"
 						onClick={() => confirmDeleteTransaction(transaction.id)}
 						className="delete-transaction-button"
 					>
