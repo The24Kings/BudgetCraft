@@ -1,22 +1,9 @@
 import React, { useState } from "react";
-import {
-	IonAccordion,
-	IonAccordionGroup,
-	IonAlert,
-	IonButton,
-	IonCol,
-	IonGrid,
-	IonItem,
-	IonItemDivider,
-	IonItemGroup,
-	IonLabel,
-	IonNote,
-	IonRow,
-	IonTextarea
-} from "@ionic/react";
+import { IonAccordion, IonAccordionGroup, IonAlert, IonButton, IonCol, IonGrid, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonNote, IonRow, IonTextarea } from "@ionic/react";
 import { Category } from "../Categories";
 import EditTransaction from "./EditTransaction";
 import Transaction from "./Transaction";
+
 
 interface DisplayTransactionsProps {
 	transactions: Transaction[];
@@ -171,26 +158,12 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
 										<IonItem color="light">
 											<IonGrid fixed={true} className="ion-no-padding">
 												<IonRow>
-													<IonCol className="ion-padding-vertical">
+													<IonCol className="ion-align-self-center ion-padding-vertical">
 														{transaction.date
 															.toDate()
 															.toLocaleDateString()}
 													</IonCol>
-												</IonRow>
-												<IonRow>
-													<IonTextarea
-														className="custom ion-no-padding"
-														shape="round"
-														readonly={true}
-														value={transaction.description}
-														placeholder="No description available."
-													/>
-												</IonRow>
-												<IonRow>
-													<IonCol className="ion-text-left ion-padding-vertical">
-														<IonNote>{transaction.id}</IonNote>
-													</IonCol>
-													<IonCol className="ion-text-right ion-padding-vertical">
+													<IonCol className="ion-align-self-center ion-text-right ion-padding-vertical">
 														<IonButton
 															size="small"
 															color="fab"
@@ -213,6 +186,20 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
 														>
 															Delete
 														</IonButton>
+													</IonCol>
+												</IonRow>
+												<IonRow>
+													<IonTextarea
+														className="custom ion-no-padding"
+														shape="round"
+														readonly={true}
+														value={transaction.description}
+														placeholder="No description available."
+													/>
+												</IonRow>
+												<IonRow>
+													<IonCol className="ion-text-right ion-padding-vertical">
+														<IonNote>{transaction.id}</IonNote>
 													</IonCol>
 												</IonRow>
 											</IonGrid>

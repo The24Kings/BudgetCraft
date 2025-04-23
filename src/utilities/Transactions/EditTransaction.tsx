@@ -1,26 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { chevronDown, chevronUp } from "ionicons/icons";
-import {
-	IonButton,
-	IonContent,
-	IonDatetime,
-	IonDatetimeButton,
-	IonHeader,
-	IonIcon,
-	IonInput,
-	IonItem,
-	IonLabel,
-	IonModal,
-	IonSelect,
-	IonSelectOption,
-	IonTextarea,
-	IonTitle,
-	IonToolbar
-} from "@ionic/react";
+import { IonButton, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { Category, EntryCategories } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import "../Transactions/editTransactionModal.css";
+
 
 interface EditTransactionProps {
 	categories: Category[];
@@ -112,6 +97,7 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 			<IonHeader>
 				<IonToolbar className="edit-transaction-header">
 					<IonButton
+						fill="clear"
 						color="fab"
 						slot="start"
 						onClick={onClose}
@@ -121,6 +107,7 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 					</IonButton>
 					<IonTitle className="ion-text-center">Edit Transaction</IonTitle>
 					<IonButton
+						fill="clear"
 						color="fab"
 						slot="end"
 						disabled={!title || !amount || !category}
@@ -151,27 +138,25 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 					</IonButton>
 				</IonItem>
 
+				{/* Removed IonSelect for type to prevent changing expense/income */}
 				{showCategoryEdit && (
-					<>
-						{/* Removed IonSelect for type to prevent changing expense/income */}
-						<EntryCategories
-							disableHeader={true}
-							categories={filteredCategories}
-							hideDelete={true}
-							onSelect={(category, subCategory) => {
-								setCategory(category);
-								categories.forEach((cat) => {
-									if (cat.name === category) {
-										setSubCategoryID(
-											cat.Subcategories.find(
-												(subCat) => subCat.name === subCategory
-											)?.id || ""
-										);
-									}
-								});
-							}}
-						/>
-					</>
+					<EntryCategories
+						disableHeader={true}
+						categories={filteredCategories}
+						hideDelete={true}
+						onSelect={(category, subCategory) => {
+							setCategory(category);
+							categories.forEach((cat) => {
+								if (cat.name === category) {
+									setSubCategoryID(
+										cat.Subcategories.find(
+											(subCat) => subCat.name === subCategory
+										)?.id || ""
+									);
+								}
+							});
+						}}
+					/>
 				)}
 
 				<IonItem>
