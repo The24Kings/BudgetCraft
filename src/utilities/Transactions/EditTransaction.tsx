@@ -133,12 +133,12 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 			</IonHeader>
 
 			<IonContent className="ion-padding">
-				<IonItem className="ion-margin-bottom">
+				<IonItem>
 					<IonLabel>Type: </IonLabel>
 					<IonInput value={type} readonly />
 				</IonItem>
 
-				<IonItem className="ion-margin-bottom">
+				<IonItem>
 					<IonLabel>Category: </IonLabel>
 					<IonInput value={category} readonly />
 					<IonButton
