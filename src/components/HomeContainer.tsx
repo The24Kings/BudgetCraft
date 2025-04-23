@@ -9,12 +9,11 @@ import AddTransactions from "../utilities/Transactions/Add";
 import DisplayTransactions from "../utilities/Transactions/Display";
 import Transaction from "../utilities/Transactions/Transaction";
 
-
 interface ContainerProps {
 	userID: string;
-    transactionData: Transaction[];
-    month: number;
-    year: number;
+	transactionData: Transaction[];
+	month: number;
+	year: number;
 }
 
 const HomeContainer: React.FC<ContainerProps> = ({ userID, transactionData, month, year }) => {
@@ -62,25 +61,33 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, transactionData, mont
 		const matchesDate =
 			(!startDate || txDateStr >= startDate) && (!endDate || txDateStr <= endDate);
 
-        const matchedMonth = new Date(tx.date.seconds * 1000).getMonth() === month;
-        const matchedYear = new Date(tx.date.seconds * 1000).getFullYear() === year;
+		const matchedMonth = new Date(tx.date.seconds * 1000).getMonth() === month;
+		const matchedYear = new Date(tx.date.seconds * 1000).getFullYear() === year;
 
-		return matchesSearch && matchesType && matchesMin && matchesMax && matchesDate && matchedMonth && matchedYear;
+		return (
+			matchesSearch &&
+			matchesType &&
+			matchesMin &&
+			matchesMax &&
+			matchesDate &&
+			matchedMonth &&
+			matchedYear
+		);
 	});
 
-    // Resets all filter fields to their default values
-    const clearFilters = () => {
-        setFilterType("All");
-        setMinAmount(null);
-        setMaxAmount(null);
-        setStartDate("");
-        setEndDate("");
-    };
+	// Resets all filter fields to their default values
+	const clearFilters = () => {
+		setFilterType("All");
+		setMinAmount(null);
+		setMaxAmount(null);
+		setStartDate("");
+		setEndDate("");
+	};
 
-    useEffect(() => {
-        clearFilters();
-        console.log("Filters cleared");
-    }, [month]);
+	useEffect(() => {
+		clearFilters();
+		console.log("Filters cleared");
+	}, [month]);
 
 	return (
 		<div className="container">
@@ -102,12 +109,17 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, transactionData, mont
 					setStartDate={setStartDate}
 					endDate={endDate}
 					setEndDate={setEndDate}
-                    clearFilters={clearFilters}
+					clearFilters={clearFilters}
 				/>
 			</div>
 
 			{/* Display the transactions */}
-			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} hideDivider />
+			<DisplayTransactions
+				categories={categoryData}
+				transactions={filteredTransactions}
+				userID={userID}
+				hideDivider
+			/>
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
