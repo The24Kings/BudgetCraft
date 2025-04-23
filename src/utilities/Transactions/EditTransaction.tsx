@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { doc, updateDoc, Timestamp } from "firebase/firestore";
+import { doc, Timestamp, updateDoc } from "firebase/firestore";
+import { chevronDown, chevronUp } from "ionicons/icons";
 import {
 	IonButton,
 	IonContent,
@@ -17,7 +18,6 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
-import { chevronDown, chevronUp } from "ionicons/icons";
 import { Category, EntryCategories } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import "../Transactions/editTransactionModal.css";
@@ -39,7 +39,13 @@ interface EditTransactionProps {
 	onUpdate: () => void;
 }
 
-const EditTransaction: React.FC<EditTransactionProps> = ({ categories, userID, transaction, onClose, onUpdate }) => {
+const EditTransaction: React.FC<EditTransactionProps> = ({
+	categories,
+	userID,
+	transaction,
+	onClose,
+	onUpdate
+}) => {
 	const [type, setType] = useState(transaction.type);
 	const [category, setCategory] = useState(transaction.category);
 	const [subCategoryID, setSubCategoryID] = useState(transaction.subCategoryID);
@@ -105,7 +111,12 @@ const EditTransaction: React.FC<EditTransactionProps> = ({ categories, userID, t
 		<IonModal isOpen={true} onDidDismiss={onClose} className="edit-transaction-modal">
 			<IonHeader>
 				<IonToolbar className="edit-transaction-header">
-					<IonButton color="fab" slot="start" onClick={onClose} className="add-transaction-button">
+					<IonButton
+						color="fab"
+						slot="start"
+						onClick={onClose}
+						className="add-transaction-button"
+					>
 						Cancel
 					</IonButton>
 					<IonTitle className="ion-text-center">Edit Transaction</IonTitle>
@@ -127,13 +138,18 @@ const EditTransaction: React.FC<EditTransactionProps> = ({ categories, userID, t
 					<IonInput value={type} readonly />
 				</IonItem>
 
-					<IonItem className="ion-margin-bottom">
-						<IonLabel>Category: </IonLabel>
-						<IonInput value={category} readonly />
-						<IonButton size="small" color="fab" className="add-transaction-button" onClick={() => setShowCategoryEdit(!showCategoryEdit)}>
-							<IonIcon icon={showCategoryEdit ? chevronUp : chevronDown} />
-						</IonButton>
-					</IonItem>
+				<IonItem className="ion-margin-bottom">
+					<IonLabel>Category: </IonLabel>
+					<IonInput value={category} readonly />
+					<IonButton
+						size="small"
+						color="fab"
+						className="add-transaction-button"
+						onClick={() => setShowCategoryEdit(!showCategoryEdit)}
+					>
+						<IonIcon icon={showCategoryEdit ? chevronUp : chevronDown} />
+					</IonButton>
+				</IonItem>
 
 				{showCategoryEdit && (
 					<>
@@ -160,12 +176,7 @@ const EditTransaction: React.FC<EditTransactionProps> = ({ categories, userID, t
 
 				<IonItem>
 					<IonLabel>Title: </IonLabel>
-					<IonInput
-						value={title}
-						onIonInput={validateTitle}
-						maxlength={20}
-						ref={input}
-					/>
+					<IonInput value={title} onIonInput={validateTitle} maxlength={20} ref={input} />
 				</IonItem>
 
 				<IonItem lines="none" className="date-picker-item">
@@ -185,7 +196,11 @@ const EditTransaction: React.FC<EditTransactionProps> = ({ categories, userID, t
 							setDate(Timestamp.fromDate(selectedDate));
 						}}
 						presentation="date"
-						value={typeof date === "object" && "toDate" in date ? date.toDate().toISOString() : ""}
+						value={
+							typeof date === "object" && "toDate" in date
+								? date.toDate().toISOString()
+								: ""
+						}
 					/>
 				</IonModal>
 

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import {
 	IonAccordion,
 	IonAccordionGroup,
+	IonAlert,
+	IonButton,
 	IonCol,
 	IonGrid,
 	IonItem,
@@ -10,13 +12,11 @@ import {
 	IonLabel,
 	IonNote,
 	IonRow,
-	IonTextarea,
-	IonButton,
-	IonAlert
+	IonTextarea
 } from "@ionic/react";
 import { Category } from "../Categories";
-import Transaction from "./Transaction";
 import EditTransaction from "./EditTransaction";
+import Transaction from "./Transaction";
 
 interface DisplayTransactionsProps {
 	transactions: Transaction[];
@@ -25,7 +25,12 @@ interface DisplayTransactionsProps {
 	hideDivider?: boolean;
 }
 
-const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories, userID, hideDivider }) => {
+const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
+	transactions,
+	categories,
+	userID,
+	hideDivider
+}) => {
 	const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 	const [transactionList, setTransactionList] = useState<Transaction[]>(transactions);
 	const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -78,7 +83,10 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 			// Delete from Firestore
 			const { doc, deleteDoc } = await import("firebase/firestore");
 			const firestoreModule = await import("../FirebaseConfig");
-			const transactionRef = doc(firestoreModule.firestore, `users/${userID}/transactions/${transactionToDelete}`);
+			const transactionRef = doc(
+				firestoreModule.firestore,
+				`users/${userID}/transactions/${transactionToDelete}`
+			);
 			await deleteDoc(transactionRef);
 
 			// Remove from local state
@@ -136,15 +144,23 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 										<IonLabel>
 											<IonNote>
 												{transaction.category} -{" "}
-												{subCategory(transaction.category, transaction.subCategoryID)}
+												{subCategory(
+													transaction.category,
+													transaction.subCategoryID
+												)}
 											</IonNote>
-											<IonGrid fixed={true} className="ion-no-padding ion-no-margin">
+											<IonGrid
+												fixed={true}
+												className="ion-no-padding ion-no-margin"
+											>
 												<IonRow className="ion-text-left ion-padding-top">
 													<IonCol>
 														<h2>{transaction.title}</h2>
 													</IonCol>
 													<IonCol className="ion-text-right">
-														{transaction.type === "Income" ? "+ " : "- "}
+														{transaction.type === "Income"
+															? "+ "
+															: "- "}
 														${transaction.amount}
 													</IonCol>
 												</IonRow>
@@ -156,7 +172,9 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 											<IonGrid fixed={true} className="ion-no-padding">
 												<IonRow>
 													<IonCol className="ion-padding-vertical">
-														{transaction.date.toDate().toLocaleDateString()}
+														{transaction.date
+															.toDate()
+															.toLocaleDateString()}
 													</IonCol>
 												</IonRow>
 												<IonRow>
@@ -173,10 +191,26 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 														<IonNote>{transaction.id}</IonNote>
 													</IonCol>
 													<IonCol className="ion-text-right ion-padding-vertical">
-														<IonButton size="small" color="fab" className="add-transaction-button" onClick={() => setEditingTransaction(transaction)}>
+														<IonButton
+															size="small"
+															color="fab"
+															className="add-transaction-button"
+															onClick={() =>
+																setEditingTransaction(transaction)
+															}
+														>
 															Edit
 														</IonButton>
-														<IonButton size="small" color="danger" onClick={() => confirmDeleteTransaction(transaction.id)} style={{ marginLeft: "8px" }}>
+														<IonButton
+															size="small"
+															color="danger"
+															onClick={() =>
+																confirmDeleteTransaction(
+																	transaction.id
+																)
+															}
+															style={{ marginLeft: "8px" }}
+														>
 															Delete
 														</IonButton>
 													</IonCol>

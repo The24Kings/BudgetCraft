@@ -1,12 +1,12 @@
 .edit-transaction-modal {
-  --border-radius: 12px;
-  overflow: hidden;
+	--border-radius: 12px;
+	overflow: hidden;
 }
 
 .edit-transaction-header {
-  --background: var(--app-color-purple);
-  color: white;
+	--background: var(--app-color-purple);
+	color: white;
 }
 .edit-transaction-header ion-button {
-    --color: white;
-  }
+	--color: white;
+}
