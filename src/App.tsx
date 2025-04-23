@@ -210,6 +210,8 @@ const App: React.FC = () => {
 
 	// Load the transactions from Firebase
 	useEffect(() => {
+		if (!user) return;
+
 		const fetchTransactions = async () => {
 			try {
 				const querySnapshot = await getDocs(
