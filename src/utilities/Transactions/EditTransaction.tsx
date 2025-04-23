@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { chevronDown, chevronUp } from "ionicons/icons";
-import { IonButton, IonContent, IonDatetime, IonDatetimeButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
+import { IonAlert, IonButton, IonContent, IonDatetime, IonDatetimeButton, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { Category, EntryCategories } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import "../Transactions/editTransactionModal.css";
@@ -38,6 +38,8 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 	const [date, setDate] = useState(transaction.date);
 	const [amount, setAmount] = useState(transaction.amount);
 	const [description, setDescription] = useState(transaction.description);
+    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+    const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
 
 	const [showCategoryEdit, setShowCategoryEdit] = useState(false);
 
@@ -92,124 +94,197 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 		}
 	};
 
+    const confirmDeleteTransaction = (transactionId: string) => {
+        setTransactionToDelete(transactionId);
+        setShowDeleteAlert(true);
+    };
+
+    const handleDeleteTransaction = async () => {
+        if (!transactionToDelete) {
+            setShowDeleteAlert(false);
+            return;
+        }
+
+        try {
+            // Delete from Firestore
+            const { doc, deleteDoc } = await import("firebase/firestore");
+            const firestoreModule = await import("../FirebaseConfig");
+            const transactionRef = doc(
+                firestoreModule.firestore,
+                `users/${userID}/transactions/${transactionToDelete}`
+            );
+            await deleteDoc(transactionRef);
+
+        } catch (error) {
+            console.error("Failed to delete transaction:", error);
+        } finally {
+            setShowDeleteAlert(false);
+            setTransactionToDelete(null);
+
+            //Close the modal and refresh the transaction list
+            onUpdate();
+            onClose();
+        }
+    };
+
 	return (
-		<IonModal isOpen={true} onDidDismiss={onClose} className="edit-transaction-modal">
-			<IonHeader>
-				<IonToolbar className="edit-transaction-header">
-					<IonButton
-						fill="clear"
-						color="fab"
-						slot="start"
-						onClick={onClose}
-						className="add-transaction-button"
-					>
-						Cancel
-					</IonButton>
-					<IonTitle className="ion-text-center">Edit Transaction</IonTitle>
-					<IonButton
-						fill="clear"
-						color="fab"
-						slot="end"
-						disabled={!title || !amount || !category}
-						onClick={handleUpdateTransaction}
-						className="add-transaction-button"
-					>
-						Save
-					</IonButton>
-				</IonToolbar>
-			</IonHeader>
-
-			<IonContent className="ion-padding">
-				<IonItem>
-					<IonLabel>Type: </IonLabel>
-					<IonInput value={type} readonly />
-				</IonItem>
-
-				<IonItem>
-					<IonLabel>Category: </IonLabel>
-					<IonInput value={category} readonly />
-					<IonButton
-						size="small"
-						color="fab"
-						className="add-transaction-button"
-						onClick={() => setShowCategoryEdit(!showCategoryEdit)}
-					>
-						<IonIcon icon={showCategoryEdit ? chevronUp : chevronDown} />
-					</IonButton>
-				</IonItem>
-
-				{/* Removed IonSelect for type to prevent changing expense/income */}
-				{showCategoryEdit && (
-					<EntryCategories
-						disableHeader={true}
-						categories={filteredCategories}
-						hideDelete={true}
-						onSelect={(category, subCategory) => {
-							setCategory(category);
-							categories.forEach((cat) => {
-								if (cat.name === category) {
-									setSubCategoryID(
-										cat.Subcategories.find(
-											(subCat) => subCat.name === subCategory
-										)?.id || ""
-									);
-								}
-							});
-						}}
-					/>
-				)}
-
-				<IonItem>
-					<IonLabel>Title: </IonLabel>
-					<IonInput value={title} onIonInput={validateTitle} maxlength={20} ref={input} />
-				</IonItem>
-
-				<IonItem lines="none" className="date-picker-item">
-					<div className="date-picker-inline">
-						<IonLabel>Date:</IonLabel>
-						<IonDatetimeButton datetime="datetime" />
-					</div>
-				</IonItem>
-				<IonModal keepContentsMounted={true}>
-					<IonDatetime
-						id="datetime"
-						onIonChange={(e) => {
-							const selectedDate = new Date(e.detail.value as string);
-							selectedDate.setMinutes(
-								selectedDate.getMinutes() + selectedDate.getTimezoneOffset()
-							);
-							setDate(Timestamp.fromDate(selectedDate));
-						}}
-						presentation="date"
-						value={
-							typeof date === "object" && "toDate" in date
-								? date.toDate().toISOString()
-								: ""
+		<>
+			<IonAlert
+				isOpen={showDeleteAlert}
+				onDidDismiss={() => setShowDeleteAlert(false)}
+				header={"Confirm Delete"}
+				message={"Are you sure you want to delete this transaction?"}
+				buttons={[
+					{
+						text: "Cancel",
+						role: "cancel",
+						handler: () => {
+							setShowDeleteAlert(false);
+							setTransactionToDelete(null);
 						}
-					/>
-				</IonModal>
+					},
+					{
+						text: "Delete",
+						handler: () => {
+							handleDeleteTransaction();
+						}
+					}
+				]}
+			/>
 
-				<IonItem id="transaction-amount">
-					<IonLabel>Amount: </IonLabel>
-					<IonInput
-						type="number"
-						value={amount}
-						onIonInput={(e) => validateAmount(e.detail.value!)}
-						maxlength={10}
-					/>
-				</IonItem>
+			<IonModal isOpen={true} onDidDismiss={onClose} className="edit-transaction-modal">
+				<IonHeader>
+					<IonToolbar className="edit-transaction-header">
+						<IonButton
+							fill="clear"
+							color="fab"
+							slot="start"
+							onClick={onClose}
+							className="add-transaction-button"
+						>
+							Cancel
+						</IonButton>
+						<IonTitle className="ion-text-center">Edit Transaction</IonTitle>
+						<IonButton
+							fill="clear"
+							color="fab"
+							slot="end"
+							disabled={!title || !amount || !category}
+							onClick={handleUpdateTransaction}
+							className="add-transaction-button"
+						>
+							Save
+						</IonButton>
+					</IonToolbar>
+				</IonHeader>
 
-				<IonItem className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
-					<IonTextarea
-						placeholder="Description (Optional)"
-						value={description}
-						rows={10}
-						onIonInput={(e) => setDescription(e.detail.value!)}
-						maxlength={256}
-					/>
-				</IonItem>
-			</IonContent>
-		</IonModal>
+				<IonContent className="ion-padding">
+					<IonItem>
+						<IonLabel>Type: </IonLabel>
+						<IonInput value={type} readonly />
+					</IonItem>
+
+					<IonItem>
+						<IonLabel>Category: </IonLabel>
+						<IonInput value={category} readonly />
+						<IonButton
+							size="small"
+							color="fab"
+							className="add-transaction-button"
+							onClick={() => setShowCategoryEdit(!showCategoryEdit)}
+						>
+							<IonIcon icon={showCategoryEdit ? chevronUp : chevronDown} />
+						</IonButton>
+					</IonItem>
+
+					{/* Removed IonSelect for type to prevent changing expense/income */}
+					{showCategoryEdit && (
+						<EntryCategories
+							disableHeader={true}
+							categories={filteredCategories}
+							hideDelete={true}
+							onSelect={(category, subCategory) => {
+								setCategory(category);
+								categories.forEach((cat) => {
+									if (cat.name === category) {
+										setSubCategoryID(
+											cat.Subcategories.find(
+												(subCat) => subCat.name === subCategory
+											)?.id || ""
+										);
+									}
+								});
+							}}
+						/>
+					)}
+
+					<IonItem>
+						<IonLabel>Title: </IonLabel>
+						<IonInput
+							value={title}
+							onIonInput={validateTitle}
+							maxlength={20}
+							ref={input}
+						/>
+					</IonItem>
+
+					<IonItem lines="none" className="date-picker-item">
+						<div className="date-picker-inline">
+							<IonLabel>Date:</IonLabel>
+							<IonDatetimeButton datetime="datetime" />
+						</div>
+					</IonItem>
+					<IonModal keepContentsMounted={true}>
+						<IonDatetime
+							id="datetime"
+							onIonChange={(e) => {
+								const selectedDate = new Date(e.detail.value as string);
+								selectedDate.setMinutes(
+									selectedDate.getMinutes() + selectedDate.getTimezoneOffset()
+								);
+								setDate(Timestamp.fromDate(selectedDate));
+							}}
+							presentation="date"
+							value={
+								typeof date === "object" && "toDate" in date
+									? date.toDate().toISOString()
+									: ""
+							}
+						/>
+					</IonModal>
+
+					<IonItem id="transaction-amount">
+						<IonLabel>Amount: </IonLabel>
+						<IonInput
+							type="number"
+							value={amount}
+							onIonInput={(e) => validateAmount(e.detail.value!)}
+							maxlength={10}
+						/>
+					</IonItem>
+
+					<IonItem className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
+						<IonTextarea
+							placeholder="Description (Optional)"
+							value={description}
+							rows={10}
+							onIonInput={(e) => setDescription(e.detail.value!)}
+							maxlength={256}
+						/>
+					</IonItem>
+				</IonContent>
+                <IonFooter>
+                    <IonButton
+                        expand="full"
+                        color="danger"
+                        onClick={() => confirmDeleteTransaction(transaction.id)}
+                        className="delete-transaction-button"
+                    >
+                        Delete Transaction
+                    </IonButton>
+                </IonFooter>
+			</IonModal>
+		</>
 	);
 };
 

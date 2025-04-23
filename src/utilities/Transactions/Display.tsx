@@ -20,8 +20,6 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
 }) => {
 	const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
 	const [transactionList, setTransactionList] = useState<Transaction[]>(transactions);
-	const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-	const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
 
 	React.useEffect(() => {
 		setTransactionList(transactions);
@@ -55,62 +53,8 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
 		return subCategory ? subCategory.name : "Uncategorized";
 	};
 
-	const confirmDeleteTransaction = (transactionId: string) => {
-		setTransactionToDelete(transactionId);
-		setShowDeleteAlert(true);
-	};
-
-	const handleDeleteTransaction = async () => {
-		if (!transactionToDelete) {
-			setShowDeleteAlert(false);
-			return;
-		}
-
-		try {
-			// Delete from Firestore
-			const { doc, deleteDoc } = await import("firebase/firestore");
-			const firestoreModule = await import("../FirebaseConfig");
-			const transactionRef = doc(
-				firestoreModule.firestore,
-				`users/${userID}/transactions/${transactionToDelete}`
-			);
-			await deleteDoc(transactionRef);
-
-			// Remove from local state
-			setTransactionList((prev) => prev.filter((t) => t.id !== transactionToDelete));
-		} catch (error) {
-			console.error("Failed to delete transaction:", error);
-		} finally {
-			setShowDeleteAlert(false);
-			setTransactionToDelete(null);
-		}
-	};
-
 	return (
 		<>
-			<IonAlert
-				isOpen={showDeleteAlert}
-				onDidDismiss={() => setShowDeleteAlert(false)}
-				header={"Confirm Delete"}
-				message={"Are you sure you want to delete this transaction?"}
-				buttons={[
-					{
-						text: "Cancel",
-						role: "cancel",
-						handler: () => {
-							setShowDeleteAlert(false);
-							setTransactionToDelete(null);
-						}
-					},
-					{
-						text: "Delete",
-						handler: () => {
-							handleDeleteTransaction();
-						}
-					}
-				]}
-			/>
-
 			<div className="transactions">
 				<div hidden={!(transactionList.length === 0)}>
 					<h1>Loading...</h1>
@@ -173,18 +117,6 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
 															}
 														>
 															Edit
-														</IonButton>
-														<IonButton
-															size="small"
-															color="danger"
-															onClick={() =>
-																confirmDeleteTransaction(
-																	transaction.id
-																)
-															}
-															style={{ marginLeft: "8px" }}
-														>
-															Delete
 														</IonButton>
 													</IonCol>
 												</IonRow>
