@@ -107,7 +107,7 @@ const HomeContainer: React.FC<ContainerProps> = ({ userID, transactionData, mont
 			</div>
 
 			{/* Display the transactions */}
-			<DisplayTransactions categories={categoryData} transactions={filteredTransactions} hideDivider />
+<DisplayTransactions categories={categoryData} transactions={filteredTransactions} userID={userID} hideDivider />
 
 			{/* Add Transactions */}
 			<AddTransactions categories={categoryData} userID={userID} />
