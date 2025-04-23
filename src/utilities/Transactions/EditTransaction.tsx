@@ -1,11 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { chevronDown, chevronUp } from "ionicons/icons";
-import { IonAlert, IonButton, IonContent, IonDatetime, IonDatetimeButton, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
+import {
+	IonAlert,
+	IonButton,
+	IonContent,
+	IonDatetime,
+	IonDatetimeButton,
+	IonFooter,
+	IonHeader,
+	IonIcon,
+	IonInput,
+	IonItem,
+	IonLabel,
+	IonModal,
+	IonTextarea,
+	IonTitle,
+	IonToolbar
+} from "@ionic/react";
 import { Category, EntryCategories } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import "../Transactions/editTransactionModal.css";
-
 
 interface EditTransactionProps {
 	categories: Category[];
@@ -38,8 +53,8 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 	const [date, setDate] = useState(transaction.date);
 	const [amount, setAmount] = useState(transaction.amount);
 	const [description, setDescription] = useState(transaction.description);
-    const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-    const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
+	const [showDeleteAlert, setShowDeleteAlert] = useState(false);
+	const [transactionToDelete, setTransactionToDelete] = useState<string | null>(null);
 
 	const [showCategoryEdit, setShowCategoryEdit] = useState(false);
 
@@ -94,38 +109,37 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 		}
 	};
 
-    const confirmDeleteTransaction = (transactionId: string) => {
-        setTransactionToDelete(transactionId);
-        setShowDeleteAlert(true);
-    };
+	const confirmDeleteTransaction = (transactionId: string) => {
+		setTransactionToDelete(transactionId);
+		setShowDeleteAlert(true);
+	};
 
-    const handleDeleteTransaction = async () => {
-        if (!transactionToDelete) {
-            setShowDeleteAlert(false);
-            return;
-        }
+	const handleDeleteTransaction = async () => {
+		if (!transactionToDelete) {
+			setShowDeleteAlert(false);
+			return;
+		}
 
-        try {
-            // Delete from Firestore
-            const { doc, deleteDoc } = await import("firebase/firestore");
-            const firestoreModule = await import("../FirebaseConfig");
-            const transactionRef = doc(
-                firestoreModule.firestore,
-                `users/${userID}/transactions/${transactionToDelete}`
-            );
-            await deleteDoc(transactionRef);
+		try {
+			// Delete from Firestore
+			const { doc, deleteDoc } = await import("firebase/firestore");
+			const firestoreModule = await import("../FirebaseConfig");
+			const transactionRef = doc(
+				firestoreModule.firestore,
+				`users/${userID}/transactions/${transactionToDelete}`
+			);
+			await deleteDoc(transactionRef);
+		} catch (error) {
+			console.error("Failed to delete transaction:", error);
+		} finally {
+			setShowDeleteAlert(false);
+			setTransactionToDelete(null);
 
-        } catch (error) {
-            console.error("Failed to delete transaction:", error);
-        } finally {
-            setShowDeleteAlert(false);
-            setTransactionToDelete(null);
-
-            //Close the modal and refresh the transaction list
-            onUpdate();
-            onClose();
-        }
-    };
+			//Close the modal and refresh the transaction list
+			onUpdate();
+			onClose();
+		}
+	};
 
 	return (
 		<>
@@ -273,16 +287,16 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 						/>
 					</IonItem>
 				</IonContent>
-                <IonFooter>
-                    <IonButton
-                        expand="full"
-                        color="danger"
-                        onClick={() => confirmDeleteTransaction(transaction.id)}
-                        className="delete-transaction-button"
-                    >
-                        Delete Transaction
-                    </IonButton>
-                </IonFooter>
+				<IonFooter>
+					<IonButton
+						expand="full"
+						color="danger"
+						onClick={() => confirmDeleteTransaction(transaction.id)}
+						className="delete-transaction-button"
+					>
+						Delete Transaction
+					</IonButton>
+				</IonFooter>
 			</IonModal>
 		</>
 	);

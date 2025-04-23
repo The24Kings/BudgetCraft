@@ -1,9 +1,21 @@
 import React, { useState } from "react";
-import { IonAccordion, IonAccordionGroup, IonAlert, IonButton, IonCol, IonGrid, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonNote, IonRow, IonTextarea } from "@ionic/react";
+import {
+	IonAccordion,
+	IonAccordionGroup,
+	IonButton,
+	IonCol,
+	IonGrid,
+	IonItem,
+	IonItemDivider,
+	IonItemGroup,
+	IonLabel,
+	IonNote,
+	IonRow,
+	IonTextarea
+} from "@ionic/react";
 import { Category } from "../Categories";
 import EditTransaction from "./EditTransaction";
 import Transaction from "./Transaction";
-
 
 interface DisplayTransactionsProps {
 	transactions: Transaction[];
