@@ -1,26 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { doc, Timestamp, updateDoc } from "firebase/firestore";
 import { chevronDown, chevronUp } from "ionicons/icons";
-import {
-	IonAlert,
-	IonButton,
-	IonContent,
-	IonDatetime,
-	IonDatetimeButton,
-	IonFooter,
-	IonHeader,
-	IonIcon,
-	IonInput,
-	IonItem,
-	IonLabel,
-	IonModal,
-	IonTextarea,
-	IonTitle,
-	IonToolbar
-} from "@ionic/react";
+import { IonAlert, IonButton, IonContent, IonDatetime, IonDatetimeButton, IonFooter, IonHeader, IonIcon, IonInput, IonItem, IonItemDivider, IonLabel, IonModal, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { Category, EntryCategories } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import "../Transactions/editTransactionModal.css";
+
 
 interface EditTransactionProps {
 	categories: Category[];
@@ -166,7 +151,7 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 				]}
 			/>
 
-			<IonModal isOpen={true} onDidDismiss={onClose} className="edit-transaction-modal">
+			<IonModal isOpen={true} onDidDismiss={onClose} id="add-transact-modal">
 				<IonHeader>
 					<IonToolbar className="edit-transaction-header">
 						<IonButton
@@ -192,96 +177,96 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 					</IonToolbar>
 				</IonHeader>
 
-				<IonContent className="ion-padding">
-					<IonItem>
-						<IonLabel>Type: </IonLabel>
-						<IonInput value={type} readonly />
-					</IonItem>
+				<IonContent>
+					<div className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
+						<IonItem>
+							<IonInput label="Type:" value={type} readonly />
+						</IonItem>
+						<IonItem>
+							<IonInput label="Category:" value={category} readonly />
+							<IonButton
+								size="small"
+								color="fab"
+								className="add-transaction-button"
+								onClick={() => setShowCategoryEdit(!showCategoryEdit)}
+							>
+								<IonIcon icon={showCategoryEdit ? chevronUp : chevronDown} />
+							</IonButton>
+						</IonItem>
 
-					<IonItem>
-						<IonLabel>Category: </IonLabel>
-						<IonInput value={category} readonly />
-						<IonButton
-							size="small"
-							color="fab"
-							className="add-transaction-button"
-							onClick={() => setShowCategoryEdit(!showCategoryEdit)}
-						>
-							<IonIcon icon={showCategoryEdit ? chevronUp : chevronDown} />
-						</IonButton>
-					</IonItem>
+						{/* Removed IonSelect for type to prevent changing expense/income */}
+						{showCategoryEdit && (
+							<div
+								style={{
+									marginTop: "10px",
+									marginBottom: "10px",
+									minHeight: "200px",
+									maxHeight: "300px",
+									overflowY: "auto"
+								}}
+							>
+								<EntryCategories
+									disableHeader={true}
+									categories={filteredCategories}
+									hideDelete={true}
+									onSelect={(category, subCategory) => {
+										setCategory(category);
+										categories.forEach((cat) => {
+											if (cat.name === category) {
+												setSubCategoryID(
+													cat.Subcategories.find(
+														(subCat) => subCat.name === subCategory
+													)?.id || ""
+												);
+											}
+										});
+									}}
+								/>
+							</div>
+						)}
 
-					{/* Removed IonSelect for type to prevent changing expense/income */}
-					{showCategoryEdit && (
-						<EntryCategories
-							disableHeader={true}
-							categories={filteredCategories}
-							hideDelete={true}
-							onSelect={(category, subCategory) => {
-								setCategory(category);
-								categories.forEach((cat) => {
-									if (cat.name === category) {
-										setSubCategoryID(
-											cat.Subcategories.find(
-												(subCat) => subCat.name === subCategory
-											)?.id || ""
-										);
-									}
-								});
-							}}
-						/>
-					)}
-
-					<IonItem>
-						<IonLabel>Title: </IonLabel>
-						<IonInput
-							value={title}
-							onIonInput={validateTitle}
-							maxlength={20}
-							ref={input}
-						/>
-					</IonItem>
-
-					<IonItem lines="none" className="date-picker-item">
-						<div className="date-picker-inline">
-							<IonLabel>Date:</IonLabel>
-							<IonDatetimeButton datetime="datetime" />
-						</div>
-					</IonItem>
-					<IonModal keepContentsMounted={true}>
-						<IonDatetime
-							id="datetime"
-							onIonChange={(e) => {
-								const selectedDate = new Date(e.detail.value as string);
-								selectedDate.setMinutes(
-									selectedDate.getMinutes() + selectedDate.getTimezoneOffset()
-								);
-								setDate(Timestamp.fromDate(selectedDate));
-							}}
-							presentation="date"
-							value={
-								typeof date === "object" && "toDate" in date
-									? date.toDate().toISOString()
-									: ""
-							}
-						/>
-					</IonModal>
-
-					<IonItem id="transaction-amount">
-						<IonLabel>Amount: </IonLabel>
-						<IonInput
-							type="number"
-							value={amount}
-							onIonInput={(e) => validateAmount(e.detail.value!)}
-							maxlength={10}
-						/>
-					</IonItem>
-
+						<IonItem>
+							<IonInput label="Title:" value={title} onIonInput={validateTitle} maxlength={20} />
+						</IonItem>
+						<IonItem lines="none" className="date-picker-item">
+							<div className="date-picker-inline">
+								<IonLabel>Date:</IonLabel>
+								<IonDatetimeButton datetime="datetime" />
+							</div>
+						</IonItem>
+						<IonModal keepContentsMounted={true}>
+							<IonDatetime
+								id="datetime"
+								onIonChange={(e) => {
+									const selectedDate = new Date(e.detail.value as string);
+									selectedDate.setMinutes(
+										selectedDate.getMinutes() + selectedDate.getTimezoneOffset()
+									);
+									setDate(Timestamp.fromDate(selectedDate));
+								}}
+								presentation="date"
+								value={
+									typeof date === "object" && "toDate" in date
+										? date.toDate().toISOString()
+										: ""
+								}
+							/>
+						</IonModal>
+						<IonItem id="transaction-amount">
+							<IonInput
+                                label="Amount:"
+								type="number"
+								value={amount}
+								onIonInput={(e) => validateAmount(e.detail.value!)}
+								maxlength={10}
+							/>
+						</IonItem>
+					</div>
 					<IonItem className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
 						<IonTextarea
 							placeholder="Description (Optional)"
 							value={description}
-							rows={10}
+							rows={8}
 							onIonInput={(e) => setDescription(e.detail.value!)}
 							maxlength={256}
 						/>
