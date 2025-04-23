@@ -39,14 +39,32 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 			[] as { name: string; value: number }[]
 		);
 
-	const COLORS = ["#59D3A0", "#FF6B6B", "#F4C95D", "#CEF9F2", "#AAB8C2"];
+	const COLORS = [
+		"#B28B84", // Rosy Brown
+		"#C5D8D1", // Ash Gray
+		"#7D1538", // Claret
+		"#D4E09B", // Vanilla
+		"#218380", // Teal
+		"#DB7C26", // Ochre
+		"#77DD77", // Light green
+		"#A0EADE", // Tiffany blue
+		"#FFD1DC", // Pastel pink
+		"#CBAACB", // Light purple
+		"#FF6961" // Coral red
+	];
+
+	// Map category names to colors to ensure unique colors per category
+	const categoryColorMap: { [key: string]: string } = {};
+	expenseData.forEach((item, index) => {
+		categoryColorMap[item.name] = COLORS[index % COLORS.length];
+	});
 
 	const [selectedSliceIndex, setSelectedSliceIndex] = useState<number | null>(null);
 
 	const toggleCollapse = () => {
 		setIsCollapsed(!isCollapsed);
 		if (!isCollapsed) {
-			// If collapse button clicked, clear slide that is shown
+			// If collapse button clicked, clear slice that is shown
 			setSelectedSliceIndex(null);
 		}
 	};
@@ -85,7 +103,7 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 										className="horizontal-bar-segment"
 										style={{
 											width: `${(entry.value / totalExpenses) * 100}%`,
-											backgroundColor: COLORS[index % COLORS.length]
+											backgroundColor: categoryColorMap[entry.name]
 										}}
 										title={`${entry.name}: $${entry.value.toFixed(2)}`}
 									/>
@@ -99,7 +117,7 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 							>
 								<IonIcon
 									icon={pieChart}
-									style={{ fontSize: "25px", color: "black" }}
+									style={{ fontSize: "25px", color: "#CEF9F2" }}
 								/>
 							</button>
 						</div>
@@ -121,7 +139,7 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 									{expenseData.map((entry, index) => (
 										<Cell
 											key={`cell-${index}`}
-											fill={COLORS[index % COLORS.length]}
+											fill={categoryColorMap[entry.name]}
 											style={{ outline: "none" }}
 										/>
 									))}
@@ -149,7 +167,8 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 								<div
 									className="category-color"
 									style={{
-										backgroundColor: COLORS[selectedSliceIndex % COLORS.length]
+										backgroundColor:
+											categoryColorMap[expenseData[selectedSliceIndex].name]
 									}}
 								/>
 								<span className="category-label">
@@ -180,7 +199,7 @@ const IncomePieChart: React.FC<IncomePieChartProps> = ({ transactions }) => {
 							>
 								<IonIcon
 									icon={pieChart}
-									style={{ fontSize: "25px", color: "black" }}
+									style={{ fontSize: "25px", color: "#CEF9F2" }}
 								/>
 							</button>
 						</div>
