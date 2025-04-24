@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import {
 	IonAccordion,
 	IonAccordionGroup,
+	IonButton,
 	IonCol,
 	IonGrid,
-	IonIcon,
 	IonItem,
 	IonItemDivider,
 	IonItemGroup,
@@ -14,18 +14,30 @@ import {
 	IonTextarea
 } from "@ionic/react";
 import { Category } from "../Categories";
+import EditTransaction from "./EditTransaction";
 import Transaction from "./Transaction";
 
 interface DisplayTransactionsProps {
 	transactions: Transaction[];
 	categories: Category[];
-    hideDivider?: boolean;
+	userID: string;
+	hideDivider?: boolean;
 }
 
-const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions, categories, hideDivider }) => {
-	//TODO: Allow the user to select which month they want to view
-	// Group the transactions by month
-	const groups = transactions
+const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
+	transactions,
+	categories,
+	userID,
+	hideDivider
+}) => {
+	const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
+	const [transactionList, setTransactionList] = useState<Transaction[]>(transactions);
+
+	React.useEffect(() => {
+		setTransactionList(transactions);
+	}, [transactions]);
+
+	const groups = transactionList
 		.sort((a, b) => b.date.toDate().getTime() - a.date.toDate().getTime())
 		.reduce(
 			(groups, transaction) => {
@@ -45,9 +57,6 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 			{} as { [key: string]: Transaction[] }
 		);
 
-	/*
-	 * Get the subcategory of a transaction from the name of the category and the index of the subcategory
-	 */
 	const subCategory = (category: String, id: string) => {
 		const subCategory = categories
 			.find((cat) => cat.name === category)
@@ -57,21 +66,21 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 	};
 
 	return (
-		<React.Fragment>
+		<>
 			<div className="transactions">
-				<div hidden={!(transactions.length === 0)}>
+				<div hidden={!(transactionList.length === 0)}>
 					<h1>Loading...</h1>
 				</div>
 
-				{/* Group the transactions by month */}
 				<IonAccordionGroup>
 					{Object.keys(groups).map((month) => (
 						<IonItemGroup key={month}>
-							{!hideDivider && (<IonItemDivider>
-								<IonLabel>{month}</IonLabel>
-							</IonItemDivider>)}
+							{!hideDivider && (
+								<IonItemDivider>
+									<IonLabel>{month}</IonLabel>
+								</IonItemDivider>
+							)}
 
-							{/* Display the transactions */}
 							{groups[month].map((transaction) => (
 								<IonAccordion value={transaction.id} key={transaction.id}>
 									<IonItem slot="header" button>
@@ -83,13 +92,18 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 													transaction.subCategoryID
 												)}
 											</IonNote>
-											<IonGrid fixed={true} className="ion-no-padding ion-no-margin">
+											<IonGrid
+												fixed={true}
+												className="ion-no-padding ion-no-margin"
+											>
 												<IonRow className="ion-text-left ion-padding-top">
 													<IonCol>
 														<h2>{transaction.title}</h2>
 													</IonCol>
 													<IonCol className="ion-text-right">
-														{transaction.type === "Income" ? "+ " : "- "}
+														{transaction.type === "Income"
+															? "+ "
+															: "- "}
 														${transaction.amount}
 													</IonCol>
 												</IonRow>
@@ -100,10 +114,22 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 										<IonItem color="light">
 											<IonGrid fixed={true} className="ion-no-padding">
 												<IonRow>
-													<IonCol className="ion-padding-vertical">
+													<IonCol className="ion-align-self-center ion-padding-vertical">
 														{transaction.date
 															.toDate()
 															.toLocaleDateString()}
+													</IonCol>
+													<IonCol className="ion-align-self-center ion-text-right ion-padding-vertical">
+														<IonButton
+															size="small"
+															color="fab"
+															className="add-transaction-button"
+															onClick={() =>
+																setEditingTransaction(transaction)
+															}
+														>
+															Edit
+														</IonButton>
 													</IonCol>
 												</IonRow>
 												<IonRow>
@@ -129,7 +155,17 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({ transactions,
 					))}
 				</IonAccordionGroup>
 			</div>
-		</React.Fragment>
+
+			{editingTransaction && (
+				<EditTransaction
+					categories={categories}
+					userID={userID}
+					transaction={editingTransaction}
+					onClose={() => setEditingTransaction(null)}
+					onUpdate={() => setEditingTransaction(null)}
+				/>
+			)}
+		</>
 	);
 };
 
