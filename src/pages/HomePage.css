@@ -266,7 +266,7 @@ ion-searchbar.search-input {
 	--height: auto;
 	--max-height: 80%;
 	--border-radius: 14px;
-	--background: var(--ion-toolbar-background);
+	--background: var(--ion-color-navy-blue-tint);
 }
 
 ion-modal.filter-modal-custom ion-toolbar {
@@ -309,7 +309,7 @@ ion-modal.filter-modal-custom .filter-close-button {
 ---------------------------------------- */
 .filter-modal ion-input,
 .filter-modal ion-select {
-	--color: #000;
+	--color: #ffffff !important;
 	--placeholder-color: #c1c1c1;
 }
 
@@ -325,6 +325,24 @@ ion-modal.filter-modal-custom .filter-close-button {
 	border: 1px solid #ccc;
 	border-radius: 6px;
 	padding: 8px;
+}
+
+.filter-type-select {
+	--color: white !important;
+	--placeholder-color: white !important;
+	color: white !important;
+}
+
+.filter-type-select::part(icon) {
+	color: white !important;
+	fill: white !important;
+}
+
+.filter-date-title {
+	color: white;
+	font-weight: 500;
+	margin: 0;
+	text-align: center;
 }
 
 /* ----------------------------------------
@@ -345,21 +363,15 @@ ion-datetime-button::part(native) {
 /* ----------------------------------------
    Buttons & FAB
 ---------------------------------------- */
-.action-button {
+#goal-details-modal .fab-add-transaction {
+	position: fixed;
+	bottom: 42px;
+	right: 10px;
+	z-index: 1000;
 	--background: var(--ion-color-mint);
-	--color: #1c1c1c;
-	border-radius: 8px;
-	font-weight: 500;
-}
-
-ion-fab-button.add-transaction-button {
-	--background: var(--secondary-color);
-	--color: var(--text-color);
-}
-
-ion-fab-button.add-transaction-button ion-icon {
-	color: black !important;
-	fill: black !important;
+	--color: black;
+	border-radius: 50%;
+	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 /* ----------------------------------------

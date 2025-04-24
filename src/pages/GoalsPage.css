@@ -1,0 +1,23 @@
+/* ----------------------------------------
+   Page Background & Layout
+---------------------------------------- */
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	width: 100%;
+	padding: 0 10px 10px;
+	background-color: var(--ion-color-navy-blue-tint);
+	overflow-y: auto;
+}
+
+/* ----------------------------------------
+   Header Title
+---------------------------------------- */
+.goals-title {
+	color: white;
+	font-weight: 600;
+	text-align: center;
+	width: 100%;
+}

@@ -2,15 +2,33 @@ import { useEffect, useRef, useState } from "react";
 import { collection, doc, setDoc, Timestamp } from "firebase/firestore";
 import { add } from "ionicons/icons";
 import { v4 as uuidv4 } from "uuid";
-import { IonButton, IonContent, IonDatetime, IonDatetimeButton, IonFab, IonFabButton, IonHeader, IonIcon, IonInput, IonItem, IonLabel, IonModal, IonSelect, IonSelectOption, IonTextarea, IonTitle, IonToggle, IonToolbar } from "@ionic/react";
+import {
+	IonButton,
+	IonContent,
+	IonDatetime,
+	IonDatetimeButton,
+	IonFab,
+	IonFabButton,
+	IonHeader,
+	IonIcon,
+	IonInput,
+	IonItem,
+	IonLabel,
+	IonModal,
+	IonSelect,
+	IonSelectOption,
+	IonTextarea,
+	IonTitle,
+	IonToggle,
+	IonToolbar
+} from "@ionic/react";
 import { Category, EntryCategories } from "../Categories";
 import { firestore } from "../FirebaseConfig";
-
 
 interface AddTransactionProps {
 	categories: Category[];
 	userID: string;
-    onlyGoals?: boolean; // Optional prop to filter goals
+	onlyGoals?: boolean; // Optional prop to filter goals
 }
 
 const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID, onlyGoals = false }) => {
@@ -74,12 +92,12 @@ const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID, onlyGoals 
 				type: type,
 				category: category,
 				subCategoryID: subCategoryID,
-                budgetItem: onlyGoals ? false : true,
+				budgetItem: onlyGoals ? false : true,
 				recurring: recurring,
 				reminder: reminder,
 				goal: goal,
 				description: description,
-				transactionIDs: [], // Initialize with an empty array; Fill as new transactions are added
+				transactionIDs: [] // Initialize with an empty array; Fill as new transactions are added
 			});
 		} catch (error) {
 			console.error("Failed to add goal...", error);
@@ -287,7 +305,7 @@ const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID, onlyGoals 
 							/>
 						</IonItem>
 					</div>
-					<IonItem className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
+					<IonItem className="modal-description-item">
 						<IonTextarea
 							placeholder="Description (Optional)"
 							value={description}

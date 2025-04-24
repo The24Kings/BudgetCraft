@@ -109,6 +109,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 
 				<div className="filter-modal">
 					<IonSelect
+						className="filter-type-select"
 						value={filterType}
 						placeholder="Type"
 						onIonChange={(e) => setFilterType(e.detail.value)}
@@ -136,7 +137,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 						}
 					/>
 
-					<h4>Date Range</h4>
+					<h4 className="filter-date-title">Date Range</h4>
 					<div style={{ display: "flex", gap: "10px", justifyContent: "center" }}>
 						<IonDatetimeButton datetime="start-date" />
 						<IonDatetimeButton datetime="end-date" />

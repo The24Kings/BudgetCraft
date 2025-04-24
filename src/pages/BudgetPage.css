@@ -130,8 +130,8 @@ ion-toolbar {
    FAB Button
 ---------------------------------------- */
 ion-fab-button {
-	--background: var(--secondary-color);
-	--color: white;
+	--background: var(--ion-color-mint);
+	--color: black;
 }
 
 .fab-add-transaction {
@@ -139,147 +139,66 @@ ion-fab-button {
 	--color: black;
 }
 
-ion-modal#goal-details-modal ion-fab-button.fab-add-transaction {
-	position: fixed;
-	bottom: 45px;
-	right: 12px;
-	z-index: 10;
-}
-
 /* ----------------------------------------
    Modal Styling
 ---------------------------------------- */
-ion-modal#add-goal-modal,
-ion-modal#goal-details-modal {
+
+ion-modal#add-goal-modal {
 	padding: 20px;
 	--max-height: 80%;
 	--border-radius: 16px;
-	--box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
-ion-modal#add-goal-modal::part(backdrop),
-ion-modal#goal-details-modal::part(backdrop) {
+ion-modal#add-goal-modal::part(backdrop) {
 	background: rgba(209, 213, 219);
 	opacity: 1;
 }
 
-ion-modal#add-goal-modal ion-toolbar,
-ion-modal#goal-details-modal ion-toolbar {
+ion-modal#add-goal-modal ion-toolbar {
 	--background: var(--ion-color-navy-blue);
 	--color: white;
-	padding-inline: 8px;
-}
-
-ion-modal#goal-details-modal::part(content),
-ion-modal#add-goal-modal::part(content) {
-	max-width: 600px;
-	width: 90%;
-	margin: auto;
-	background: #ffffff !important;
-}
-
-#goal-details-modal ion-content,
-#add-goal-modal ion-content {
-	--background: #ffffff !important;
-	background: #ffffff !important;
-}
-
-/* ----------------------------------------
-   Modal Labels
----------------------------------------- */
-#goal-details-modal ion-label {
-	color: #000000;
-	font-weight: 100;
-}
-
-#goal-details-modal ion-label p {
-	color: #999999;
-	font-weight: normal;
-	font-style: italic;
-}
-
-/* ----------------------------------------
-   Add Goal Form Styling
----------------------------------------- */
-#add-goal-modal ion-item {
-	background: var(--ion-color-mint);
-	border-radius: 12px;
-	padding: 10px;
-	margin-bottom: 10px;
-}
-
-#add-goal-modal ion-item ion-label {
-	background: white;
-	border-radius: 8px;
-	padding: 10px;
-	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 8px;
+	min-height: 50px;
 	box-sizing: border-box;
 }
 
-/* Remove spacing above item group */
-#add-goal-modal ion-item-group {
-	margin-top: 0 !important;
-	padding-top: 0 !important;
-}
-
-/* Divider Style */
-#add-goal-modal ion-item-divider {
-	background: #ffffff !important;
-	--background: #ffffff !important;
-	border: none !important;
-	box-shadow: none !important;
+ion-modal#add-goal-modal ion-title {
+	flex: 1;
 	text-align: center;
-	justify-content: center;
-	margin-top: 0 !important;
-	padding: 4px 0 !important;
-}
-
-#add-goal-modal ion-item-divider::part(native) {
-	border: none !important;
-	box-shadow: none !important;
-}
-
-#add-goal-modal ion-item-divider ion-label {
-	color: var(--ion-color-navy-blue) !important;
-	text-align: center;
-	width: 100%;
-	display: flex;
-	justify-content: center;
-	font-weight: 600;
 	font-size: 1rem;
-	margin: 0 !important;
-	padding: 0 !important;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin: 0 8px;
 }
 
-/* ----------------------------------------
-   Inputs & Controls
----------------------------------------- */
-ion-input,
-ion-textarea,
-ion-select,
-ion-toggle {
-	--color: var(--text-color);
-	--placeholder-color: var(--muted-text-color);
-	--background: var(--surface-color);
-	border-radius: 10px;
-}
-
-ion-modal#add-goal-modal .category ion-button {
-	color: var(--secondary-color);
-	font-weight: 500;
-}
-
-/* ----------------------------------------
-   Modal Toolbar Buttons
----------------------------------------- */
-ion-modal#add-goal-modal ion-toolbar ion-button,
-ion-modal#goal-details-modal ion-toolbar ion-button {
-	--background: transparent;
-	--color: white;
+ion-modal#add-goal-modal ion-button {
+	font-size: 0.9rem;
 	font-weight: 500;
 	text-transform: none;
-	padding: 0 12px;
-	font-size: 1rem;
+}
+
+ion-modal#add-goal-modal .categories {
+	height: 80%;
+	overflow-y: auto;
+}
+
+ion-modal#add-goal-modal .category ion-item,
+ion-modal#add-goal-modal .subCategory ion-button {
+	--background: white;
+	--color: var(--ion-color-navy-blue);
+	font-weight: 500;
+}
+ion-modal#add-goal-modal .modal-description-item {
+	margin: 0 16px 16px 16px;
+	border-radius: 10px;
+	box-shadow: none;
+	background: transparent;
 }
 
 /* ----------------------------------------
@@ -296,6 +215,109 @@ ion-modal#goal-details-modal ion-toolbar ion-button {
 }
 
 /* ----------------------------------------
+   Budget / Goal Details Modal
+---------------------------------------- */
+ion-modal#goal-details-modal {
+	padding: 20px;
+	--max-height: 80%;
+	--border-radius: 16px;
+	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal#goal-details-modal::part(backdrop) {
+	background: rgba(209, 213, 219);
+	opacity: 1;
+}
+
+ion-modal#goal-details-modal ion-toolbar {
+	--background: var(--ion-color-navy-blue);
+	--color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 8px;
+	min-height: 50px;
+	box-sizing: border-box;
+}
+
+ion-modal#goal-details-modal ion-title {
+	flex: 1;
+	text-align: center;
+	font-size: 1rem;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin: 0 8px;
+}
+
+ion-modal#goal-details-modal ion-button {
+	font-size: 0.9rem;
+	font-weight: 500;
+	text-transform: none;
+}
+
+#goal-details-modal ion-textarea.custom {
+	--background: var(--ion-toolbar-background);
+	--color: #000;
+	--padding-end: 10px;
+	--padding-start: 10px;
+	--padding-top: 10px;
+	--padding-bottom: 10px;
+	--placeholder-color: var(--muted-text-color);
+	--placeholder-opacity: 1;
+	--border-radius: 10px;
+	margin: 16px 0;
+}
+
+ion-modal#goal-details-modal ion-modal#add-goal-modal {
+	padding: 20px;
+	--max-height: 80%;
+	--border-radius: 16px;
+	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal#goal-details-modal ion-modal#add-goal-modal ion-toolbar {
+	--background: var(--ion-color-navy-blue);
+	--color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 8px;
+}
+
+#goal-details-modal ion-item[color="light"] {
+	--background: white;
+	--color: var(--ion-color-navy-blue);
+	border-radius: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	margin-bottom: 10px;
+}
+
+/* ----------------------------------------
+   Add Transaction to Goal FAB Button
+---------------------------------------- */
+#goal-details-modal .fab-add-transaction {
+	position: absolute;
+	bottom: 16px;
+	right: 16px;
+	z-index: 100;
+	--background: var(--ion-color-mint);
+	--color: black;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	background: transparent !important;
+}
+
+#goal-details-modal .goal-wrapper {
+	background: transparent !important;
+}
+
+ion-modal#goal-details-modal ion-content {
+	--background: transparent !important;
+	background: transparent !important;
+}
+
+/* ----------------------------------------
    Cancel / Save Buttons
 ---------------------------------------- */
 .add-modal-cancel,
@@ -308,35 +330,13 @@ ion-modal#goal-details-modal ion-toolbar ion-button {
 }
 
 /* ----------------------------------------
-   Mobile Toolbar Fixes
+   Accordion
 ---------------------------------------- */
-@media (max-width: 600px) {
-	ion-modal#add-goal-modal ion-toolbar {
-		display: flex !important;
-		align-items: center !important;
-		justify-content: space-between !important;
-		padding: 0 4px !important;
-		min-height: 48px !important;
-		box-sizing: border-box !important;
-	}
-
-	ion-modal#add-goal-modal ion-toolbar ion-button {
-		font-size: 0.9rem !important;
-		--padding-start: 4px !important;
-		--padding-end: 4px !important;
-		min-width: auto !important;
-	}
-
-	ion-modal#add-goal-modal .add-modal-title,
-	ion-modal#add-goal-modal ion-title {
-		flex: 1 1 auto !important;
-		text-align: center !important;
-		font-size: 1rem !important;
-		font-weight: 600 !important;
-		color: white !important;
-		padding: 0 4px !important;
-		white-space: nowrap !important;
-		overflow: hidden !important;
-		text-overflow: ellipsis !important;
-	}
+ion-accordion::part(header) {
+	background: #cef9f2;
+	color: #1c1c1c;
+	border-radius: 10px;
+	margin-bottom: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+	padding: 10px;
 }
