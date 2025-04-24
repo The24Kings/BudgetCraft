@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonReactRouter } from "@ionic/react-router";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, DocumentData, getDoc, getDocs, onSnapshot, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
+import { collection, doc, getDocs, onSnapshot, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
 import { bulb, construct, home, settings, wallet } from "ionicons/icons";
 import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact } from "@ionic/react";
 import BudgetPage from "./pages/BudgetPage";
@@ -23,344 +23,243 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import "./theme/variables.css";
-import { Category, parseJSON } from "./utilities/Categories";
 import Goal from "./utilities/Goals/Goal";
 import Transaction from "./utilities/Transactions/Transaction";
-
 
 setupIonicReact();
 
 const App: React.FC = () => {
-	const [user, setUser] = useState<any>(null);
-	const [loading, setLoading] = useState<boolean>(true);
-	const [jsonData, setJSONData] = useState<any>(null);
-	const [categoryData, setCategoryData] = useState<Category[]>([]);
-	const [goalData, setGoalData] = useState<Goal[]>([]);
-	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [goalData, setGoalData] = useState<Goal[]>([]);
+  const [transactionData, setTransactionData] = useState<Transaction[]>([]);
+  const [categoryData, setCategoryData] = useState<any[]>([]); // Add if needed for BudgetPage and GoalsPage
 
-	useEffect(() => {
-		// Force light mode by removing Ionic's dark class from <body>
-		document.body.classList.remove("dark");
+  useEffect(() => {
+    document.body.classList.remove("dark");
 
-		const unsubscribe = onAuthStateChanged(auth, (user) => {
-			setUser(user);
-			setLoading(false);
-		});
-		return () => unsubscribe();
-	}, []);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
+    return () => unsubscribe();
+  }, []);
 
-	// Load the JSON data
-	useEffect(() => {
-		if (!user) return;
+  // Fetch goals and listen for changes
+  useEffect(() => {
+    if (!user || !user.uid) return;
 
-		const fetchJSON = async () => {
-			const settingsRef = collection(firestore, `users/${user.uid}/settings`);
-			const categoriesRef = doc(settingsRef, "categories");
-			const categoriesSnapshot = await getDoc(categoriesRef);
+    const fetchGoals = async () => {
+      let querySnapshot: QuerySnapshot;
 
-			// Order the categories by type in descending order
-			const categories = categoriesSnapshot.data().categories;
-			const orderedCategories = parseJSON(categories).sort((a: Category, b: Category) => {
-				if (a.type !== b.type) {
-					if (a.type === "Income") return -1;
-					if (b.type === "Income") return 1;
-				}
+      try {
+        querySnapshot = await getDocs(
+          query(
+            collection(firestore, `users/${user.uid}/budget`),
+            orderBy("createdAt", "desc")
+          )
+        );
+      } catch (error) {
+        console.error("Failed to fetch goals:", error);
+        return;
+      }
 
-				if (a.name !== b.name) {
-					return a.name.localeCompare(b.name);
-				}
-			});
+      const goals = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
 
-			setJSONData(categories);
-			setCategoryData(orderedCategories);
-		};
+        return new Goal(
+          doc.id,
+          data.type,
+          data.category,
+          data.subCategoryID,
+          data.goal,
+          data.budgetItem,
+          data.recurring,
+          data.reminder,
+          data.createdAt,
+          data.targetDate,
+          data.reminderDate,
+          data.description,
+          data.transactionIDs,
+          data.withdrawalIDs,
+          []
+        );
+      });
 
-		const interval = setInterval(() => {
-			fetchJSON();
-		}, 500);
+      setGoalData(goals);
+    };
 
-		return () => clearInterval(interval);
-	}, [user]);
+    const unsubscribe = onSnapshot(collection(firestore, `users/${user.uid}/budget`), () => {
+      fetchGoals();
+    });
 
-	useEffect(() => {
-		if (!user) return;
+    return () => unsubscribe();
+  }, [user]);
 
-		const fetchGoals = async () => {
-			let querySnapshot: QuerySnapshot<DocumentData>;
+  // Fetch transactions related to goals
+  useEffect(() => {
+    if (!user) return;
 
-			try {
-				querySnapshot = await getDocs(
-					query(
-						collection(firestore, `users/${user.uid}/budget`),
-						orderBy("createdAt", "desc")
-					)
-				);
-			} catch (error) {
-				console.error("Failed to fetch transactions...");
-			} finally {
-				// Parse the documents into Transaction objects
-				const goals = querySnapshot.docs.map((doc) => {
-					const data = doc.data();
+    const fetchTransactions = async () => {
+      const transactionsRef = collection(firestore, `users/${user.uid}/transactions`);
 
-					return new Goal(
-						doc.id,
-						data.type,
-						data.category,
-						data.subCategoryID,
-						data.goal,
-						data.budgetItem,
-						data.recurring,
-						data.reminder,
-						data.createdAt,
-						data.targetDate,
-						data.reminderDate,
-						data.description,
-						data.transactionIDs, // Later when displaying the transactions, we will need to fetch them from the database: https://stackoverflow.com/questions/47876754/query-firestore-database-for-document-id
-						data.withdrawalIDs,
-						[] // Transactions related to this goal
-					);
-				});
+      for (const goal of goalData) {
+        if (goal.transactionIDs.length === 0) {
+          continue;
+        }
 
-				setGoalData(goals);
-			}
-		};
+        const transactionsSnapshot = await getDocs(
+          query(
+            transactionsRef,
+            orderBy("date", "desc"),
+            where("__name__", "in", goal.transactionIDs)
+          )
+        );
 
-		const unsubscribe = onSnapshot(collection(firestore, `users/${user.uid}/budget`), () => {
-			console.log("Fetching goals...");
-			fetchGoals();
-		});
+        const transactions = transactionsSnapshot.docs.map((doc) => {
+          const data = doc.data();
 
-		return () => unsubscribe();
-	}, [user]);
+          return new Transaction(
+            doc.id,
+            data.type,
+            data.category,
+            data.subCategoryID,
+            data.title,
+            data.date,
+            data.description,
+            data.amount
+          );
+        });
 
-	// Get each transaction associated with the Goal
-	useEffect(() => {
-		if (!user) return;
+        goal.transactions = transactions;
 
-		const fetchTransactions = async () => {
-			const transactionsRef = collection(firestore, `users/${user.uid}/transactions`);
+        if (goal.withdrawalIDs.length === 0) {
+          continue;
+        }
 
-			for (const goal of goalData) {
-				if (goal.transactionIDs.length == 0) {
-					console.log(`No transactions for this goal ${goal.id}`);
-					continue;
-				}
+        const withdrawalsSnapshot = await getDocs(
+          query(
+            transactionsRef,
+            orderBy("date", "desc"),
+            where("__name__", "in", goal.withdrawalIDs)
+          )
+        );
 
-				const transactionsSnapshot = await getDocs(
-					query(
-						transactionsRef,
-						orderBy("date", "desc"),
-						where("__name__", "in", goal.transactionIDs)
-					)
-				);
+        const withdrawals = withdrawalsSnapshot.docs.map((doc) => {
+          const data = doc.data();
 
-				// Parse the documents into Transaction objects
-				const transactions = transactionsSnapshot.docs.map((doc) => {
-					const data = doc.data();
+          return new Transaction(
+            doc.id,
+            data.type,
+            data.category,
+            data.subCategoryID,
+            data.title,
+            data.date,
+            data.description,
+            data.amount
+          );
+        });
 
-					return new Transaction(
-						doc.id,
-						data.type,
-						data.category,
-						data.subCategoryID,
-						data.title,
-						data.date,
-						data.description,
-						data.amount
-					);
-				});
+        goal.withdrawals = withdrawals;
+      }
+    };
 
-				goal.transactions = transactions;
+    fetchTransactions();
+  }, [user, goalData]);
 
-                if (goal.withdrawalIDs.length == 0) {
-                    console.log(`No withdrawals for this goal ${goal.id}`);
-                    continue;
-                }
+  // Real-time listener for all transactions
+  useEffect(() => {
+    if (!user || !user.uid) return;
 
-                const withdrawalsSnapshot = await getDocs(
-					query(
-						transactionsRef,
-						orderBy("date", "desc"),
-						where("__name__", "in", goal.withdrawalIDs)
-					)
-				);
+    const transactionsRef = collection(firestore, `users/${user.uid}/transactions`);
+    const q = query(transactionsRef, orderBy("date", "desc"));
 
-                // Parse the documents into Transaction objects
-                const withdrawals = withdrawalsSnapshot.docs.map((doc) => {
-                    const data = doc.data();
+    const unsubscribe = onSnapshot(
+      q,
+      (querySnapshot) => {
+        const transactions = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return new Transaction(
+            doc.id,
+            data.type,
+            data.category,
+            data.subCategoryID,
+            data.title,
+            data.date,
+            data.description,
+            data.amount
+          );
+        });
+        setTransactionData(transactions);
+      },
+      (error) => {
+        console.error("Failed to fetch transactions:", error);
+      }
+    );
 
-                    return new Transaction(
-                        doc.id,
-                        data.type,
-                        data.category,
-                        data.subCategoryID,
-                        data.title,
-                        data.date,
-                        data.description,
-                        data.amount
-                    );
-                });
+    return () => unsubscribe();
+  }, [user]);
 
-                goal.withdrawals = withdrawals;
-			}
-		};
+  if (loading) return <div>Loading...</div>;
 
-		fetchTransactions();
-	}, [user, goalData]);
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonTabs>
+          <IonRouterOutlet>
+            <Route exact path="/" render={() => <Redirect to="/home" />} />
+            <Route
+              path="/home"
+              render={() => (user ? <HomePage key={user.uid} user={user} transactionData={transactionData} /> : <Redirect to="/login" />)}
+              exact
+            />
+            <Route
+              path="/budget"
+              render={() => (user ? <BudgetPage user={user} goalData={goalData} categoryData={categoryData} transactionData={transactionData} /> : <Redirect to="/login" />)}
+              exact
+            />
+            <Route
+              path="/goals"
+              render={() => (user ? <GoalsPage user={user} goalData={goalData} categoryData={categoryData} transactionData={transactionData} /> : <Redirect to="/login" />)}
+              exact
+            />
+            <Route path="/tools" render={() => (user ? <ToolsPage /> : <Redirect to="/login" />)} exact />
+            <Route
+              path="/settings"
+              render={() => (user ? <SettingsPage user={user} jsonData={null} categoryData={categoryData} /> : <Redirect to="/login" />)}
+              exact
+            />
+            <Route path="/login" render={() => <LoginPage setUser={setUser} setErrorMessage={(msg) => console.error(msg)} />} exact />
+          </IonRouterOutlet>
 
-	// Load the transactions from Firebase
-	useEffect(() => {
-		if (!user) return;
-
-		const fetchTransactions = async () => {
-			try {
-				const querySnapshot = await getDocs(
-					query(
-						collection(firestore, `users/${user.uid}/transactions`),
-						orderBy("date", "desc")
-					)
-				);
-
-				// Parse the documents into Transaction objects
-				const transactionData = querySnapshot.docs.map((doc) => {
-					const data = doc.data();
-					return new Transaction(
-						doc.id,
-						data.type,
-						data.category,
-						data.subCategoryID,
-						data.title,
-						data.date,
-						data.description,
-						data.amount
-					);
-				});
-
-				setTransactionData(transactionData);
-			} catch (error) {
-				console.error("Failed to fetch transactions:", error);
-			}
-		};
-
-		const interval = setInterval(fetchTransactions, 1000);
-		return () => clearInterval(interval);
-	}, [user]);
-
-	if (loading) return <div>Loading...</div>;
-
-	return (
-		<IonApp>
-			<IonReactRouter>
-				<IonTabs>
-					<IonRouterOutlet>
-						<Route exact path="/" render={() => <Redirect to="/home" />} />
-						<Route
-							path="/home"
-							render={() => {
-								return user ? (
-									<HomePage user={user} transactionData={transactionData} />
-								) : (
-									<Redirect to="/login" />
-								);
-							}}
-							exact
-						/>
-						<Route
-							path="/budget"
-							render={() => {
-								return user ? (
-									<BudgetPage
-										user={user}
-										goalData={goalData}
-										categoryData={categoryData}
-										transactionData={transactionData}
-									/>
-								) : (
-									<Redirect to="/login" />
-								);
-							}}
-							exact
-						/>
-						<Route
-							path="/goals"
-							render={() => {
-								return user ? (
-									<GoalsPage
-										user={user}
-										goalData={goalData}
-										categoryData={categoryData}
-										transactionData={transactionData}
-									/>
-								) : (
-									<Redirect to="/login" />
-								);
-							}}
-							exact
-						/>
-						<Route
-							path="/tools"
-							render={() => {
-								return user ? <ToolsPage /> : <Redirect to="/login" />;
-							}}
-							exact
-						/>
-						<Route
-							path="/settings"
-							render={() => {
-								return user ? (
-									<SettingsPage 
-                                        user={user} 
-                                        jsonData={jsonData}
-                                        categoryData={categoryData}
-                                    />
-								) : (
-									<Redirect to="/login" />
-								);
-							}}
-							exact
-						/>
-						<Route
-							path="/login"
-							render={() => {
-								return (
-									<LoginPage
-										setUser={setUser}
-										setErrorMessage={(msg) => console.error(msg)}
-									/>
-								);
-							}}
-							exact
-						/>
-					</IonRouterOutlet>
-
-					{user && (
-						<IonTabBar slot="bottom">
-							<IonTabButton tab="home" href="/home" >
-								<IonIcon icon={home}/>
-								<IonLabel>Home</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="budget" href="/budget">
-								<IonIcon icon={wallet} />
-								<IonLabel>Budget</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="goals" href="/goals">
-								<IonIcon icon={bulb} />
-								<IonLabel>Goals</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="tools" href="/tools">
-								<IonIcon icon={construct} />
-								<IonLabel>Tools</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="settings" href="/settings">
-								<IonIcon icon={settings} />
-								<IonLabel>Settings</IonLabel>
-							</IonTabButton>
-						</IonTabBar>
-					)}
-				</IonTabs>
-			</IonReactRouter>
-		</IonApp>
-	);
+          {user && (
+            <IonTabBar slot="bottom">
+              <IonTabButton tab="home" href="/home">
+                <IonIcon icon={home} />
+                <IonLabel>Home</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="budget" href="/budget">
+                <IonIcon icon={wallet} />
+                <IonLabel>Budget</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="goals" href="/goals">
+                <IonIcon icon={bulb} />
+                <IonLabel>Goals</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="tools" href="/tools">
+                <IonIcon icon={construct} />
+                <IonLabel>Tools</IonLabel>
+              </IonTabButton>
+              <IonTabButton tab="settings" href="/settings">
+                <IonIcon icon={settings} />
+                <IonLabel>Settings</IonLabel>
+              </IonTabButton>
+            </IonTabBar>
+          )}
+        </IonTabs>
+      </IonReactRouter>
+    </IonApp>
+  );
 };
 
 export default App;
