@@ -97,3 +97,25 @@
 .edit-categories-page ion-item-divider {
 	display: none;
 }
+
+/* ----------------------------------------
+   Modal Styles for Edit Personal Info
+---------------------------------------- */
+
+.edit-name-modal-header {
+	background-color: var(--ion-color-mint);
+	color: black;
+	text-align: center;
+}
+
+.mint-button {
+	--background: var(--ion-color-mint);
+	color: black;
+	font-weight: 500;
+}
+
+.danger-button {
+	--background: var(--ion-color-danger);
+	color: white;
+	font-weight: 500;
+}

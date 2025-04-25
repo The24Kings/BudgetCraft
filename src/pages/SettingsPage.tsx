@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { doc, getDoc } from "firebase/firestore";
 import {
-	IonButton,
 	IonContent,
 	IonHeader,
 	IonItem,
@@ -11,9 +11,32 @@ import {
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
+import { firestore } from "../utilities/FirebaseConfig";
+import "../pages/SettingsPage.css";
 
 const SettingsPage: React.FC<{ user: any }> = ({ user }) => {
-	const userName = user?.displayName || user?.email?.split("@")[0] || "User";
+	const [displayName, setDisplayName] = useState("User");
+
+	useEffect(() => {
+		if (!user) return;
+
+		const fetchDisplayName = async () => {
+			try {
+				const userRef = doc(firestore, "users", user.uid);
+				const userSnap = await getDoc(userRef);
+				if (userSnap.exists() && userSnap.data().displayName) {
+					setDisplayName(userSnap.data().displayName);
+				} else {
+					setDisplayName(user.email?.split("@")[0] || "User");
+				}
+			} catch (err) {
+				console.error("Failed to fetch display name from Firestore:", err);
+				setDisplayName(user.email?.split("@")[0] || "User");
+			}
+		};
+
+		fetchDisplayName();
+	}, [user]);
 
 	return (
 		<IonPage>
@@ -24,12 +47,12 @@ const SettingsPage: React.FC<{ user: any }> = ({ user }) => {
 			</IonHeader>
 
 			<IonContent className="settings-content">
-				{/* User Name Header */}
+				{/* Display Firestore Display Name */}
 				<IonText className="settings-username">
-					<h2>{userName}</h2>
+					<h2>{displayName}</h2>
 				</IonText>
 
-				{/* Container 1 */}
+				{/* Main Settings Options */}
 				<div className="settings-container">
 					<IonList lines="none">
 						<IonItem
@@ -67,7 +90,7 @@ const SettingsPage: React.FC<{ user: any }> = ({ user }) => {
 					</IonList>
 				</div>
 
-				{/* Container 2 */}
+				{/* Secondary Options */}
 				<div className="settings-container">
 					<IonList lines="none">
 						<IonItem

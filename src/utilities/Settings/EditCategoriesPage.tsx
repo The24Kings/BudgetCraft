@@ -5,7 +5,6 @@ import {
 	IonContent,
 	IonHeader,
 	IonItem,
-	IonLabel,
 	IonPage,
 	IonSelect,
 	IonSelectOption,
@@ -13,6 +12,7 @@ import {
 	IonToolbar
 } from "@ionic/react";
 import { Category, EntryCategories } from "../Categories";
+import "../../pages/SettingsPage.css";
 
 const EditCategoriesPage: React.FC<{ user: any; jsonData: any; categoryData: Category[] }> = ({
 	user,
