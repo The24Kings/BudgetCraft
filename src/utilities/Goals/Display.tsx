@@ -86,6 +86,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 	const onDetailsDismiss = () => {
 		modalDetailsRef.current?.attributes.removeNamedItem("goalId");
 		modalDetailsRef.current?.dismiss(null, "cancel");
+        console.log("Modal Details Ref:", modalDetailsRef.current?.getAttribute("goalId"));
 	};
 
 	const addTransaction = async (transaction: Transaction) => {
@@ -148,6 +149,8 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 							onClick={() => {
 								modalDetailsRef.current?.present();
 								modalDetailsRef.current?.setAttribute("goalId", goal.id);
+                                console.log("Goal ID:", goal.id);
+                                console.log("Modal Details Ref:", modalDetailsRef.current?.getAttribute("goalId"));
 							}}
 						>
 							<IonLabel>

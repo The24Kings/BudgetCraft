@@ -41,6 +41,7 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import "./theme/variables.css";
+import { Category } from "./utilities/Categories";
 import Goal from "./utilities/Goals/Goal";
 import Transaction from "./utilities/Transactions/Transaction";
 
@@ -51,7 +52,7 @@ const App: React.FC = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [goalData, setGoalData] = useState<Goal[]>([]);
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
-	const [categoryData, setCategoryData] = useState<any[]>([]); // Add if needed for BudgetPage and GoalsPage
+	const [categoryData, setCategoryData] = useState<Category[]>([]); // Add if needed for BudgetPage and GoalsPage
 
 	useEffect(() => {
 		document.body.classList.remove("dark");
@@ -104,6 +105,8 @@ const App: React.FC = () => {
 				);
 			});
 
+            console.log("Fetched goals:", goals);
+
 			setGoalData(goals);
 		};
 
@@ -116,13 +119,14 @@ const App: React.FC = () => {
 
 	// Fetch transactions related to goals
 	useEffect(() => {
-		if (!user) return;
+		if (!user || !user.uid) return;
 
 		const fetchTransactions = async () => {
 			const transactionsRef = collection(firestore, `users/${user.uid}/transactions`);
 
 			for (const goal of goalData) {
 				if (goal.transactionIDs.length === 0) {
+					console.log("No transactions for goal:", goal.id);
 					continue;
 				}
 
@@ -152,6 +156,7 @@ const App: React.FC = () => {
 				goal.transactions = transactions;
 
 				if (goal.withdrawalIDs.length === 0) {
+					console.log("No withdrawals for goal:", goal.id);
 					continue;
 				}
 
