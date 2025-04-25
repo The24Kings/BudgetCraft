@@ -19,7 +19,7 @@ import {
 import { auth, firestore } from "../FirebaseConfig";
 import "../../pages/SettingsPage.css";
 
-const EditPersonalInfoPage: React.FC = () => {
+const AccountPage: React.FC = () => {
 	const [showNameModal, setShowNameModal] = useState(false);
 	const [showPasswordModal, setShowPasswordModal] = useState(false);
 	const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -92,6 +92,17 @@ const EditPersonalInfoPage: React.FC = () => {
 						onClick={() => setShowPasswordModal(true)}
 					>
 						<IonLabel>Change Password</IonLabel>
+					</IonItem>
+					<IonItem
+						button
+						className="settings-item"
+						onClick={() => {
+							auth.signOut().then(() => {
+								window.location.href = "/login";
+							});
+						}}
+					>
+						<IonLabel>Log Out</IonLabel>
 					</IonItem>
 					<IonItem
 						button
@@ -219,4 +230,4 @@ const EditPersonalInfoPage: React.FC = () => {
 	);
 };
 
-export default EditPersonalInfoPage;
+export default AccountPage;

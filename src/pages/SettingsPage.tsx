@@ -58,10 +58,10 @@ const SettingsPage: React.FC<{ user: any }> = ({ user }) => {
 						<IonItem
 							button
 							detail={true}
-							routerLink="/settings/personal"
+							routerLink="/settings/account"
 							className="settings-item"
 						>
-							<IonLabel>Edit Personal Info</IonLabel>
+							<IonLabel>Account</IonLabel>
 						</IonItem>
 						<IonItem
 							button

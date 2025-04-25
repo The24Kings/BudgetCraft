@@ -46,8 +46,8 @@ import "./theme/variables.css";
 import { Category, parseJSON } from "./utilities/Categories";
 import Goal from "./utilities/Goals/Goal";
 import AboutPage from "./utilities/Settings/AboutPage";
+import AccountPage from "./utilities/Settings/AccountPage";
 import EditCategoriesPage from "./utilities/Settings/EditCategoriesPage";
-import EditPersonalInfoPage from "./utilities/Settings/EditPersonalInfoPage";
 import ExportUserDataPage from "./utilities/Settings/ExportUserDataPage";
 import HelpTopicsPage from "./utilities/Settings/HelpTopicsPage";
 import NotificationSettingsPage from "./utilities/Settings/NotificationSettingsPage";
@@ -349,10 +349,8 @@ const App: React.FC = () => {
 							}
 						/>
 						<Route
-							path="/settings/personal"
-							render={() =>
-								user ? <EditPersonalInfoPage /> : <Redirect to="/login" />
-							}
+							path="/settings/account"
+							render={() => (user ? <AccountPage /> : <Redirect to="/login" />)}
 						/>
 						<Route
 							path="/settings/notifications"

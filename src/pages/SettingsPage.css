@@ -154,3 +154,52 @@
 	background-color: var(--ion-color-navy-blue) !important;
 	border-color: var(--ion-color-navy-blue) !important;
 }
+
+/* ----------------------------------------
+   Help Topics Page Styles 
+---------------------------------------- */
+
+.help-accordion-group {
+	padding: 0; /* Remove extra padding around all accordions */
+	margin: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.help-accordion-group ion-accordion {
+	margin: 0; /* No gaps between questions */
+	border-radius: 0;
+	box-shadow: none;
+	background: white;
+}
+
+.help-accordion-header {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	background: white;
+	color: var(--ion-color-navy-blue);
+	font-weight: 500;
+	border-bottom: 1px solid #e0e0e0;
+	padding: 12px;
+	box-sizing: border-box;
+}
+
+.help-accordion-group ion-accordion::part(content) {
+	background: white;
+	padding: 12px;
+	color: #1c1c1c; /* Darker text for answers */
+	font-size: 0.95rem;
+	font-weight: 400;
+	line-height: 1.4;
+}
+
+.help-accordion-group ion-accordion::part(header) {
+	background: white !important;
+	color: var(--ion-color-navy-blue) !important;
+	border-radius: 0;
+	box-shadow: none;
+	margin: 0;
+	padding: 12px;
+	border-bottom: 1px solid #e0e0e0;
+}
