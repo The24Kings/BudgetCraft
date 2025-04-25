@@ -286,25 +286,25 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 		const type = categories.find((cat) => cat.getCategory() === _category.name)?.getType();
 		const id = cyrb53(_category.getCategory() + subcategory);
 
-        // Check to see if the type is undefined
-        if (type === undefined) {
-            console.error("Type is undefined. Cannot add subcategory.");
-            return;
-        }
+		// Check to see if the type is undefined
+		if (type === undefined) {
+			console.error("Type is undefined. Cannot add subcategory.");
+			return;
+		}
 
-        // Check to see if the new subcategory already exists in the JSON file
-        if (json[type][_category.name][id]) {
-            alert("Subcategory already exists.");
+		// Check to see if the new subcategory already exists in the JSON file
+		if (json[type][_category.name][id]) {
+			alert("Subcategory already exists.");
 
-            return;
-        }
+			return;
+		}
 
-        // Check to see if the name provided is already in use as a default subcategory
-        if (categories.some((cat) => cat.getCategory() === subcategory)) {
-            alert("Subcategory name already in use.");
+		// Check to see if the name provided is already in use as a default subcategory
+		if (categories.some((cat) => cat.getCategory() === subcategory)) {
+			alert("Subcategory name already in use.");
 
-            return;
-        }
+			return;
+		}
 
 		// Add the subcategory to the JSON file
 		json[type][_category.name][id] = {
@@ -384,12 +384,6 @@ const EntryCategories: React.FC<EntryCategoriesProps> = ({
 				{/* Display the Types of categories - as a set so they are unique (no duplicates) */}
 				{[...new Set(categories.map((category) => category.getType()))].map((type) => (
 					<div key={type}>
-						{!disableHeader && (
-							<IonItemDivider color="light">
-								<IonLabel>{type}</IonLabel>
-							</IonItemDivider>
-						)}
-
 						{/* Display the categories under the corrisponding Type */}
 						{categories
 							.filter((cat) => cat.getType() === type)

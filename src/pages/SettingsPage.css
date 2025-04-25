@@ -70,3 +70,30 @@
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 	margin-top: 20px;
 }
+
+/* ----------------------------------------
+   Edit Categories Page Styles
+---------------------------------------- */
+
+.edit-categories-ion-item-select {
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-bottom: 20px;
+}
+
+.edit-categories-ion-select {
+	--placeholder-color: #666;
+	--color: black;
+	--background: white;
+	--padding-start: 12px;
+	--padding-end: 12px;
+	border-radius: 8px;
+	font-weight: 500;
+}
+
+.edit-categories-page ion-item-divider {
+	display: none;
+}

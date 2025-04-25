@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import {
 	IonBackButton,
 	IonButtons,
 	IonContent,
 	IonHeader,
+	IonItem,
+	IonLabel,
 	IonPage,
+	IonSelect,
+	IonSelectOption,
 	IonTitle,
 	IonToolbar
 } from "@ionic/react";
@@ -15,6 +19,10 @@ const EditCategoriesPage: React.FC<{ user: any; jsonData: any; categoryData: Cat
 	jsonData,
 	categoryData
 }) => {
+	const [typeFilter, setTypeFilter] = useState("Income");
+
+	const filteredCategories = categoryData.filter((cat) => cat.getType() === typeFilter);
+
 	return (
 		<IonPage>
 			<IonHeader>
@@ -25,8 +33,25 @@ const EditCategoriesPage: React.FC<{ user: any; jsonData: any; categoryData: Cat
 					<IonTitle>Edit Categories</IonTitle>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent className="ion-padding">
-				<EntryCategories userID={user.uid} json={jsonData} categories={categoryData} />
+			<IonContent className="ion-padding edit-categories-page">
+				{/* Dropdown to choose type */}
+				<IonItem className="edit-categories-ion-item-select ion-margin-bottom">
+					<IonSelect
+						placeholder="Select Type"
+						value={typeFilter}
+						onIonChange={(e) => setTypeFilter(e.detail.value)}
+						className="edit-categories-ion-select"
+					>
+						<IonSelectOption value="Income">Income</IonSelectOption>
+						<IonSelectOption value="Expenses">Expenses</IonSelectOption>
+					</IonSelect>
+				</IonItem>
+				{/* Only show the filtered categories */}
+				<EntryCategories
+					userID={user.uid}
+					json={jsonData}
+					categories={filteredCategories}
+				/>
 			</IonContent>
 		</IonPage>
 	);
