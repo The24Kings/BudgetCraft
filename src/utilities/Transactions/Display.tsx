@@ -58,9 +58,11 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
 		);
 
 	const subCategory = (category: String, id: string) => {
-		const subCategory = categories
-			.find((cat) => cat.name === category)
-			.Subcategories.find((subCat) => subCat.id === id);
+		const cat = categories.find((cat) => cat.name === category);
+		if (!cat || !cat.Subcategories) {
+			return "Uncategorized";
+		}
+		const subCategory = cat.Subcategories.find((subCat) => subCat.id === id);
 
 		return subCategory ? subCategory.name : "Uncategorized";
 	};

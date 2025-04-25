@@ -2,9 +2,27 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonReactRouter } from "@ionic/react-router";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, DocumentData, getDoc, getDocs, onSnapshot, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
+import {
+	collection,
+	doc,
+	getDocs,
+	onSnapshot,
+	orderBy,
+	query,
+	QuerySnapshot,
+	where
+} from "firebase/firestore";
 import { bulb, construct, home, settings, wallet } from "ionicons/icons";
-import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact } from "@ionic/react";
+import {
+	IonApp,
+	IonIcon,
+	IonLabel,
+	IonRouterOutlet,
+	IonTabBar,
+	IonTabButton,
+	IonTabs,
+	setupIonicReact
+} from "@ionic/react";
 import BudgetPage from "./pages/BudgetPage";
 import GoalsPage from "./pages/GoalsPage";
 import HomePage from "./pages/HomePage";
@@ -23,23 +41,22 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import "./theme/variables.css";
+import categoriesJson from "./categories.json";
 import { Category, parseJSON } from "./utilities/Categories";
 import Goal from "./utilities/Goals/Goal";
 import Transaction from "./utilities/Transactions/Transaction";
-
 
 setupIonicReact();
 
 const App: React.FC = () => {
 	const [user, setUser] = useState<any>(null);
 	const [loading, setLoading] = useState<boolean>(true);
-	const [jsonData, setJSONData] = useState<any>(null);
-	const [categoryData, setCategoryData] = useState<Category[]>([]);
 	const [goalData, setGoalData] = useState<Goal[]>([]);
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
+	const [categoryData, setCategoryData] = useState<Category[]>([]);
+	const [userCategoriesJson, setUserCategoriesJson] = useState<any>(null);
 
 	useEffect(() => {
-		// Force light mode by removing Ionic's dark class from <body>
 		document.body.classList.remove("dark");
 
 		const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -49,44 +66,47 @@ const App: React.FC = () => {
 		return () => unsubscribe();
 	}, []);
 
-	// Load the JSON data
 	useEffect(() => {
-		if (!user) return;
+		// Load static categories JSON initially
+		const parsedCategories = parseJSON(categoriesJson);
+		setCategoryData(parsedCategories);
+		setUserCategoriesJson(categoriesJson);
+	}, []);
 
-		const fetchJSON = async () => {
-			const settingsRef = collection(firestore, `users/${user.uid}/settings`);
-			const categoriesRef = doc(settingsRef, "categories");
-			const categoriesSnapshot = await getDoc(categoriesRef);
+	useEffect(() => {
+		if (!user || !user.uid) return;
 
-			// Order the categories by type in descending order
-			const categories = categoriesSnapshot.data().categories;
-			const orderedCategories = parseJSON(categories).sort((a: Category, b: Category) => {
-				if (a.type !== b.type) {
-					if (a.type === "Income") return -1;
-					if (b.type === "Income") return 1;
+		// Listen to user categories in Firestore settings
+		const settingsDocRef = doc(firestore, `users/${user.uid}/settings/categories`);
+
+		const unsubscribe = onSnapshot(settingsDocRef, (docSnap) => {
+			if (docSnap.exists()) {
+				const data = docSnap.data();
+				if (data && data.categories) {
+					try {
+						const userCategories = parseJSON(data.categories);
+						setCategoryData(userCategories);
+						setUserCategoriesJson(data.categories);
+					} catch (error) {
+						console.error("Failed to parse user categories from Firestore:", error);
+					}
 				}
+			} else {
+				// If no user categories in Firestore, fallback to static categories
+				const parsedCategories = parseJSON(categoriesJson);
+				setCategoryData(parsedCategories);
+				setUserCategoriesJson(categoriesJson);
+			}
+		});
 
-				if (a.name !== b.name) {
-					return a.name.localeCompare(b.name);
-				}
-			});
-
-			setJSONData(categories);
-			setCategoryData(orderedCategories);
-		};
-
-		const interval = setInterval(() => {
-			fetchJSON();
-		}, 500);
-
-		return () => clearInterval(interval);
+		return () => unsubscribe();
 	}, [user]);
 
 	useEffect(() => {
-		if (!user) return;
+		if (!user || !user.uid) return;
 
 		const fetchGoals = async () => {
-			let querySnapshot: QuerySnapshot<DocumentData>;
+			let querySnapshot: QuerySnapshot;
 
 			try {
 				querySnapshot = await getDocs(
@@ -96,53 +116,53 @@ const App: React.FC = () => {
 					)
 				);
 			} catch (error) {
-				console.error("Failed to fetch transactions...");
-			} finally {
-				// Parse the documents into Transaction objects
-				const goals = querySnapshot.docs.map((doc) => {
-					const data = doc.data();
-
-					return new Goal(
-						doc.id,
-						data.type,
-						data.category,
-						data.subCategoryID,
-						data.goal,
-						data.budgetItem,
-						data.recurring,
-						data.reminder,
-						data.createdAt,
-						data.targetDate,
-						data.reminderDate,
-						data.description,
-						data.transactionIDs, // Later when displaying the transactions, we will need to fetch them from the database: https://stackoverflow.com/questions/47876754/query-firestore-database-for-document-id
-						data.withdrawalIDs,
-						[] // Transactions related to this goal
-					);
-				});
-
-				setGoalData(goals);
+				console.error("Failed to fetch goals:", error);
+				return;
 			}
+
+			const goals = querySnapshot.docs.map((doc) => {
+				const data = doc.data();
+
+				return new Goal(
+					doc.id,
+					data.type,
+					data.category,
+					data.subCategoryID,
+					data.goal,
+					data.budgetItem,
+					data.recurring,
+					data.reminder,
+					data.createdAt,
+					data.targetDate,
+					data.reminderDate,
+					data.description,
+					data.transactionIDs,
+					data.withdrawalIDs,
+					[]
+				);
+			});
+
+			console.log("Fetched goals:", goals);
+
+			setGoalData(goals);
 		};
 
 		const unsubscribe = onSnapshot(collection(firestore, `users/${user.uid}/budget`), () => {
-			console.log("Fetching goals...");
 			fetchGoals();
 		});
 
 		return () => unsubscribe();
 	}, [user]);
 
-	// Get each transaction associated with the Goal
 	useEffect(() => {
-		if (!user) return;
+		if (!user || !user.uid) return;
 
 		const fetchTransactions = async () => {
 			const transactionsRef = collection(firestore, `users/${user.uid}/transactions`);
 
 			for (const goal of goalData) {
-				if (goal.transactionIDs.length == 0) {
-					console.log(`No transactions for this goal ${goal.id}`);
+				if (goal.transactionIDs.length === 0) {
+					console.log("No transactions for goal:", goal.id);
 					continue;
 				}
 
@@ -154,7 +174,6 @@ const App: React.FC = () => {
 					)
 				);
 
-				// Parse the documents into Transaction objects
 				const transactions = transactionsSnapshot.docs.map((doc) => {
 					const data = doc.data();
 
@@ -172,12 +191,12 @@ const App: React.FC = () => {
 
 				goal.transactions = transactions;
 
-                if (goal.withdrawalIDs.length == 0) {
-                    console.log(`No withdrawals for this goal ${goal.id}`);
-                    continue;
-                }
+				if (goal.withdrawalIDs.length === 0) {
+					console.log("No withdrawals for goal:", goal.id);
+					continue;
+				}
 
-                const withdrawalsSnapshot = await getDocs(
+				const withdrawalsSnapshot = await getDocs(
 					query(
 						transactionsRef,
 						orderBy("date", "desc"),
@@ -185,43 +204,9 @@ const App: React.FC = () => {
 					)
 				);
 
-                // Parse the documents into Transaction objects
-                const withdrawals = withdrawalsSnapshot.docs.map((doc) => {
-                    const data = doc.data();
-
-                    return new Transaction(
-                        doc.id,
-                        data.type,
-                        data.category,
-                        data.subCategoryID,
-                        data.title,
-                        data.date,
-                        data.description,
-                        data.amount
-                    );
-                });
-
-                goal.withdrawals = withdrawals;
-			}
-		};
-
-		fetchTransactions();
-	}, [user, goalData]);
-
-	// Load the transactions from Firebase
-	useEffect(() => {
-		const fetchTransactions = async () => {
-			try {
-				const querySnapshot = await getDocs(
-					query(
-						collection(firestore, `users/${user.uid}/transactions`),
-						orderBy("date", "desc")
-					)
-				);
-
-				// Parse the documents into Transaction objects
-				const transactionData = querySnapshot.docs.map((doc) => {
+				const withdrawals = withdrawalsSnapshot.docs.map((doc) => {
 					const data = doc.data();
+
 					return new Transaction(
 						doc.id,
 						data.type,
@@ -234,14 +219,43 @@ const App: React.FC = () => {
 					);
 				});
 
-				setTransactionData(transactionData);
-			} catch (error) {
-				console.error("Failed to fetch transactions:", error);
+				goal.withdrawals = withdrawals;
 			}
 		};
 
-		const interval = setInterval(fetchTransactions, 1000);
-		return () => clearInterval(interval);
+		fetchTransactions();
+	}, [user, goalData]);
+
+	useEffect(() => {
+		if (!user || !user.uid) return;
+
+		const transactionsRef = collection(firestore, `users/${user.uid}/transactions`);
+		const q = query(transactionsRef, orderBy("date", "desc"));
+
+		const unsubscribe = onSnapshot(
+			q,
+			(querySnapshot) => {
+				const transactions = querySnapshot.docs.map((doc) => {
+					const data = doc.data();
+					return new Transaction(
+						doc.id,
+						data.type,
+						data.category,
+						data.subCategoryID,
+						data.title,
+						data.date,
+						data.description,
+						data.amount
+					);
+				});
+				setTransactionData(transactions);
+			},
+			(error) => {
+				console.error("Failed to fetch transactions:", error);
+			}
+		);
+
+		return () => unsubscribe();
 	}, [user]);
 
 	if (loading) return <div>Loading...</div>;
@@ -254,19 +268,23 @@ const App: React.FC = () => {
 						<Route exact path="/" render={() => <Redirect to="/home" />} />
 						<Route
 							path="/home"
-							render={() => {
-								return user ? (
-									<HomePage user={user} transactionData={transactionData} />
+							render={() =>
+								user ? (
+									<HomePage
+										key={user.uid}
+										user={user}
+										transactionData={transactionData}
+									/>
 								) : (
 									<Redirect to="/login" />
-								);
-							}}
+								)
+							}
 							exact
 						/>
 						<Route
 							path="/budget"
-							render={() => {
-								return user ? (
+							render={() =>
+								user ? (
 									<BudgetPage
 										user={user}
 										goalData={goalData}
@@ -275,14 +293,14 @@ const App: React.FC = () => {
 									/>
 								) : (
 									<Redirect to="/login" />
-								);
-							}}
+								)
+							}
 							exact
 						/>
 						<Route
 							path="/goals"
-							render={() => {
-								return user ? (
+							render={() =>
+								user ? (
 									<GoalsPage
 										user={user}
 										goalData={goalData}
@@ -291,50 +309,46 @@ const App: React.FC = () => {
 									/>
 								) : (
 									<Redirect to="/login" />
-								);
-							}}
+								)
+							}
 							exact
 						/>
 						<Route
 							path="/tools"
-							render={() => {
-								return user ? <ToolsPage /> : <Redirect to="/login" />;
-							}}
+							render={() => (user ? <ToolsPage /> : <Redirect to="/login" />)}
 							exact
 						/>
 						<Route
 							path="/settings"
-							render={() => {
-								return user ? (
-									<SettingsPage 
-                                        user={user} 
-                                        jsonData={jsonData}
-                                        categoryData={categoryData}
-                                    />
+							render={() =>
+								user ? (
+									<SettingsPage
+										user={user}
+										jsonData={userCategoriesJson}
+										categoryData={categoryData}
+									/>
 								) : (
 									<Redirect to="/login" />
-								);
-							}}
+								)
+							}
 							exact
 						/>
 						<Route
 							path="/login"
-							render={() => {
-								return (
-									<LoginPage
-										setUser={setUser}
-										setErrorMessage={(msg) => console.error(msg)}
-									/>
-								);
-							}}
+							render={() => (
+								<LoginPage
+									setUser={setUser}
+									setErrorMessage={(msg) => console.error(msg)}
+								/>
+							)}
 							exact
 						/>
 					</IonRouterOutlet>
 
 					{user && (
 						<IonTabBar slot="bottom">
-							<IonTabButton tab="home" href="/home" >
-								<IonIcon icon={home}/>
+							<IonTabButton tab="home" href="/home">
+								<IonIcon icon={home} />
 								<IonLabel>Home</IonLabel>
 							</IonTabButton>
 							<IonTabButton tab="budget" href="/budget">
