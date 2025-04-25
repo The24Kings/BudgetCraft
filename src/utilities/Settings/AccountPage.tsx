@@ -81,6 +81,7 @@ const AccountPage: React.FC = () => {
 				<div className="settings-container">
 					<IonItem
 						button
+						detail={true}
 						className="settings-item"
 						onClick={() => setShowNameModal(true)}
 					>
@@ -88,6 +89,7 @@ const AccountPage: React.FC = () => {
 					</IonItem>
 					<IonItem
 						button
+						detail={true}
 						className="settings-item"
 						onClick={() => setShowPasswordModal(true)}
 					>
@@ -95,6 +97,7 @@ const AccountPage: React.FC = () => {
 					</IonItem>
 					<IonItem
 						button
+						detail={true}
 						className="settings-item"
 						onClick={() => {
 							auth.signOut().then(() => {
@@ -106,6 +109,7 @@ const AccountPage: React.FC = () => {
 					</IonItem>
 					<IonItem
 						button
+						detail={true}
 						className="settings-item"
 						onClick={() => setShowDeleteModal(true)}
 					>
