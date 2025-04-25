@@ -19,9 +19,9 @@ const HomePage: React.FC<{ user: any, transactionData: Transaction[] }> = ({ use
 	const [month, setMonth] = useState(new Date().getMonth());
 	const [year, setYear] = useState(new Date().getFullYear());
 
-	useEffect(() => {
+		useEffect(() => {
 		const fetchUserData = async () => {
-			if (!user) return;
+			if (!user || !user.uid) return;
 			const userRef = doc(firestore, "users", user.uid);
 			const userDoc = await getDoc(userRef);
 			if (userDoc.exists()) {
