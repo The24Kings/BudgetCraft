@@ -1,0 +1,69 @@
+/* ----------------------------------------
+   Tools Page Layout
+---------------------------------------- */
+.tools-content {
+	--background: var(--ion-color-navy-blue-tint);
+	background-color: var(--ion-color-navy-blue-tint);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 20px;
+	text-align: center;
+}
+
+.tools-title {
+	color: white;
+	font-weight: 600;
+	text-align: center;
+	width: 100%;
+	font-size: 1.4rem;
+}
+
+/* ----------------------------------------
+   Coming Soon Display
+---------------------------------------- */
+.tools-coming-soon {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	color: white;
+	gap: 12px;
+}
+
+.tools-coming-soon ion-icon {
+	font-size: 4rem;
+	color: var(--ion-color-mint);
+}
+
+.tools-coming-soon p {
+	font-size: 1.25rem;
+	font-weight: 500;
+}
+
+.tools-content {
+	--background: var(--ion-color-navy-blue-tint);
+	background-color: var(--ion-color-navy-blue-tint);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.tools-coming-soon-wrapper {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	color: white;
+	text-align: center;
+	padding: 20px;
+	box-sizing: border-box;
+}
+
+.tools-icon {
+	font-size: 5rem;
+	color: var(--ion-color-mint);
+	margin-bottom: 16px;
+}
