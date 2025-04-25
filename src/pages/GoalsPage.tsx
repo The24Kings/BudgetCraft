@@ -19,7 +19,7 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ user, goalData, categoryData, tra
 		<IonPage id="main-content">
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle className="goals-title">Goals</IonTitle>
+					<IonTitle className="page-title">Goals</IonTitle>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent>

@@ -42,7 +42,7 @@ const SettingsPage: React.FC<{ user: any }> = ({ user }) => {
 		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle className="ion-text-center">Settings</IonTitle>
+					<IonTitle className="page-title">Settings</IonTitle>
 				</IonToolbar>
 			</IonHeader>
 
