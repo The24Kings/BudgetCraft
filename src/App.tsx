@@ -41,7 +41,8 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import "./theme/variables.css";
-import { Category } from "./utilities/Categories";
+import categoriesJson from "./categories.json";
+import { Category, parseJSON } from "./utilities/Categories";
 import Goal from "./utilities/Goals/Goal";
 import Transaction from "./utilities/Transactions/Transaction";
 
@@ -52,7 +53,8 @@ const App: React.FC = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	const [goalData, setGoalData] = useState<Goal[]>([]);
 	const [transactionData, setTransactionData] = useState<Transaction[]>([]);
-	const [categoryData, setCategoryData] = useState<Category[]>([]); // Add if needed for BudgetPage and GoalsPage
+	const [categoryData, setCategoryData] = useState<Category[]>([]);
+	const [userCategoriesJson, setUserCategoriesJson] = useState<any>(null);
 
 	useEffect(() => {
 		document.body.classList.remove("dark");
@@ -64,7 +66,42 @@ const App: React.FC = () => {
 		return () => unsubscribe();
 	}, []);
 
-	// Fetch goals and listen for changes
+	useEffect(() => {
+		// Load static categories JSON initially
+		const parsedCategories = parseJSON(categoriesJson);
+		setCategoryData(parsedCategories);
+		setUserCategoriesJson(categoriesJson);
+	}, []);
+
+	useEffect(() => {
+		if (!user || !user.uid) return;
+
+		// Listen to user categories in Firestore settings
+		const settingsDocRef = doc(firestore, `users/${user.uid}/settings/categories`);
+
+		const unsubscribe = onSnapshot(settingsDocRef, (docSnap) => {
+			if (docSnap.exists()) {
+				const data = docSnap.data();
+				if (data && data.categories) {
+					try {
+						const userCategories = parseJSON(data.categories);
+						setCategoryData(userCategories);
+						setUserCategoriesJson(data.categories);
+					} catch (error) {
+						console.error("Failed to parse user categories from Firestore:", error);
+					}
+				}
+			} else {
+				// If no user categories in Firestore, fallback to static categories
+				const parsedCategories = parseJSON(categoriesJson);
+				setCategoryData(parsedCategories);
+				setUserCategoriesJson(categoriesJson);
+			}
+		});
+
+		return () => unsubscribe();
+	}, [user]);
+
 	useEffect(() => {
 		if (!user || !user.uid) return;
 
@@ -105,7 +142,7 @@ const App: React.FC = () => {
 				);
 			});
 
-            console.log("Fetched goals:", goals);
+			console.log("Fetched goals:", goals);
 
 			setGoalData(goals);
 		};
@@ -117,7 +154,6 @@ const App: React.FC = () => {
 		return () => unsubscribe();
 	}, [user]);
 
-	// Fetch transactions related to goals
 	useEffect(() => {
 		if (!user || !user.uid) return;
 
@@ -190,7 +226,6 @@ const App: React.FC = () => {
 		fetchTransactions();
 	}, [user, goalData]);
 
-	// Real-time listener for all transactions
 	useEffect(() => {
 		if (!user || !user.uid) return;
 
@@ -289,7 +324,7 @@ const App: React.FC = () => {
 								user ? (
 									<SettingsPage
 										user={user}
-										jsonData={null}
+										jsonData={userCategoriesJson}
 										categoryData={categoryData}
 									/>
 								) : (
