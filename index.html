@@ -6,23 +6,77 @@
 
 		<base href="/" />
 
-		<meta name="color-scheme" content="light dark" />
+		<!-- Viewport & UI behavior -->
 		<meta
 			name="viewport"
 			content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
 		/>
+		<meta name="color-scheme" content="light dark" />
 		<meta name="format-detection" content="telephone=no" />
 		<meta name="msapplication-tap-highlight" content="no" />
 
+		<!-- App Identity -->
 		<link rel="manifest" href="/manifest.json" />
-
 		<link rel="shortcut icon" type="image/png" href="/favicon.png" />
 
-		<!-- add to homescreen for ios -->
+		<!-- iOS PWA Support -->
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-title" content="Ionic App" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+
+		<!-- Global Style Overrides -->
+		<style>
+			/* ------------------------------
+			   Popover & Action Sheet Styling
+			------------------------------ */
+			.select-popover,
+			ion-action-sheet::part(content) {
+				background-color: #f4f4f4 !important;
+				color: #000 !important;
+				--ion-background-color: #f4f4f4 !important;
+			}
+
+			ion-action-sheet::part(button),
+			ion-alert .alert-button {
+				color: #000 !important;
+			}
+
+			/* ------------------------------
+			   Alert Styling
+			------------------------------ */
+			ion-alert::part(content),
+			.alert-wrapper,
+			.alert-wrapper.sc-ion-alert-md,
+			.alert-wrapper.sc-ion-alert-ios {
+				background-color: #f4f4f4 !important;
+				color: #000 !important;
+				border-radius: 12px !important;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+			}
+
+			ion-alert::part(base),
+			ion-alert::part(alert-dialog) {
+				background-color: transparent !important;
+			}
+
+			ion-alert::part(backdrop) {
+				background-color: transparent !important;
+				backdrop-filter: blur(2px) !important;
+			}
+
+			/* ------------------------------
+			   Global Backdrop Fix (Prevents White Screen)
+			------------------------------ */
+			ion-backdrop,
+			ion-backdrop.sc-ion-alert-md,
+			ion-backdrop.sc-ion-alert-ios {
+				background-color: transparent !important;
+				backdrop-filter: transparent !important;
+				pointer-events: none !important;
+			}
+		</style>
 	</head>
+
 	<body>
 		<div id="root"></div>
 		<script type="module" src="/src/main.tsx"></script>

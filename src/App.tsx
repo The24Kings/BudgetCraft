@@ -44,6 +44,12 @@ import "./theme/variables.css";
 import categoriesJson from "./categories.json";
 import { Category, parseJSON } from "./utilities/Categories";
 import Goal from "./utilities/Goals/Goal";
+import AboutPage from "./utilities/Settings/AboutPage";
+import AccountPage from "./utilities/Settings/AccountPage";
+import EditCategoriesPage from "./utilities/Settings/EditCategoriesPage";
+import ExportUserDataPage from "./utilities/Settings/ExportUserDataPage";
+import HelpTopicsPage from "./utilities/Settings/HelpTopicsPage";
+import NotificationSettingsPage from "./utilities/Settings/NotificationSettingsPage";
 import Transaction from "./utilities/Transactions/Transaction";
 
 setupIonicReact();
@@ -332,6 +338,48 @@ const App: React.FC = () => {
 								)
 							}
 							exact
+						/>
+						<Route
+							path="/settings/export"
+							render={() =>
+								user ? (
+									<ExportUserDataPage user={user} categoryData={categoryData} />
+								) : (
+									<Redirect to="/login" />
+								)
+							}
+						/>
+						<Route
+							path="/settings/account"
+							render={() => (user ? <AccountPage /> : <Redirect to="/login" />)}
+						/>
+						<Route
+							path="/settings/notifications"
+							render={() =>
+								user ? <NotificationSettingsPage /> : <Redirect to="/login" />
+							}
+						/>
+						<Route
+							path="/settings/edit-categories"
+							render={() =>
+								user ? (
+									<EditCategoriesPage
+										user={user}
+										jsonData={userCategoriesJson}
+										categoryData={categoryData}
+									/>
+								) : (
+									<Redirect to="/login" />
+								)
+							}
+						/>
+						<Route
+							path="/settings/help"
+							render={() => (user ? <HelpTopicsPage /> : <Redirect to="/login" />)}
+						/>
+						<Route
+							path="/settings/about"
+							render={() => (user ? <AboutPage /> : <Redirect to="/login" />)}
 						/>
 						<Route
 							path="/login"

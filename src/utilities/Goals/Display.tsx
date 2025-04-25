@@ -1,26 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { arrayUnion, collection, deleteDoc, doc, getDoc, updateDoc } from "firebase/firestore";
 import { add } from "ionicons/icons";
-import {
-	IonButton,
-	IonCol,
-	IonContent,
-	IonFab,
-	IonFabButton,
-	IonFooter,
-	IonGrid,
-	IonHeader,
-	IonIcon,
-	IonItem,
-	IonItemDivider,
-	IonItemGroup,
-	IonLabel,
-	IonModal,
-	IonRow,
-	IonTextarea,
-	IonTitle,
-	IonToolbar
-} from "@ionic/react";
+import { IonButton, IonButtons, IonCol, IonContent, IonFabButton, IonFooter, IonGrid, IonHeader, IonIcon, IonItem, IonItemDivider, IonItemGroup, IonLabel, IonModal, IonRow, IonTextarea, IonTitle, IonToolbar } from "@ionic/react";
 import { Category } from "../Categories";
 import { firestore } from "../FirebaseConfig";
 import Transaction from "../Transactions/Transaction";
@@ -124,9 +105,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 	};
 
 	const subCategory = (category: String, id: string) => {
-		if (!categories.length) {
-			return;
-		}
+		if (!categories.length) return;
 
 		const subCategory = categories
 			.find((cat) => cat.name === category)
@@ -154,6 +133,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 		const goalRef = doc(firestore, `users/${user.uid}/budget/${goalId}`);
 		const goalDocSnapshot = await getDoc(goalRef);
 
+		// Check if the transaction ID is already added
 		if (goalDocSnapshot.exists()) {
 			const goalData = goalDocSnapshot.data();
 
@@ -170,11 +150,9 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 		modalAddRef.current?.dismiss(null, "cancel");
 	};
 
-	const filteredTransactions = (transactions: Transaction[]) => {
-		return transactions.filter(
-			(transaction) => transaction.date.toDate().getMonth() === selectedMonth
-		);
-	};
+    const filteredTransactions = (transactions: Transaction[]) => {
+        return transactions.filter((transaction) => transaction.date.toDate().getMonth() === selectedMonth);
+    }
 
 	const filteredWithdrawals = (withdrawals: Transaction[]) => {
 		return withdrawals.filter(
@@ -182,7 +160,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 		);
 	};
 
-	const saveDescription = async () => {
+    const saveDescription = async () => {
 		if (!currentGoalId) return;
 		const goalRef = doc(firestore, `users/${user.uid}/budget/${currentGoalId}`);
 		try {
@@ -200,56 +178,70 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 					<h1>Loading...</h1>
 				</div>
 
-				<IonItemGroup>
-					<IonItemDivider>
-						<IonLabel>
-							<IonGrid>
-								<IonRow>
-									<IonCol>Description</IonCol>
-									<IonCol>Target</IonCol>
-									<IonCol>Goal</IonCol>
-									<IonCol>Saved</IonCol>
-								</IonRow>
-							</IonGrid>
-						</IonLabel>
-					</IonItemDivider>
+				{/* Single Header Row for Labels */}
+				<IonGrid className="budget-label-row">
+					<IonRow>
+						<IonCol className="budget-col-description">
+							<span className="budget-label">Description</span>
+						</IonCol>
+						<IonCol className="budget-col-target">
+							<span className="budget-label">Target</span>
+						</IonCol>
+						<IonCol className="budget-col-saved-goal">
+							<span className="budget-label">Saved / Goal</span>
+						</IonCol>
+					</IonRow>
+				</IonGrid>
 
+				{/* Each Budget Item */}
+				<IonItemGroup>
 					{filteredGoals.map((goal) => (
-						<IonItem
-							key={goal.id}
-							button
-							onClick={() => {
-								modalDetailsRef.current?.present();
-								modalDetailsRef.current?.setAttribute("goalId", goal.id);
-								setCurrentGoalId(goal.id);
-							}}
-						>
-							<IonLabel>
-								<IonGrid>
-									<IonRow>
-										<IonCol>
-											{goal.description ||
-												subCategory(goal.category, goal.subCategoryID)}
+						<div key={goal.id} className="budget-item-wrapper">
+							<IonItem
+								button
+								className="budget-card"
+								onClick={() => {
+									modalDetailsRef.current?.present();
+									modalDetailsRef.current?.setAttribute("goalId", goal.id);
+									setCurrentGoalId(goal.id);
+								}}
+							>
+								<IonGrid style={{ width: "100%" }}>
+									<IonRow className="budget-row">
+										<IonCol className="budget-col-description">
+											<IonLabel className="budget-value">
+												{goal.description ||
+													subCategory(
+														goal.category,
+														goal.subCategoryID
+													) ||
+													"Uncategorized"}
+											</IonLabel>
 										</IonCol>
-										<IonCol>
-											{goal.targetDate.toDate().toLocaleDateString()}
+										<IonCol className="budget-col-target">
+											<p className="budget-value">
+												{goal.targetDate.toDate().toLocaleDateString()}
+											</p>
 										</IonCol>
-										<IonCol>${goal.goal}</IonCol>
-										<IonCol>
-											{calculateSaved(
-												filteredTransactions(goal.transactions),
-												filteredWithdrawals(goal.withdrawals)
-											)}
+										<IonCol className="budget-col-saved-goal">
+											<p className="budget-value">
+												$
+												{calculateSaved(
+													filteredTransactions(goal.transactions),
+													filteredWithdrawals(goal.withdrawals)
+												)}{" "}
+												/ ${goal.goal}
+											</p>
 										</IonCol>
 									</IonRow>
 								</IonGrid>
-							</IonLabel>
-						</IonItem>
+							</IonItem>
+						</div>
 					))}
 				</IonItemGroup>
 			</div>
 
-			<IonModal ref={modalDetailsRef} onDidDismiss={onDetailsDismiss}>
+			<IonModal id="goal-details-modal" ref={modalDetailsRef} onDidDismiss={onDetailsDismiss}>
 				{filteredGoals.map(
 					(goal) =>
 						currentGoalId === goal.id && (
@@ -263,17 +255,16 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 								</IonHeader>
 								<IonContent className="ion-padding-horizontal">
 									<div key={goal.id}>
-										<IonFab vertical="bottom" horizontal="end" slot="fixed">
-											<IonFabButton
-												color="secondary"
-												size="small"
-												onClick={() => {
-													modalAddRef.current?.present();
-												}}
-											>
-												<IonIcon icon={add} />
-											</IonFabButton>
-										</IonFab>
+                                        <IonFabButton
+                                            className="fab-add-transaction"
+                                            size="small"
+                                            style={{ bottom: "70px", right: "16px", zIndex: 10 }}
+                                            onClick={() => {
+                                                modalAddRef.current?.present();
+                                            }}
+                                        >
+                                            <IonIcon icon={add} />
+                                        </IonFabButton>
 										<IonTextarea
 											className="custom ion-margin-vertical"
 											shape="round"
@@ -281,134 +272,151 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 											onIonInput={(e) => setDescription(e.detail.value!)}
 										/>
 										<div>
-											<IonLabel>Transactions</IonLabel>
-											<IonItemGroup
-												className="ion-margin-vertical"
-												style={{
-													maxHeight: "190px",
-													overflowY: "auto"
-												}}
-											>
-												{filteredTransactions(goal.transactions).length >
-												0 ? (
-													filteredTransactions(goal.transactions).map(
-														(transaction, index) => (
-															<IonItem
-																key={index}
-																style={{ minWidth: "75%" }}
-																color="light"
-															>
-																<IonLabel>
-																	<p>
-																		<strong>Title:</strong>{" "}
-																		{transaction.title ||
-																			"No title"}
-																	</p>
-																	<p>
-																		<strong>Date:</strong>{" "}
-																		{transaction.date
-																			.toDate()
-																			.toLocaleDateString()}
-																	</p>
-																	<p>
-																		<strong>Amount:</strong> $
-																		{transaction.amount}
-																	</p>
-																	<p
-																		style={{
-																			fontSize: "0.75em",
-																			textAlign: "center"
-																		}}
-																	>
-																		{transaction.id}
-																	</p>
-																</IonLabel>
-															</IonItem>
+											<React.Fragment>
+												<IonLabel>Transactions</IonLabel>
+												<IonItemGroup
+													className="ion-margin-vertical"
+													style={{
+														maxHeight: "190px",
+														overflowY: "auto"
+													}}
+												>
+													{filteredTransactions(goal.transactions)
+														.length > 0 ? (
+														filteredTransactions(goal.transactions).map(
+															(transaction, index) => (
+																<IonItem
+																	key={index}
+																	style={{ minWidth: "75%" }}
+																	color="light"
+																>
+																	<IonLabel>
+																		<p>
+																			<strong>Title:</strong>{" "}
+																			{transaction.title ||
+																				"No title"}
+																		</p>
+																		<p>
+																			<strong>Date:</strong>{" "}
+																			{transaction.date
+																				.toDate()
+																				.toLocaleDateString()}
+																		</p>
+																		<p>
+																			<strong>Amount:</strong>{" "}
+																			${transaction.amount}
+																		</p>
+																		<p
+																			style={{
+																				fontSize: "0.75em",
+																				textAlign: "center"
+																			}}
+																		>
+																			{transaction.id}
+																		</p>
+																	</IonLabel>
+																</IonItem>
+															)
 														)
-													)
-												) : (
-													<IonLabel>
-														<p>
-															No transactions attached to this goal.
-														</p>
-													</IonLabel>
-												)}
-											</IonItemGroup>
-											<IonLabel>Withdrawals</IonLabel>
-											<IonItemGroup
-												className="ion-margin-top"
-												style={{
-													maxHeight: "190px",
-													overflowY: "auto"
-												}}
-											>
-												{filteredWithdrawals(goal.withdrawals).length >
-												0 ? (
-													filteredWithdrawals(goal.withdrawals).map(
-														(withdrawal, index) => (
-															<IonItem
-																key={index}
-																color="light"
-																style={{ minWidth: "75%" }}
-															>
-																<IonLabel>
-																	<p>
-																		<strong>Title:</strong>{" "}
-																		{withdrawal.title ||
-																			"No title"}
-																	</p>
-																	<p>
-																		<strong>Date:</strong>{" "}
-																		{withdrawal.date
-																			.toDate()
-																			.toLocaleDateString()}
-																	</p>
-																	<p>
-																		<strong>Amount:</strong> $
-																		{withdrawal.amount}
-																	</p>
-																	<p
-																		style={{
-																			fontSize: "0.75em",
-																			textAlign: "center"
-																		}}
-																	>
-																		{withdrawal.id}
-																	</p>
-																</IonLabel>
-															</IonItem>
+													) : (
+														<IonLabel>
+															<p>
+																No transactions attached to this
+																goal.
+															</p>
+														</IonLabel>
+													)}
+												</IonItemGroup>
+											</React.Fragment>
+											<React.Fragment>
+												<IonLabel>Withdrawals</IonLabel>
+												<IonItemGroup
+													className="ion-margin-top"
+													style={{
+														maxHeight: "190px",
+														overflowY: "auto"
+													}}
+												>
+													{filteredWithdrawals(goal.withdrawals).length >
+													0 ? (
+														filteredWithdrawals(goal.withdrawals).map(
+															(withdrawal, index) => (
+																<IonItem
+																	key={index}
+																	color="light"
+																	style={{ minWidth: "75%" }}
+																>
+																	<IonLabel>
+																		<p>
+																			<strong>Title:</strong>{" "}
+																			{withdrawal.title ||
+																				"No title"}
+																		</p>
+																		<p>
+																			<strong>Date:</strong>{" "}
+																			{withdrawal.date
+																				.toDate()
+																				.toLocaleDateString()}
+																		</p>
+																		<p>
+																			<strong>Amount:</strong>{" "}
+																			${withdrawal.amount}
+																		</p>
+																		<p
+																			style={{
+																				fontSize: "0.75em",
+																				textAlign: "center"
+																			}}
+																		>
+																			{withdrawal.id}
+																		</p>
+																	</IonLabel>
+																</IonItem>
+															)
 														)
-													)
-												) : (
-													<IonLabel>
-														<p>No withdrawals attached to this goal.</p>
-													</IonLabel>
-												)}
-											</IonItemGroup>
+													) : (
+														<IonLabel>
+															<p>
+																No withdrawals attached to this
+																goal.
+															</p>
+														</IonLabel>
+													)}
+												</IonItemGroup>
+											</React.Fragment>
 										</div>
 									</div>
 								</IonContent>
 								<IonFooter>
-									<IonButton
-										slot="start"
-										expand="block"
-										color="primary"
-										onClick={saveDescription}
-									>
-										Save Description
-									</IonButton>
-									<IonButton
-										slot="end"
-										shape="round"
-										expand="block"
-										color="danger"
-										onClick={() => {
-											removeGoal(goal.id);
-											modalDetailsRef.current?.dismiss();
-										}}
-									>
-										Delete Goal
-									</IonButton>
+                                    <IonGrid>
+                                        <IonRow>
+                                            <IonCol>
+                                                <IonButton
+                                                    fill="solid"
+                                                    shape="round"
+                                                    expand="block"
+                                                    color="primary"
+                                                    onClick={saveDescription}
+                                                >
+                                                    Save Description
+                                                </IonButton>
+                                            </IonCol>
+                                            <IonCol>
+                                                <IonButton
+                                                    fill="solid"
+                                                    shape="round"
+                                                    color="danger"
+                                                    expand="block"
+                                                    onClick={() => {
+                                                        removeGoal(goal.id);
+                                                        modalDetailsRef.current?.dismiss();
+                                                    }}
+                                                >
+                                                    Delete Goal
+                                                </IonButton>
+                                            </IonCol>
+                                        </IonRow>
+                                    </IonGrid>
 								</IonFooter>
 							</React.Fragment>
 						)
@@ -416,6 +424,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 			</IonModal>
 
 			<IonModal
+				id="add-goal-modal"
 				ref={modalAddRef}
 				onDidDismiss={() => modalAddRef.current?.dismiss(null, "cancel")}
 			>
@@ -423,19 +432,19 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 					<IonToolbar>
 						<IonButton
 							slot="start"
-							fill="default"
-							color="secondary"
+							fill="clear"
+							color="light"
 							onClick={() => modalAddRef.current?.dismiss(null, "cancel")}
 						>
 							Cancel
 						</IonButton>
-						<IonTitle className="ion-text-center" slot="start">
-							Add Transaction
-						</IonTitle>
+
+						<IonTitle className="ion-text-center">Add Transaction</IonTitle>
+
 						<IonButton
 							slot="end"
-							fill="default"
-							color="primary"
+							fill="clear"
+							color="light"
 							onClick={() => modalAddRef.current?.dismiss(null, "confirm")}
 						>
 							Save
@@ -449,7 +458,7 @@ const DisplayGoals: React.FC<DisplayGoalsProps> = ({
 								<strong>Available Transactions</strong>
 							</IonLabel>
 						</IonItemDivider>
-						<div style={{ maxHeight: "30em", overflowY: "auto" }}>
+						<div>
 							{transactions.map((transaction, index) => (
 								<IonItem
 									key={index}

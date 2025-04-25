@@ -264,10 +264,9 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 							value={type}
 							onIonChange={(e) => {
 								setType(e.detail.value);
-								setCategory(""); // Reset category when type changes
+								setCategory("");
 							}}
 						>
-							{/* Get Each Type (Unique) as options */}
 							{[...new Set(categories.map((category) => category.getType()))].map(
 								(type) => (
 									<IonSelectOption key={type} value={type}>
@@ -277,7 +276,6 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 							)}
 						</IonSelect>
 					</IonItem>
-
 					<EntryCategories
 						disableHeader={true}
 						categories={filteredCategories}

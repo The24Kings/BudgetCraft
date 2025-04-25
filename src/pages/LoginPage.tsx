@@ -1,12 +1,32 @@
 import React, { useRef, useState } from "react";
 import { useHistory } from "react-router";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { collection, doc, getDoc, serverTimestamp, setDoc, Timestamp, updateDoc } from "firebase/firestore";
+import {
+	collection,
+	doc,
+	getDoc,
+	serverTimestamp,
+	setDoc,
+	Timestamp,
+	updateDoc
+} from "firebase/firestore";
 import { eye, eyeOff } from "ionicons/icons";
-import { IonButton, IonIcon, IonInput, IonItem, IonLabel, IonToast } from "@ionic/react";
+import {
+	IonButton,
+	IonContent,
+	IonHeader,
+	IonIcon,
+	IonInput,
+	IonItem,
+	IonLabel,
+	IonPage,
+	IonToast,
+	IonToolbar
+} from "@ionic/react";
+import logo from "../../resources/BudgetCraftLogo2.png";
 import categoriesData from "../categories.json";
 import { auth, firestore } from "../utilities/FirebaseConfig";
-
+import "./LoginPage.css";
 
 const LoginPage: React.FC<{
 	setUser: (user: any) => void;
@@ -22,11 +42,11 @@ const LoginPage: React.FC<{
 	const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 	const [toastMessage, setToastMessage] = useState<string>("");
 	const [showToast, setShowToast] = useState<boolean>(false);
-    const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
-    const [isTouched, setIsTouched] = useState<boolean>(false);
+	const [isValid, setIsValid] = useState<boolean | undefined>(undefined);
+	const [isTouched, setIsTouched] = useState<boolean>(false);
 
-    const input = useRef<HTMLIonInputElement>(null);
-    
+	const input = useRef<HTMLIonInputElement>(null);
+
 	const history = useHistory();
 
 	const showErrorToast = (message: string) => {
@@ -51,10 +71,10 @@ const LoginPage: React.FC<{
 			return;
 		}
 
-        if (isValid === false) {
-            showErrorToast("Invalid email.");
-            return;
-        }
+		if (isValid === false) {
+			showErrorToast("Invalid email.");
+			return;
+		}
 
 		try {
 			const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -109,10 +129,10 @@ const LoginPage: React.FC<{
 			return;
 		}
 
-        if (isValid === false) {
-            showErrorToast("Invalid email.");
-            return;
-        }
+		if (isValid === false) {
+			showErrorToast("Invalid email.");
+			return;
+		}
 
 		try {
 			const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -158,28 +178,28 @@ const LoginPage: React.FC<{
 		}
 	};
 
-    const validateEmail = (email: string) => {
-		return email.match(
-			/^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-		);
+	const validateEmail = (email: string) => {
+        return email.match(
+            "^(?=.{1,254}$)(?=.{1,64}@)[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+        );
 	};
 
-    const validate = (event: Event) => {
+	const validate = (event: Event) => {
 		const value = (event.target as HTMLInputElement).value;
 
 		setIsValid(undefined);
 
 		const isValidEmail = validateEmail(value);
 
-        handleInputChange();
+		handleInputChange();
 
-        if (isValidEmail) {
-            setIsValid(true);
-            setEmail(value);
-        } else {
-            setIsValid(false);
-            setEmail(value);
-        } 
+		if (isValidEmail) {
+			setIsValid(true);
+			setEmail(value);
+		} else {
+			setIsValid(false);
+			setEmail(value);
+		}
 	};
 
 	const markTouched = () => {
@@ -187,107 +207,130 @@ const LoginPage: React.FC<{
 	};
 
 	return (
-		<div className="login-container">
-			<h2>{isRegistering ? "Register" : "Sign In"}</h2>
+		<IonPage>
+			<IonHeader>
+				<IonToolbar className="login-toolbar">
+					<div className="logo-wrapper">
+						<img src={logo} alt="BudgetCraft Logo" className="login-logo" />
+					</div>
+				</IonToolbar>
+			</IonHeader>
 
-			<IonToast
-				isOpen={showToast}
-				onDidDismiss={() => setShowToast(false)}
-				message={toastMessage}
-				duration={0}
-				position="top"
-			/>
+			<IonContent className="login-container" fullscreen>
+				<h2>{isRegistering ? "Register" : "Sign In"}</h2>
 
-			{isRegistering && (
-				<>
+				<IonToast
+					isOpen={showToast}
+					onDidDismiss={() => setShowToast(false)}
+					message={toastMessage}
+					duration={0}
+					position="top"
+				/>
+
+				<div className="login-form-wrapper">
+					{isRegistering && (
+						<>
+							<IonItem>
+								<IonLabel position="floating">First Name</IonLabel>
+								<IonInput
+									value={firstName}
+									onIonChange={(e) => setFirstName(e.detail.value!)}
+									onIonInput={handleInputChange}
+									required
+								/>
+							</IonItem>
+							<IonItem>
+								<IonLabel position="floating">Last Name</IonLabel>
+								<IonInput
+									value={lastName}
+									onIonChange={(e) => setLastName(e.detail.value!)}
+									onIonInput={handleInputChange}
+									required
+								/>
+							</IonItem>
+						</>
+					)}
+
 					<IonItem>
-						<IonLabel position="floating">First Name</IonLabel>
+						<IonLabel position="floating">Email</IonLabel>
 						<IonInput
-							value={firstName}
-							onIonChange={(e) => setFirstName(e.detail.value!)}
-							onIonInput={handleInputChange}
+							className={`${isValid && "ion-valid"} ${isValid === false && "ion-invalid"} ${isTouched && "ion-touched"}`}
+							type="email"
+							errorText="Invalid email format"
+							onIonBlur={() => markTouched()}
+							value={email}
+							onIonInput={(e) => validate(e)}
 							required
 						/>
 					</IonItem>
+
 					<IonItem>
-						<IonLabel position="floating">Last Name</IonLabel>
+						<IonLabel position="floating">Password</IonLabel>
 						<IonInput
-							value={lastName}
-							onIonChange={(e) => setLastName(e.detail.value!)}
+							type={showPassword ? "text" : "password"}
+							value={password}
+							onIonChange={(e) => setPassword(e.detail.value!)}
 							onIonInput={handleInputChange}
+							onKeyUp={handleKeyPress}
 							required
 						/>
+						<IonButton
+							slot="end"
+							fill="clear"
+							onClick={() => setShowPassword(!showPassword)}
+							style={{ padding: "0.75rem", alignSelf: "center" }}
+						>
+							<IonIcon
+								icon={showPassword ? eyeOff : eye}
+								style={{ fontSize: "1.5rem", color: "var(--ion-color-navy-blue)" }}
+							/>
+						</IonButton>
 					</IonItem>
-				</>
-			)}
 
-			<IonItem>
-				<IonLabel position="floating">Email</IonLabel>
-				<IonInput
-					className={`${isValid && "ion-valid"} ${isValid === false && "ion-invalid"} ${isTouched && "ion-touched"}`}
-					type="email"
-					errorText="Invalid email format"
-					onIonBlur={() => markTouched()}
-					value={email}
-					onIonInput={(e) => validate(e)}
-					required
-				/>
-			</IonItem>
+					{isRegistering && (
+						<IonItem>
+							<IonLabel position="floating">Confirm Password</IonLabel>
+							<IonInput
+								type={showConfirmPassword ? "text" : "password"}
+								value={confirmPassword}
+								onIonChange={(e) => setConfirmPassword(e.detail.value!)}
+								onIonInput={handleInputChange}
+								onKeyUp={handleKeyPress}
+								required
+							/>
+							<IonButton
+								slot="end"
+								fill="clear"
+								onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+								style={{ padding: "0.75rem", alignSelf: "center" }}
+							>
+								<IonIcon
+									icon={showConfirmPassword ? eyeOff : eye}
+									style={{ fontSize: "1.5rem" }}
+								/>
+							</IonButton>
+						</IonItem>
+					)}
 
-			<IonItem>
-				<IonLabel position="floating">Password</IonLabel>
-				<IonInput
-					type={showPassword ? "text" : "password"}
-					value={password}
-					onIonChange={(e) => setPassword(e.detail.value!)}
-					onIonInput={handleInputChange}
-					onKeyUp={handleKeyPress}
-					required
-				/>
-				<IonButton
-					slot="end"
-					fill="clear"
-					onClick={() => setShowPassword(!showPassword)}
-					style={{ padding: "0.75rem", alignSelf: "center" }}
-				>
-					<IonIcon icon={showPassword ? eyeOff : eye} style={{ fontSize: "1.5rem" }} />
-				</IonButton>
-			</IonItem>
-
-			{isRegistering && (
-				<IonItem>
-					<IonLabel position="floating">Confirm Password</IonLabel>
-					<IonInput
-						type={showConfirmPassword ? "text" : "password"}
-						value={confirmPassword}
-						onIonChange={(e) => setConfirmPassword(e.detail.value!)}
-						onIonInput={handleInputChange}
-						onKeyUp={handleKeyPress}
-						required
-					/>
 					<IonButton
-						slot="end"
-						fill="clear"
-						onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-						style={{ padding: "0.75rem", alignSelf: "center" }}
+						expand="block"
+						onClick={isRegistering ? handleRegister : handleSignIn}
 					>
-						<IonIcon
-							icon={showConfirmPassword ? eyeOff : eye}
-							style={{ fontSize: "1.5rem" }}
-						/>
+						{isRegistering ? "Register" : "Sign In"}
 					</IonButton>
-				</IonItem>
-			)}
 
-			<IonButton expand="full" onClick={isRegistering ? handleRegister : handleSignIn}>
-				{isRegistering ? "Register" : "Sign In"}
-			</IonButton>
-			<IonButton expand="full" fill="clear" onClick={() => setIsRegistering(!isRegistering)}>
-				{isRegistering
-					? "Already have an account? Sign In"
-					: "Don't have an account? Register"}
-			</IonButton>
-		</div>
+					<IonButton
+						expand="block"
+						fill="clear"
+						onClick={() => setIsRegistering(!isRegistering)}
+					>
+						{isRegistering
+							? "Already have an account? Sign In"
+							: "Don't have an account? Register"}
+					</IonButton>
+				</div>
+			</IonContent>
+		</IonPage>
 	);
 };
 

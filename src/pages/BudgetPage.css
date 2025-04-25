@@ -1,0 +1,342 @@
+/* ----------------------------------------
+   Header & Toolbar
+---------------------------------------- */
+ion-toolbar {
+	--background: var(--ion-color-navy-blue);
+	--color: white;
+}
+
+/* ----------------------------------------
+   Page Background & Container
+---------------------------------------- */
+.container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 0 10px 10px;
+	width: 100%;
+	overflow-y: auto;
+	background-color: var(--ion-color-navy-blue-tint);
+}
+
+/* ----------------------------------------
+   Budget Items
+---------------------------------------- */
+.budget-item-wrapper {
+	width: 100vw;
+	box-sizing: border-box;
+	padding: 0 10px;
+}
+
+.budget-card {
+	background-color: var(--ion-color-mint);
+	border-radius: 10px;
+	padding: 10px;
+	margin-bottom: 10px;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.budget-inner-card {
+	background-color: #ffffff;
+	color: var(--text-color);
+	border-radius: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	padding: 12px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* ----------------------------------------
+   Label Row
+---------------------------------------- */
+.budget-label-row {
+	padding: 0 10px;
+	margin-bottom: 6px;
+	background-color: var(--ion-color-navy-blue-tint);
+}
+
+.budget-label {
+	font-size: 0.9rem;
+	color: var(--text-color);
+	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	width: 100%;
+	padding: 0 2px;
+}
+
+.budget-col-description .budget-label {
+	padding-left: 30px;
+	text-align: left;
+}
+
+.budget-label-target {
+	flex: 0 0 25%;
+	text-align: center;
+}
+
+.budget-col-saved-goal .budget-label {
+	padding-right: 20px;
+	text-align: right;
+}
+
+/* ----------------------------------------
+   Budget Row Layout
+---------------------------------------- */
+.budget-row {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	width: 100%;
+}
+
+.budget-row ion-col {
+	display: flex;
+	align-items: center;
+}
+
+.budget-col-description {
+	flex: 1 1 40%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.budget-col-target {
+	flex: 0 0 25%;
+	text-align: center;
+}
+
+.budget-col-saved-goal {
+	flex: 0 0 30%;
+	text-align: right;
+}
+
+.budget-value {
+	font-size: 0.75rem;
+	color: var(--text-color) !important;
+	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.1rem;
+	width: 100%;
+}
+
+/* ----------------------------------------
+   FAB Button
+---------------------------------------- */
+ion-fab-button {
+	--background: var(--ion-color-mint);
+	--color: black;
+}
+
+.fab-add-transaction {
+	--background: var(--ion-color-mint);
+	--color: black;
+}
+
+/* ----------------------------------------
+   Modal Styling
+---------------------------------------- */
+
+ion-modal#add-goal-modal {
+	padding: 20px;
+	--max-height: 80%;
+	--border-radius: 16px;
+	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal#add-goal-modal::part(backdrop) {
+	background: rgba(209, 213, 219);
+	opacity: 1;
+}
+
+ion-modal#add-goal-modal ion-toolbar {
+	--background: var(--ion-color-navy-blue);
+	--color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 8px;
+	min-height: 50px;
+	box-sizing: border-box;
+}
+
+ion-modal#add-goal-modal ion-title {
+	flex: 1;
+	text-align: center;
+	font-size: 1rem;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin: 0 8px;
+}
+
+ion-modal#add-goal-modal ion-button {
+	font-size: 0.9rem;
+	font-weight: 500;
+	text-transform: none;
+}
+
+ion-modal#add-goal-modal .categories {
+	height: 80%;
+	overflow-y: auto;
+}
+
+ion-modal#add-goal-modal .category ion-item,
+ion-modal#add-goal-modal .subCategory ion-button {
+	--background: white;
+	--color: var(--ion-color-navy-blue);
+	font-weight: 500;
+}
+ion-modal#add-goal-modal .modal-description-item {
+	margin: 0 16px 16px 16px;
+	border-radius: 10px;
+	box-shadow: none;
+	background: transparent;
+}
+
+/* ----------------------------------------
+   Modal Title
+---------------------------------------- */
+.add-modal-title {
+	font-size: 0.5rem;
+	font-weight: 600;
+	color: white;
+	text-align: center;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* ----------------------------------------
+   Budget / Goal Details Modal
+---------------------------------------- */
+ion-modal#goal-details-modal {
+	padding: 20px;
+	--max-height: 80%;
+	--border-radius: 16px;
+	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal#goal-details-modal::part(backdrop) {
+	background: rgba(209, 213, 219);
+	opacity: 1;
+}
+
+ion-modal#goal-details-modal ion-toolbar {
+	--background: var(--ion-color-navy-blue);
+	--color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 8px;
+	min-height: 50px;
+	box-sizing: border-box;
+}
+
+ion-modal#goal-details-modal ion-title {
+	flex: 1;
+	text-align: center;
+	font-size: 1rem;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin: 0 8px;
+}
+
+ion-modal#goal-details-modal ion-button {
+	font-size: 0.9rem;
+	font-weight: 500;
+	text-transform: none;
+}
+
+#goal-details-modal ion-textarea.custom {
+	--background: var(--ion-toolbar-background);
+	--color: #000;
+	--padding-end: 10px;
+	--padding-start: 10px;
+	--padding-top: 10px;
+	--padding-bottom: 10px;
+	--placeholder-color: var(--muted-text-color);
+	--placeholder-opacity: 1;
+	--border-radius: 10px;
+	margin: 16px 0;
+}
+
+ion-modal#goal-details-modal ion-modal#add-goal-modal {
+	padding: 20px;
+	--max-height: 80%;
+	--border-radius: 16px;
+	--box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+ion-modal#goal-details-modal ion-modal#add-goal-modal ion-toolbar {
+	--background: var(--ion-color-navy-blue);
+	--color: white;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 8px;
+}
+
+#goal-details-modal ion-item[color="light"] {
+	--background: white;
+	--color: var(--ion-color-navy-blue);
+	border-radius: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+	margin-bottom: 10px;
+}
+
+/* ----------------------------------------
+   Add Transaction to Goal FAB Button
+---------------------------------------- */
+#goal-details-modal .fab-add-transaction {
+	position: absolute;
+	bottom: 16px;
+	right: 16px;
+	z-index: 100;
+	--background: var(--ion-color-mint);
+	--color: black;
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	background: transparent !important;
+}
+
+#goal-details-modal .goal-wrapper {
+	background: transparent !important;
+}
+
+ion-modal#goal-details-modal ion-content {
+	--background: transparent !important;
+	background: transparent !important;
+}
+
+/* ----------------------------------------
+   Cancel / Save Buttons
+---------------------------------------- */
+.add-modal-cancel,
+.add-modal-save {
+	font-size: 0.95rem;
+	font-weight: 500;
+	white-space: nowrap;
+	color: white;
+	background: transparent;
+}
+
+/* ----------------------------------------
+   Accordion
+---------------------------------------- */
+ion-accordion::part(header) {
+	background: #cef9f2;
+	color: #1c1c1c;
+	border-radius: 10px;
+	margin-bottom: 10px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+	padding: 10px;
+}

@@ -1,20 +1,22 @@
 import React from "react";
-import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import { constructOutline } from "ionicons/icons";
+import { IonContent, IonHeader, IonIcon, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import "../pages/ToolsPage.css";
 
 const ToolsPage: React.FC = () => {
 	return (
-		<IonPage id="main-content">
+		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle>Tools</IonTitle>
+					<IonTitle className="tools-title">Tools</IonTitle>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent className="ion-padding">
-				<h2>This is the Tools Page</h2>
-				<p>
-					Here’s where you’ll include financial tools like calculators or category
-					editors.
-				</p>
+
+			<IonContent className="tools-content" fullscreen>
+				<div className="tools-coming-soon-wrapper">
+					<IonIcon icon={constructOutline} className="tools-icon" />
+					<h2>Coming Soon</h2>
+				</div>
 			</IonContent>
 		</IonPage>
 	);

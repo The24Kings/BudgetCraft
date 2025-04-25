@@ -1,0 +1,90 @@
+/* ----------------------------------------
+   Login Toolbar + Logo Styling
+---------------------------------------- */
+.login-toolbar {
+	--background: var(--ion-color-navy-blue);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: 8px 0;
+}
+
+.logo-wrapper {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+}
+
+.login-logo {
+	height: 60px;
+	object-fit: contain;
+}
+
+/* ----------------------------------------
+   Page Container
+---------------------------------------- */
+.login-container {
+	--background: var(--ion-color-navy-blue-tint);
+	background-color: var(--ion-color-navy-blue-tint);
+	min-height: 100vh;
+}
+
+.login-container h2 {
+	color: white;
+	text-align: left;
+	padding-left: 22px;
+	font-size: 1.6rem;
+}
+
+/* ----------------------------------------
+   Form Layout
+---------------------------------------- */
+.login-form-wrapper {
+	width: 100%;
+	max-width: 400px;
+	margin: 0 auto;
+	padding: 0 16px;
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+/* Input Fields */
+.login-form-wrapper ion-item {
+	width: 100%;
+	background: white;
+	--background: white;
+	border-radius: 12px;
+	margin-bottom: 16px;
+	box-sizing: border-box;
+}
+
+.login-form-wrapper ion-label {
+	color: var(--ion-color-navy-blue);
+	font-weight: 500;
+}
+
+.login-form-wrapper ion-input {
+	--color: #000;
+}
+
+/* Primary Button */
+.login-form-wrapper ion-button:not([fill="clear"]) {
+	--background: var(--ion-color-mint);
+	--color: var(--ion-color-navy-blue);
+	font-weight: 600;
+	width: 100%;
+	margin-top: 16px;
+	border-radius: 12px;
+}
+
+/* Secondary Toggle Button */
+.login-form-wrapper ion-button[fill="clear"] {
+	color: var(--ion-color-mint);
+	--color: var(--ion-color-mint);
+	background: transparent;
+	margin-top: 8px;
+	font-size: 0.95rem;
+}

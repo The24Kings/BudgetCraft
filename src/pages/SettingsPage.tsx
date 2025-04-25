@@ -1,28 +1,40 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { signOut } from "firebase/auth";
-import {
-	IonAvatar,
-	IonButton,
-	IonContent,
-	IonFooter,
-	IonHeader,
-	IonItemDivider,
-	IonItemGroup,
-	IonModal,
-	IonPage,
-	IonText,
-	IonTitle,
-	IonToolbar
-} from "@ionic/react";
+import { doc, getDoc } from "firebase/firestore";
+import { IonContent, IonHeader, IonItem, IonLabel, IonList, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
 import { Category, EntryCategories } from "../utilities/Categories";
 import { exportUserDataJSON } from "../utilities/DataExport";
-import { auth } from "../utilities/FirebaseConfig";
+import { auth, firestore } from "../utilities/FirebaseConfig";
+import "../pages/SettingsPage.css";
 
 const SettingsPage: React.FC<{ user: any; jsonData: any; categoryData: Category[] }> = ({
 	user,
 	jsonData,
 	categoryData
 }) => {
+	const [displayName, setDisplayName] = useState("User");
+
+	useEffect(() => {
+		if (!user) return;
+
+		const fetchDisplayName = async () => {
+			try {
+				const userRef = doc(firestore, "users", user.uid);
+				const userSnap = await getDoc(userRef);
+				if (userSnap.exists() && userSnap.data().displayName) {
+					setDisplayName(userSnap.data().displayName);
+				} else {
+					setDisplayName(user.email?.split("@")[0] || "User");
+				}
+			} catch (err) {
+				console.error("Failed to fetch display name from Firestore:", err);
+				setDisplayName(user.email?.split("@")[0] || "User");
+			}
+		};
+
+		fetchDisplayName();
+	}, [user]);
+
 	const handleLogout = async () => {
 		try {
 			await signOut(auth);
@@ -78,74 +90,79 @@ const SettingsPage: React.FC<{ user: any; jsonData: any; categoryData: Category[
 	}, []);
 
 	return (
-		<IonPage id="main-content">
+		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle>Settings</IonTitle>
+					<IonTitle className="page-title">Settings</IonTitle>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent className="ion-padding">
-				<IonItemGroup
-					style={{ display: "flex", alignItems: "center", justifyContent: "left" }}
-				>
-					<IonAvatar
-						className="menu-avatar"
-						style={{
-							marginRight: "20px",
-							width: "60px",
-							height: "60px"
-						}}
-					>
-						<img
-							src={"https://ionicframework.com/docs/img/demos/avatar.svg"}
-							alt="User Avatar"
-						/>
-					</IonAvatar>
-					<div style={{ display: "flex", flexDirection: "column" }}>
-						<IonText>
-							<h2>Welcome, {userName}!</h2>
-						</IonText>
-						<IonButton color="danger" onClick={handleLogout}>
-							Logout
-						</IonButton>
-					</div>
-				</IonItemGroup>
 
-				<IonItemDivider />
+			<IonContent className="settings-content">
+				{/* Display Firestore Display Name */}
+				<IonText className="settings-username">
+					<h2>{displayName}</h2>
+				</IonText>
 
-				<IonItemGroup>
-					<IonButton expand="full" color="primary" onClick={showCategoryModal}>
-						<IonText>Edit Categories</IonText>
-					</IonButton>
-				</IonItemGroup>
-			</IonContent>
-			<IonFooter>
-				<IonButton expand="full" color="primary" onClick={handleExportJSON}>
-					Export Data
-				</IonButton>
-			</IonFooter>
-
-			<IonModal
-				ref={modalCategoryRef}
-				isOpen={false}
-				onDidDismiss={() => modalCategoryRef.current?.dismiss()}
-			>
-				<IonHeader>
-					<IonToolbar>
-						<IonTitle>Edit Categories</IonTitle>
-						<IonButton
-							fill="clear"
-							slot="end"
-							onClick={() => modalCategoryRef.current?.dismiss()}
+				{/* Main Settings Options */}
+				<div className="settings-container">
+					<IonList lines="none">
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/account"
+							className="settings-item"
 						>
-							Close
-						</IonButton>
-					</IonToolbar>
-				</IonHeader>
-				<IonContent className="ion-padding">
-					<EntryCategories userID={user.uid} json={jsonData} categories={categoryData} />
-				</IonContent>
-			</IonModal>
+							<IonLabel>Account</IonLabel>
+						</IonItem>
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/notifications"
+							className="settings-item"
+						>
+							<IonLabel>Notification Settings</IonLabel>
+						</IonItem>
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/export"
+							className="settings-item"
+						>
+							<IonLabel>Export User Data</IonLabel>
+						</IonItem>
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/edit-categories"
+							className="settings-item"
+						>
+							<IonLabel>Edit Categories</IonLabel>
+						</IonItem>
+					</IonList>
+				</div>
+
+				{/* Secondary Options */}
+				<div className="settings-container">
+					<IonList lines="none">
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/help"
+							className="settings-item"
+						>
+							<IonLabel>Help Topics</IonLabel>
+						</IonItem>
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/about"
+							className="settings-item"
+						>
+							<IonLabel>About</IonLabel>
+						</IonItem>
+					</IonList>
+				</div>
+			</IonContent>
 		</IonPage>
 	);
 };

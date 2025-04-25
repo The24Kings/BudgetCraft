@@ -1,17 +1,17 @@
 import React from "react";
 import { IonContent, IonHeader, IonPage, IonTitle, IonToolbar } from "@ionic/react";
+import "./GoalsPage.css";
 import { Category } from "../utilities/Categories";
-import Goal from "../utilities/Goals/Goal";
-import "./HomePage.css";
 import AddGoal from "../utilities/Goals/Add";
 import DisplayGoals from "../utilities/Goals/Display";
+import Goal from "../utilities/Goals/Goal";
 import Transaction from "../utilities/Transactions/Transaction";
 
 interface GoalsPageProps {
 	user: any;
 	goalData: Goal[];
 	categoryData: Category[];
-    transactionData: Transaction[];
+	transactionData: Transaction[];
 }
 
 const GoalsPage: React.FC<GoalsPageProps> = ({ user, goalData, categoryData, transactionData }) => {
@@ -19,7 +19,7 @@ const GoalsPage: React.FC<GoalsPageProps> = ({ user, goalData, categoryData, tra
 		<IonPage id="main-content">
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle>Goals</IonTitle>
+					<IonTitle className="page-title">Goals</IonTitle>
 				</IonToolbar>
 			</IonHeader>
 			<IonContent>

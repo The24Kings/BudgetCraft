@@ -1,30 +1,63 @@
-/* For information on how to create your own theme, please see:
-http://ionicframework.com/docs/theming/ */
+/* ===============================
+   Ionic Custom Theme Variables
+   =============================== */
 
 :root {
-	--ion-background-color: #233F57;
+	/* Base Theme Colors */
+	--ion-background-color: #233f57;
 	--ion-toolbar-background: #ebebeb;
+	--muted-text-color: #c1c1c1;
 	--ion-color-primary: #0077cc;
 	--ion-text-color: #d5dbe0;
 	--ion-color-step-50: #e0e0e0;
 	--ion-color-step-100: #d4d4d4;
 
-	/* Custom app colors */
-	--app-color-purple: #1A2E40;
-	--app-color-green: #CEF9F2;
-}
+	/* Custom App Colors */
+	--app-color-purple: #1a2e40;
+	--app-color-green: #cef9f2;
 
-/* Custom colors for the app */
-/* main dark background color */
-:root {
-	--ion-color-navy-blue: #1A2E40;
-	--ion-color-navy-blue-rgb: 26,46,64;
+	/* Navy Blue Theme */
+	--ion-color-navy-blue: #1a2e40;
+	--ion-color-navy-blue-rgb: 26, 46, 64;
 	--ion-color-navy-blue-contrast: #ffffff;
-	--ion-color-navy-blue-contrast-rgb: 255,255,255;
+	--ion-color-navy-blue-contrast-rgb: 255, 255, 255;
 	--ion-color-navy-blue-shade: #172838;
-	--ion-color-navy-blue-tint: #233F57;
+	--ion-color-navy-blue-tint: #233f57;
+
+	/* Mint Theme */
+	--ion-color-mint: #cef9f2;
+	--ion-color-mint-rgb: 206, 249, 242;
+	--ion-color-mint-contrast: #000000;
+	--ion-color-mint-contrast-rgb: 0, 0, 0;
+	--ion-color-mint-shade: #b5dbd5;
+	--ion-color-mint-tint: #d3faf3;
+
+	/* FAB Button (same as Mint) */
+	--ion-color-fab: #cef9f2;
+	--ion-color-fab-rgb: 206, 249, 242;
+	--ion-color-fab-contrast: #000000;
+	--ion-color-fab-contrast-rgb: 0, 0, 0;
+	--ion-color-fab-shade: #b5dbd5;
+	--ion-color-fab-tint: #d3faf3;
+
+	/* Month Picker (same as Mint) */
+	--ion-color-month-button: #cef9f2;
+	--ion-color-month-button-rgb: 206, 249, 242;
+	--ion-color-month-button-contrast: #000000;
+	--ion-color-month-button-contrast-rgb: 0, 0, 0;
+	--ion-color-month-button-shade: #b5dbd5;
+	--ion-color-month-button-tint: #d3faf3;
+
+	/* Tab Bar */
+	--ion-color-tab-bar: #f4c95d;
+	--ion-color-tab-bar-rgb: 244, 201, 93;
+	--ion-color-tab-bar-contrast: #000000;
+	--ion-color-tab-bar-contrast-rgb: 0, 0, 0;
+	--ion-color-tab-bar-shade: #d7b152;
+	--ion-color-tab-bar-tint: #f5ce6d;
 }
 
+/* Theme Classes */
 .ion-color-navy-blue {
 	--ion-color-base: var(--ion-color-navy-blue);
 	--ion-color-base-rgb: var(--ion-color-navy-blue-rgb);
@@ -32,15 +65,6 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-contrast-rgb: var(--ion-color-navy-blue-contrast-rgb);
 	--ion-color-shade: var(--ion-color-navy-blue-shade);
 	--ion-color-tint: var(--ion-color-navy-blue-tint);
-}
-/*Main light accent color*/
-:root {
-	--ion-color-mint: #CEF9F2;
-	--ion-color-mint-rgb: 206,249,242;
-	--ion-color-mint-contrast: #000000;
-	--ion-color-mint-contrast-rgb: 0,0,0;
-	--ion-color-mint-shade: #b5dbd5;
-	--ion-color-mint-tint: #d3faf3;
 }
 
 .ion-color-mint {
@@ -52,16 +76,6 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-tint: var(--ion-color-mint-tint);
 }
 
-/* FAB Button */
-:root {
-	--ion-color-fab: #CEF9F2;
-	--ion-color-fab-rgb: 206,249,242;
-	--ion-color-fab-contrast: #000000;
-	--ion-color-fab-contrast-rgb: 0,0,0;
-	--ion-color-fab-shade: #b5dbd5;
-	--ion-color-fab-tint: #d3faf3;
-}
-
 .ion-color-fab {
 	--ion-color-base: var(--ion-color-fab);
 	--ion-color-base-rgb: var(--ion-color-fab-rgb);
@@ -69,16 +83,6 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-contrast-rgb: var(--ion-color-fab-contrast-rgb);
 	--ion-color-shade: var(--ion-color-fab-shade);
 	--ion-color-tint: var(--ion-color-fab-tint);
-}
-
-/* Month Picker */
-:root {
-	--ion-color-month-button: #CEF9F2;
-	--ion-color-month-button-rgb: 206,249,242;
-	--ion-color-month-button-contrast: #000000;
-	--ion-color-month-button-contrast-rgb: 0,0,0;
-	--ion-color-month-button-shade: #b5dbd5;
-	--ion-color-month-button-tint: #d3faf3;
 }
 
 .ion-color-month-button {
@@ -90,16 +94,6 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-tint: var(--ion-color-month-button-tint);
 }
 
-/* Tab Bar */
-:root {
-	--ion-color-tab-bar: #F4C95D;
-	--ion-color-tab-bar-rgb: 244,201,93;
-	--ion-color-tab-bar-contrast: #000000;
-	--ion-color-tab-bar-contrast-rgb: 0,0,0;
-	--ion-color-tab-bar-shade: #d7b152;
-	--ion-color-tab-bar-tint: #f5ce6d;
-}
-
 .ion-color-tab-bar {
 	--ion-color-base: var(--ion-color-tab-bar);
 	--ion-color-base-rgb: var(--ion-color-tab-bar-rgb);
@@ -108,3 +102,53 @@ http://ionicframework.com/docs/theming/ */
 	--ion-color-shade: var(--ion-color-tab-bar-shade);
 	--ion-color-tint: var(--ion-color-tab-bar-tint);
 }
+
+/* ----------------------------------------
+   Alert Interface Fix for IonSelect
+---------------------------------------- */
+.alert-wrapper,
+.alert-title,
+.alert-sub-title,
+.alert-message,
+.alert-radio-label {
+	color: #000 !important;
+}
+
+.alert-wrapper {
+	background: #f4f4f4 !important;
+	border-radius: 12px !important;
+}
+
+.alert-button-group,
+.alert-radio-group {
+	background-color: #f4f4f4 !important;
+}
+
+ion-alert::part(content) {
+	background: #f4f4f4 !important;
+	color: #000 !important;
+	border-radius: 12px !important;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+ion-alert::part(backdrop) {
+	background-color: rgba(0, 0, 0, 0.3) !important;
+	backdrop-filter: blur(2px);
+}
+
+ion-alert::part(base) {
+	background-color: transparent !important;
+}
+
+.select-wrapper {
+	background-color: transparent !important;
+}
+
+ion-backdrop,
+ion-backdrop.sc-ion-alert-md,
+ion-backdrop.sc-ion-alert-ios {
+	background-color: transparent !important;
+}
+
+/* For information on how to create your own theme, 
+please see: http://ionicframework.com/docs/theming/ */

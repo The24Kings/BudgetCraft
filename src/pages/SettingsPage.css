@@ -1,0 +1,213 @@
+/* ----------------------------------------
+   Settings Page Styles
+---------------------------------------- */
+
+.page-title {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: white;
+	text-align: center;
+	width: 100%;
+}
+
+.settings-content {
+	--background: var(--ion-color-navy-blue-tint);
+	background-color: var(--ion-color-navy-blue-tint);
+	padding: 20px;
+}
+
+.settings-username {
+	font-size: 1.2rem;
+	font-weight: bold;
+	color: white;
+	margin-bottom: 20px;
+}
+
+.settings-username h2 {
+	margin-left: 12px;
+}
+
+.settings-container {
+	background: white;
+	border-radius: 16px;
+	padding: 0;
+	margin: 0 12px 20px 12px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
+}
+
+.settings-container ion-item {
+	--padding-start: 12px;
+	--padding-end: 12px;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.settings-item {
+	background: white !important;
+	color: var(--ion-color-navy-blue) !important;
+	font-weight: 500;
+	border-radius: 0;
+	box-shadow: none !important;
+	border-bottom: 1px solid #e0e0e0;
+	width: 100%;
+	margin: 0;
+}
+
+.settings-container ion-item:last-of-type.settings-item {
+	border-bottom: none;
+}
+
+.settings-container ion-list {
+	padding: 0;
+	margin: 0;
+	background: transparent !important;
+}
+
+/* ----------------------------------------
+   Export User Data Page Styles
+---------------------------------------- */
+
+.export-user-data-page .export-user-button {
+	--background: var(--ion-color-mint) !important;
+	color: black !important;
+	font-weight: 500;
+	border-radius: 12px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	margin-top: 20px;
+}
+
+/* ----------------------------------------
+   Edit Categories Page Styles
+---------------------------------------- */
+
+.edit-categories-ion-item-select {
+	background: white;
+	border-radius: 12px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	padding-left: 12px;
+	padding-right: 12px;
+	margin-bottom: 20px;
+}
+
+.edit-categories-ion-select {
+	--placeholder-color: #666;
+	--color: black;
+	--background: white;
+	--padding-start: 12px;
+	--padding-end: 12px;
+	border-radius: 8px;
+	font-weight: 500;
+}
+
+.edit-categories-page ion-item-divider {
+	display: none;
+}
+
+/* ----------------------------------------
+   Edit Personal Info Page Styles 
+---------------------------------------- */
+
+.edit-name-modal-header {
+	background-color: var(--ion-color-mint);
+	color: black;
+	text-align: center;
+}
+
+.mint-button {
+	--background: var(--ion-color-mint);
+	color: black;
+	font-weight: 500;
+}
+
+.danger-button {
+	--background: var(--ion-color-danger);
+	color: white;
+	font-weight: 500;
+}
+
+/* ----------------------------------------
+   Notification Settings Page Styles 
+---------------------------------------- */
+
+.toggle-mint ion-toggle {
+	--handle-background: white;
+	--background: #ccc;
+	--background-checked: var(--ion-color-mint) !important;
+	--handle-background-checked: white;
+}
+
+.checkbox-mint ion-checkbox {
+	--size: 22px;
+	--border-width: 2px;
+	--border-color: var(--ion-color-navy-blue);
+	--border-color-checked: var(--ion-color-mint);
+	--background: white;
+	--background-checked: var(--ion-color-mint);
+	--checkmark-color: black;
+	border-radius: 6px;
+}
+
+.checkbox-mint::part(container) {
+	background-color: white !important;
+	border: 2px solid var(--ion-color-navy-blue) !important;
+	border-radius: 6px !important;
+	padding: 0 !important;
+	box-shadow: none !important;
+}
+
+.checkbox-mint[aria-checked="true"]::part(container) {
+	background-color: var(--ion-color-navy-blue) !important;
+	border-color: var(--ion-color-navy-blue) !important;
+}
+
+/* ----------------------------------------
+   Help Topics Page Styles 
+---------------------------------------- */
+
+.help-accordion-group {
+	padding: 0;
+	margin: 0;
+	background: transparent;
+	box-shadow: none;
+}
+
+.help-accordion-group ion-accordion {
+	margin: 0;
+	border-radius: 0;
+	box-shadow: none;
+	background: white;
+}
+
+.help-accordion-header {
+	display: flex;
+	align-items: center;
+	width: 100%;
+	background: white;
+	color: var(--ion-color-navy-blue);
+	font-weight: 500;
+	border-bottom: 1px solid #e0e0e0;
+	padding: 12px;
+	box-sizing: border-box;
+}
+
+.help-accordion-group ion-accordion::part(content) {
+	background: white;
+	padding: 12px;
+	color: #1c1c1c;
+	font-size: 0.95rem;
+	font-weight: 400;
+	line-height: 1.4;
+}
+
+.help-accordion-group ion-accordion::part(header) {
+	background: white !important;
+	color: var(--ion-color-navy-blue) !important;
+	border-radius: 0;
+	box-shadow: none;
+	margin: 0;
+	padding: 12px;
+	border-bottom: 1px solid #e0e0e0;
+}
