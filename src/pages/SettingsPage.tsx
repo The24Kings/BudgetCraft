@@ -1,105 +1,64 @@
-import React, { useRef } from "react";
-import { signOut } from "firebase/auth";
-import { IonAvatar, IonButton, IonContent, IonFooter, IonHeader, IonItemDivider, IonItemGroup, IonModal, IonPage, IonText, IonTitle, IonToolbar } from "@ionic/react";
-import { Category, EntryCategories } from "../utilities/Categories";
-import { exportUserDataJSON } from "../utilities/DataExport";
-import { auth } from "../utilities/FirebaseConfig";
+import React from "react";
+import {
+	IonButton,
+	IonContent,
+	IonHeader,
+	IonItem,
+	IonLabel,
+	IonList,
+	IonPage,
+	IonText,
+	IonTitle,
+	IonToolbar
+} from "@ionic/react";
 
-
-const SettingsPage: React.FC<{user: any, jsonData: any, categoryData: Category[]}> = ({ user, jsonData, categoryData }) => {
-    const handleLogout = async () => {
-		try {
-			await signOut(auth);
-			console.log("User signed out");
-		} catch (error) {
-			console.error("Logout Error:", error);
-		}
-	};
-
-	const handleExportJSON = () => {
-		if (user) {
-			const categories: any[] = [];
-			exportUserDataJSON(user.uid, categories);
-		}
-	};
-
-    const userName = user?.displayName || (user?.email?.split("@")[0]) || "User";
-
-    const modalCategoryRef = useRef<HTMLIonModalElement>(null);
-
-    const showCategoryModal = () => {
-        if (modalCategoryRef.current) {
-            modalCategoryRef.current.present();
-        } 
-    }
+const SettingsPage: React.FC<{ user: any }> = ({ user }) => {
+	const userName = user?.displayName || user?.email?.split("@")[0] || "User";
 
 	return (
-		<IonPage id="main-content">
+		<IonPage>
 			<IonHeader>
 				<IonToolbar>
-					<IonTitle>Settings</IonTitle>
+					<IonTitle className="ion-text-center">Settings</IonTitle>
 				</IonToolbar>
 			</IonHeader>
-			<IonContent className="ion-padding">
-				<IonItemGroup
-					style={{ display: "flex", alignItems: "center", justifyContent: "left" }}
-				>
-					<IonAvatar
-						className="menu-avatar"
-						style={{
-							marginRight: "20px",
-							width: "60px",
-							height: "60px"
-						}}
-					>
-						<img
-							src={"https://ionicframework.com/docs/img/demos/avatar.svg"}
-							alt="User Avatar"
-						/>
-					</IonAvatar>
-					<div style={{ display: "flex", flexDirection: "column" }}>
-						<IonText>
-							<h2>Welcome, {userName}!</h2>
-						</IonText>
-						<IonButton color="danger" onClick={handleLogout}>Logout</IonButton>
-					</div>
-				</IonItemGroup>
 
-				<IonItemDivider />
+			<IonContent className="settings-content">
+				{/* User Name Header */}
+				<IonText className="settings-username">
+					<h2>{userName}</h2>
+				</IonText>
 
-				<IonItemGroup>
-					<IonButton expand="full" color="primary" onClick={showCategoryModal}>
-						<IonText>Edit Categories</IonText>
-					</IonButton>
-				</IonItemGroup>
+				{/* Container 1 */}
+				<div className="settings-container">
+					<IonList lines="none">
+						<IonItem button detail={true} routerLink="/settings/personal">
+							<IonLabel>Edit Personal Info</IonLabel>
+						</IonItem>
+						<IonItem button detail={true} routerLink="/settings/notifications">
+							<IonLabel>Notification Settings</IonLabel>
+						</IonItem>
+						<IonItem button detail={true} routerLink="/settings/export">
+							<IonLabel>Export User Data</IonLabel>
+						</IonItem>
+						<IonItem button detail={true} routerLink="/settings/edit-categories">
+							<IonLabel>Edit Categories</IonLabel>
+						</IonItem>
+					</IonList>
+				</div>
+
+				{/* Container 2 */}
+				<div className="settings-container">
+					<IonList lines="none">
+						<IonItem button detail={true} routerLink="/settings/help">
+							<IonLabel>Help Topics</IonLabel>
+						</IonItem>
+						<IonItem button detail={true} routerLink="/settings/about">
+							<IonLabel>About</IonLabel>
+						</IonItem>
+					</IonList>
+				</div>
 			</IonContent>
-			<IonFooter>
-				<IonButton expand="full" color="primary" onClick={handleExportJSON}>
-					Export Data
-				</IonButton>
-			</IonFooter>
-
-			<IonModal
-				ref={modalCategoryRef}
-				isOpen={false}
-				onDidDismiss={() => modalCategoryRef.current?.dismiss()}
-			>
-				<IonHeader>
-					<IonToolbar>
-						<IonTitle>Edit Categories</IonTitle>
-						<IonButton
-							fill="clear"
-							slot="end"
-							onClick={() => modalCategoryRef.current?.dismiss()}
-						>
-							Close
-						</IonButton>
-					</IonToolbar>
-				</IonHeader>
-				<IonContent className="ion-padding">
-					<EntryCategories userID={user.uid} json={jsonData} categories={categoryData} />
-				</IonContent>
-			</IonModal>
 		</IonPage>
 	);
 };

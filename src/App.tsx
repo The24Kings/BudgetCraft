@@ -2,9 +2,29 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonReactRouter } from "@ionic/react-router";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, doc, DocumentData, getDoc, getDocs, onSnapshot, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
+import {
+	collection,
+	doc,
+	DocumentData,
+	getDoc,
+	getDocs,
+	onSnapshot,
+	orderBy,
+	query,
+	QuerySnapshot,
+	where
+} from "firebase/firestore";
 import { bulb, construct, home, settings, wallet } from "ionicons/icons";
-import { IonApp, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact } from "@ionic/react";
+import {
+	IonApp,
+	IonIcon,
+	IonLabel,
+	IonRouterOutlet,
+	IonTabBar,
+	IonTabButton,
+	IonTabs,
+	setupIonicReact
+} from "@ionic/react";
 import BudgetPage from "./pages/BudgetPage";
 import GoalsPage from "./pages/GoalsPage";
 import HomePage from "./pages/HomePage";
@@ -25,8 +45,13 @@ import "@ionic/react/css/display.css";
 import "./theme/variables.css";
 import { Category, parseJSON } from "./utilities/Categories";
 import Goal from "./utilities/Goals/Goal";
+import AboutPage from "./utilities/Settings/AboutPage";
+import EditCategoriesPage from "./utilities/Settings/EditCategoriesPage";
+import EditPersonalInfoPage from "./utilities/Settings/EditPersonalInfoPage";
+import ExportUserDataPage from "./utilities/Settings/ExportUserDataPage";
+import HelpTopicsPage from "./utilities/Settings/HelpTopicsPage";
+import NotificationSettingsPage from "./utilities/Settings/NotificationSettingsPage";
 import Transaction from "./utilities/Transactions/Transaction";
-
 
 setupIonicReact();
 
@@ -172,12 +197,12 @@ const App: React.FC = () => {
 
 				goal.transactions = transactions;
 
-                if (goal.withdrawalIDs.length == 0) {
-                    console.log(`No withdrawals for this goal ${goal.id}`);
-                    continue;
-                }
+				if (goal.withdrawalIDs.length == 0) {
+					console.log(`No withdrawals for this goal ${goal.id}`);
+					continue;
+				}
 
-                const withdrawalsSnapshot = await getDocs(
+				const withdrawalsSnapshot = await getDocs(
 					query(
 						transactionsRef,
 						orderBy("date", "desc"),
@@ -185,23 +210,23 @@ const App: React.FC = () => {
 					)
 				);
 
-                // Parse the documents into Transaction objects
-                const withdrawals = withdrawalsSnapshot.docs.map((doc) => {
-                    const data = doc.data();
+				// Parse the documents into Transaction objects
+				const withdrawals = withdrawalsSnapshot.docs.map((doc) => {
+					const data = doc.data();
 
-                    return new Transaction(
-                        doc.id,
-                        data.type,
-                        data.category,
-                        data.subCategoryID,
-                        data.title,
-                        data.date,
-                        data.description,
-                        data.amount
-                    );
-                });
+					return new Transaction(
+						doc.id,
+						data.type,
+						data.category,
+						data.subCategoryID,
+						data.title,
+						data.date,
+						data.description,
+						data.amount
+					);
+				});
 
-                goal.withdrawals = withdrawals;
+				goal.withdrawals = withdrawals;
 			}
 		};
 
@@ -306,16 +331,56 @@ const App: React.FC = () => {
 							path="/settings"
 							render={() => {
 								return user ? (
-									<SettingsPage 
-                                        user={user} 
-                                        jsonData={jsonData}
-                                        categoryData={categoryData}
-                                    />
+									<SettingsPage user={user} />
 								) : (
 									<Redirect to="/login" />
 								);
 							}}
 							exact
+						/>
+						<Route
+							path="/settings/export"
+							render={() =>
+								user ? (
+									<ExportUserDataPage user={user} categoryData={categoryData} />
+								) : (
+									<Redirect to="/login" />
+								)
+							}
+						/>
+						<Route
+							path="/settings/personal"
+							render={() =>
+								user ? <EditPersonalInfoPage /> : <Redirect to="/login" />
+							}
+						/>
+						<Route
+							path="/settings/notifications"
+							render={() =>
+								user ? <NotificationSettingsPage /> : <Redirect to="/login" />
+							}
+						/>
+						<Route
+							path="/settings/edit-categories"
+							render={() =>
+								user ? (
+									<EditCategoriesPage
+										user={user}
+										jsonData={jsonData}
+										categoryData={categoryData}
+									/>
+								) : (
+									<Redirect to="/login" />
+								)
+							}
+						/>
+						<Route
+							path="/settings/help"
+							render={() => (user ? <HelpTopicsPage /> : <Redirect to="/login" />)}
+						/>
+						<Route
+							path="/settings/about"
+							render={() => (user ? <AboutPage /> : <Redirect to="/login" />)}
 						/>
 						<Route
 							path="/login"
@@ -333,8 +398,8 @@ const App: React.FC = () => {
 
 					{user && (
 						<IonTabBar slot="bottom">
-							<IonTabButton tab="home" href="/home" >
-								<IonIcon icon={home}/>
+							<IonTabButton tab="home" href="/home">
+								<IonIcon icon={home} />
 								<IonLabel>Home</IonLabel>
 							</IonTabButton>
 							<IonTabButton tab="budget" href="/budget">
