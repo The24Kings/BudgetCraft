@@ -32,16 +32,36 @@ const SettingsPage: React.FC<{ user: any }> = ({ user }) => {
 				{/* Container 1 */}
 				<div className="settings-container">
 					<IonList lines="none">
-						<IonItem button detail={true} routerLink="/settings/personal">
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/personal"
+							className="settings-item"
+						>
 							<IonLabel>Edit Personal Info</IonLabel>
 						</IonItem>
-						<IonItem button detail={true} routerLink="/settings/notifications">
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/notifications"
+							className="settings-item"
+						>
 							<IonLabel>Notification Settings</IonLabel>
 						</IonItem>
-						<IonItem button detail={true} routerLink="/settings/export">
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/export"
+							className="settings-item"
+						>
 							<IonLabel>Export User Data</IonLabel>
 						</IonItem>
-						<IonItem button detail={true} routerLink="/settings/edit-categories">
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/edit-categories"
+							className="settings-item"
+						>
 							<IonLabel>Edit Categories</IonLabel>
 						</IonItem>
 					</IonList>
@@ -50,10 +70,20 @@ const SettingsPage: React.FC<{ user: any }> = ({ user }) => {
 				{/* Container 2 */}
 				<div className="settings-container">
 					<IonList lines="none">
-						<IonItem button detail={true} routerLink="/settings/help">
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/help"
+							className="settings-item"
+						>
 							<IonLabel>Help Topics</IonLabel>
 						</IonItem>
-						<IonItem button detail={true} routerLink="/settings/about">
+						<IonItem
+							button
+							detail={true}
+							routerLink="/settings/about"
+							className="settings-item"
+						>
 							<IonLabel>About</IonLabel>
 						</IonItem>
 					</IonList>

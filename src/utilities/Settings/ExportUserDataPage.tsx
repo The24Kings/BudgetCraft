@@ -12,6 +12,7 @@ import {
 } from "@ionic/react";
 import { Category } from "../Categories";
 import { exportUserDataJSON } from "../DataExport";
+import "../../pages/SettingsPage.css";
 
 interface ExportUserDataPageProps {
 	user: any;
@@ -27,7 +28,7 @@ const ExportUserDataPage: React.FC<ExportUserDataPageProps> = ({ user, categoryD
 	};
 
 	return (
-		<IonPage>
+		<IonPage className="export-user-data-page">
 			<IonHeader>
 				<IonToolbar>
 					<IonButtons slot="start">
@@ -42,8 +43,9 @@ const ExportUserDataPage: React.FC<ExportUserDataPageProps> = ({ user, categoryD
 				style={{ "--background": "var(--ion-color-navy-blue-tint)" }}
 			>
 				<IonButton
+					fill="solid"
 					expand="block"
-					className="export-button"
+					className="export-user-button"
 					onClick={() => setShowAlert(true)}
 				>
 					Export User Data

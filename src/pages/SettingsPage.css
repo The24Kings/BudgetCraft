@@ -13,34 +13,60 @@
 	font-weight: bold;
 	color: white;
 	margin-bottom: 20px;
-	padding-left: 8px;
+}
+
+.settings-username h2 {
+	margin-left: 12px;
 }
 
 .settings-container {
 	background: white;
 	border-radius: 16px;
-	padding: 12px;
-	margin-bottom: 20px;
+	padding: 0;
+	margin: 0 12px 20px 12px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	overflow: hidden;
 }
 
 .settings-container ion-item {
-	--background: transparent;
-	--color: var(--ion-color-navy-blue);
+	--padding-start: 12px;
+	--padding-end: 12px;
+	padding: 0;
+	margin: 0;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.settings-item {
+	background: white !important;
+	color: var(--ion-color-navy-blue) !important;
 	font-weight: 500;
-	border-radius: 8px;
-	margin-bottom: 8px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+	border-radius: 0;
+	box-shadow: none !important;
+	border-bottom: 1px solid #e0e0e0;
+	width: 100%;
+	margin: 0;
+}
+
+.settings-container ion-item:last-of-type.settings-item {
+	border-bottom: none;
+}
+
+.settings-container ion-list {
+	padding: 0;
+	margin: 0;
+	background: transparent !important;
 }
 
 /* ----------------------------------------
    Export User Data Page Styles
 ---------------------------------------- */
 
-.export-button {
-	--background: var(--ion-color-mint);
-	--color: black;
+.export-user-data-page .export-user-button {
+	--background: var(--ion-color-mint) !important;
+	color: black !important;
 	font-weight: 500;
 	border-radius: 12px;
 	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+	margin-top: 20px;
 }
