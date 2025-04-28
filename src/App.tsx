@@ -2,27 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonReactRouter } from "@ionic/react-router";
 import { onAuthStateChanged } from "firebase/auth";
-import {
-	collection,
-	doc,
-	getDocs,
-	onSnapshot,
-	orderBy,
-	query,
-	QuerySnapshot,
-	where
-} from "firebase/firestore";
+import { collection, doc, getDocs, onSnapshot, orderBy, query, QuerySnapshot, where } from "firebase/firestore";
 import { bulb, construct, home, settings, wallet } from "ionicons/icons";
-import {
-	IonApp,
-	IonIcon,
-	IonLabel,
-	IonRouterOutlet,
-	IonTabBar,
-	IonTabButton,
-	IonTabs,
-	setupIonicReact
-} from "@ionic/react";
+import { IonApp, IonFooter, IonIcon, IonLabel, IonRouterOutlet, IonTabBar, IonTabButton, IonTabs, setupIonicReact } from "@ionic/react";
 import BudgetPage from "./pages/BudgetPage";
 import GoalsPage from "./pages/GoalsPage";
 import HomePage from "./pages/HomePage";
@@ -51,6 +33,7 @@ import ExportUserDataPage from "./utilities/Settings/ExportUserDataPage";
 import HelpTopicsPage from "./utilities/Settings/HelpTopicsPage";
 import NotificationSettingsPage from "./utilities/Settings/NotificationSettingsPage";
 import Transaction from "./utilities/Transactions/Transaction";
+
 
 setupIonicReact();
 
@@ -267,7 +250,7 @@ const App: React.FC = () => {
 	if (loading) return <div>Loading...</div>;
 
 	return (
-		<IonApp style={{flexDirection: "column-reverse"}}>
+		<IonApp>
 			<IonReactRouter>
 				<IonTabs>
 					<IonRouterOutlet>
@@ -394,28 +377,30 @@ const App: React.FC = () => {
 					</IonRouterOutlet>
 
 					{user && (
-						<IonTabBar slot="bottom">
-							<IonTabButton tab="home" href="/home">
-								<IonIcon icon={home} />
-								<IonLabel>Home</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="budget" href="/budget">
-								<IonIcon icon={wallet} />
-								<IonLabel>Budget</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="goals" href="/goals">
-								<IonIcon icon={bulb} />
-								<IonLabel>Goals</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="tools" href="/tools">
-								<IonIcon icon={construct} />
-								<IonLabel>Tools</IonLabel>
-							</IonTabButton>
-							<IonTabButton tab="settings" href="/settings">
-								<IonIcon icon={settings} />
-								<IonLabel>Settings</IonLabel>
-							</IonTabButton>
-						</IonTabBar>
+						<IonFooter slot="bottom">
+							<IonTabBar>
+								<IonTabButton tab="home" href="/home">
+									<IonIcon icon={home} />
+									<IonLabel>Home</IonLabel>
+								</IonTabButton>
+								<IonTabButton tab="budget" href="/budget">
+									<IonIcon icon={wallet} />
+									<IonLabel>Budget</IonLabel>
+								</IonTabButton>
+								<IonTabButton tab="goals" href="/goals">
+									<IonIcon icon={bulb} />
+									<IonLabel>Goals</IonLabel>
+								</IonTabButton>
+								<IonTabButton tab="tools" href="/tools">
+									<IonIcon icon={construct} />
+									<IonLabel>Tools</IonLabel>
+								</IonTabButton>
+								<IonTabButton tab="settings" href="/settings">
+									<IonIcon icon={settings} />
+									<IonLabel>Settings</IonLabel>
+								</IonTabButton>
+							</IonTabBar>
+						</IonFooter>
 					)}
 				</IonTabs>
 			</IonReactRouter>
