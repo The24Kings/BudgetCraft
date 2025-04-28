@@ -360,6 +360,25 @@ ion-datetime-button::part(native) {
 	fill: #000;
 }
 
+ion-modal ion-datetime::part(content) {
+	background: white; /* or very light grey if you want */
+	color: black;
+}
+
+ion-modal ion-datetime::part(calendar-day) {
+	color: black; /* the number text inside the calendar */
+}
+
+ion-modal ion-datetime::part(calendar-day-active) {
+	color: white; /* selected day number */
+	background: var(--ion-color-navy-blue) !important;
+}
+
+ion-modal ion-datetime::part(calendar-day-today) {
+	color: var(--ion-color-mint);
+	font-weight: bold;
+}
+
 /* ----------------------------------------
    Buttons & FAB
 ---------------------------------------- */
