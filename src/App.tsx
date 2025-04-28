@@ -267,7 +267,7 @@ const App: React.FC = () => {
 	if (loading) return <div>Loading...</div>;
 
 	return (
-		<IonApp style={{flexDirection: "column-reverse"}}>
+		<IonApp>
 			<IonReactRouter>
 				<IonTabs>
 					<IonRouterOutlet>
