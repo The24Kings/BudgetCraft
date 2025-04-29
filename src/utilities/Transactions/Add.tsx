@@ -349,6 +349,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="datetime"
+								color="navy-blue"
 								onIonChange={(e) => {
 									const selectedDate = new Date(e.detail.value as string);
 									selectedDate.setMinutes(

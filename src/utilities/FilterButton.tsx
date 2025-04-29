@@ -146,6 +146,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 					<IonModal keepContentsMounted={true}>
 						<IonDatetime
 							id="start-date"
+							color="navy-blue"
 							presentation="date"
 							onIonChange={(e) => {
 								const selected = new Date(e.detail.value as string);
@@ -157,6 +158,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
 					<IonModal keepContentsMounted={true}>
 						<IonDatetime
 							id="end-date"
+							color="navy-blue"
 							presentation="date"
 							onIonChange={(e) => {
 								const selected = new Date(e.detail.value as string);

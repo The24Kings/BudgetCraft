@@ -355,28 +355,11 @@ ion-modal.filter-modal-custom .filter-close-button {
 /* ----------------------------------------
    Datetime Button
 ---------------------------------------- */
-ion-datetime-button::part(native) {
-	color: #000;
-	fill: #000;
-}
-
-ion-modal ion-datetime::part(content) {
-	background: white; /* or very light grey if you want */
-	color: black;
-}
-
-ion-modal ion-datetime::part(calendar-day) {
-	color: black; /* the number text inside the calendar */
-}
-
-ion-modal ion-datetime::part(calendar-day-active) {
-	color: white; /* selected day number */
-	background: var(--ion-color-navy-blue) !important;
-}
-
-ion-modal ion-datetime::part(calendar-day-today) {
-	color: var(--ion-color-mint);
-	font-weight: bold;
+ion-datetime {
+	--background: var(--ion-color-navy-blue-tint);
+	--background-rgb: 26, 46, 64;
+	
+	border-radius: 16px;
 }
 
 /* ----------------------------------------

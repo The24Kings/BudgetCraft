@@ -272,6 +272,7 @@ const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID, onlyGoals 
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="target-datetime"
+								color="navy-blue"
 								onIonChange={(e) => {
 									const selectedDate = new Date(e.detail.value as string);
 									selectedDate.setMinutes(
@@ -285,6 +286,7 @@ const AddGoal: React.FC<AddTransactionProps> = ({ categories, userID, onlyGoals 
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="reminder-datetime"
+								color="navy-blue"
 								onIonChange={(e) => {
 									const selectedDate = new Date(e.detail.value as string);
 									selectedDate.setMinutes(
