@@ -113,7 +113,7 @@ const DisplayTransactions: React.FC<DisplayTransactionsProps> = ({
 										</IonLabel>
 									</IonItem>
 									<div className="accordion-content" slot="content">
-										<IonItem color="light">
+										<IonItem color="navy-blue">
 											<IonGrid fixed={true} className="ion-no-padding">
 												<IonRow>
 													<IonCol className="ion-align-self-center ion-padding-vertical">
