@@ -334,7 +334,7 @@ const AddTransactions: React.FC<AddTransactionProps> = ({ categories, userID }) 
 					<div className="ion-padding-start ion-padding-end ion-margin-bottom ion-margin-top">
 						<IonItem>
 							<IonInput
-                                label="Type:"
+                                label="Title:"
 								value={title}
 								onIonInput={(e) => validateTitle(e)}
 								maxlength={20} // Prevents additional characters in UI
