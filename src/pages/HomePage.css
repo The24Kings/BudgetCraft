@@ -183,12 +183,8 @@ ion-item {
    Accordion
 ---------------------------------------- */
 ion-accordion::part(header) {
-	background: #cef9f2;
-	color: #1c1c1c;
-	border-radius: 10px;
-	margin-bottom: 10px;
-	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-	padding: 10px;
+	margin-bottom: 5px;
+	margin-top: 5px;
 }
 
 /* ----------------------------------------
@@ -201,7 +197,7 @@ ion-accordion::part(header) {
 }
 
 ion-textarea.custom {
-	--background: var(--surface-color);
+	--background: var(--ion-color-navy-blue-tint);
 	--color: #000;
 	--padding-end: 10px;
 	--padding-start: 10px;
@@ -355,9 +351,11 @@ ion-modal.filter-modal-custom .filter-close-button {
 /* ----------------------------------------
    Datetime Button
 ---------------------------------------- */
-ion-datetime-button::part(native) {
-	color: #000;
-	fill: #000;
+ion-datetime {
+	--background: var(--ion-color-navy-blue-tint);
+	--background-rgb: 26, 46, 64;
+	
+	border-radius: 16px;
 }
 
 /* ----------------------------------------

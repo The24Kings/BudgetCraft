@@ -85,6 +85,17 @@
 	--ion-color-tint: var(--ion-color-fab-tint);
 }
 
+
+/* This adds the rose color */
+.ion-color-rose {
+	--ion-color-base: var(--ion-color-rose);
+	--ion-color-base-rgb: var(--ion-color-rose-rgb);
+	--ion-color-contrast: var(--ion-color-rose-contrast);
+	--ion-color-contrast-rgb: var(--ion-color-rose-contrast-rgb);
+	--ion-color-shade: var(--ion-color-rose-shade);
+	--ion-color-tint: var(--ion-color-rose-tint);
+  }
+
 .ion-color-month-button {
 	--ion-color-base: var(--ion-color-month-button);
 	--ion-color-base-rgb: var(--ion-color-month-button-rgb);
@@ -148,6 +159,55 @@ ion-backdrop,
 ion-backdrop.sc-ion-alert-md,
 ion-backdrop.sc-ion-alert-ios {
 	background-color: transparent !important;
+}
+
+:root.ios,
+:root.md {
+	--ion-background-color: #233f57;
+	--ion-background-color-rgb: 35,63,87;
+
+	--ion-text-color: cef9f2;
+	--ion-text-color-rgb: 206,249,242;
+
+	--ion-text-color-step-50: #c5f0ea;
+	--ion-text-color-step-100: #bde6e3;
+	--ion-text-color-step-150: #b4dddb;
+	--ion-text-color-step-200: #acd4d3;
+	--ion-text-color-step-250: #a3cbcb;
+	--ion-text-color-step-300: #9bc1c3;
+	--ion-text-color-step-350: #92b8bc;
+	--ion-text-color-step-400: #8aafb4;
+	--ion-text-color-step-450: #81a5ac;
+	--ion-text-color-step-500: #799ca5;
+	--ion-text-color-step-550: #70939d;
+	--ion-text-color-step-600: #678995;
+	--ion-text-color-step-650: #5f808d;
+	--ion-text-color-step-700: #567786;
+	--ion-text-color-step-750: #4e6e7e;
+	--ion-text-color-step-800: #456476;
+	--ion-text-color-step-850: #3d5b6e;
+	--ion-text-color-step-900: #345267;
+	--ion-text-color-step-950: #2c485f;
+
+	--ion-background-color-step-50: #2c485f;
+	--ion-background-color-step-100: #345267;
+	--ion-background-color-step-150: #3d5b6e;
+	--ion-background-color-step-200: #456476;
+	--ion-background-color-step-250: #4e6e7e;
+	--ion-background-color-step-300: #567786;
+	--ion-background-color-step-350: #5f808d;
+	--ion-background-color-step-400: #678995;
+	--ion-background-color-step-450: #70939d;
+	--ion-background-color-step-500: #799ca5;
+	--ion-background-color-step-550: #81a5ac;
+	--ion-background-color-step-600: #8aafb4;
+	--ion-background-color-step-650: #92b8bc;
+	--ion-background-color-step-700: #9bc1c3;
+	--ion-background-color-step-750: #a3cbcb;
+	--ion-background-color-step-800: #acd4d3;
+	--ion-background-color-step-850: #b4dddb;
+	--ion-background-color-step-900: #bde6e3;
+	--ion-background-color-step-950: #c5f0ea;
 }
 
 /* For information on how to create your own theme, 

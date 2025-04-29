@@ -231,12 +231,13 @@ const EditTransaction: React.FC<EditTransactionProps> = ({
 						<IonItem lines="none" className="date-picker-item">
 							<div className="date-picker-inline">
 								<IonLabel>Date:</IonLabel>
-								<IonDatetimeButton datetime="datetime" />
+								<IonDatetimeButton datetime="datetime"/>
 							</div>
 						</IonItem>
 						<IonModal keepContentsMounted={true}>
 							<IonDatetime
 								id="datetime"
+								color="navy-blue"
 								onIonChange={(e) => {
 									const selectedDate = new Date(e.detail.value as string);
 									selectedDate.setMinutes(

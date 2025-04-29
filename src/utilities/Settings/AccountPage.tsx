@@ -100,7 +100,9 @@ const AccountPage: React.FC = () => {
 						detail={true}
 						className="settings-item"
 						onClick={() => {
-							auth.signOut();
+							auth.signOut().then(() => {
+								window.location.href = "/login";
+							});
 						}}
 					>
 						<IonLabel>Log Out</IonLabel>
